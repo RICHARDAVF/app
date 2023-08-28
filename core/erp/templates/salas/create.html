@@ -1,0 +1,12 @@
+{% extends 'form.html' %}
+{% load widget_tweaks %}
+{% block form %}
+    <label for="">{{ form.sala.label }}:</label>
+    {{form.sala}}
+    <!-- {% for field in form.visible_fields %}
+        <div class="form-group">
+            <label for="">{{ field.label }}:</label>
+            {{ field|add_class:'form-control'|attr:'autocomplete:off' }}
+        </div>
+    {% endfor %} -->
+{% endblock form %}

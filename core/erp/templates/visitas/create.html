@@ -1,0 +1,77 @@
+{% extends 'form.html' %}
+{% load static %}
+{% block head_form %}
+    <script src="{% static 'visitas/js/form.js' %}"></script>
+{% endblock head_form %}
+{% block form %}
+    <div class="row">
+        <div class="card col-sm-6">
+            <div class="card-header bg-primary">
+                <h6>Datos del visitante</h6>
+            </div>
+            <div class="card-body">
+                <label for="estado">{{form.user.label}}</label>
+                {{form.user}}
+                <label for="estado">{{form.estado.label}}</label>
+                {{form.estado}}
+                <label for="tipo_documento">{{form.tipo_documento.label}}</label>
+                {{form.tipo_documento}}
+                <label for="dni">{{form.dni.label}}</label>
+                {{form.dni}}
+                <label for="nombre">{{form.nombre.label}}</label>
+                {{form.nombre}}
+                <label for="apellidos">{{form.apellidos.label}}</label>
+                {{form.apellidos}}
+                <label for="motivo">{{form.motivo.label}}</label>
+                {{form.motivo}}
+                <label for="empresa">{{form.empresa.label}}</label>
+                {{form.empresa}}
+                <label for="cargo">{{form.cargo.label}}</label>
+                {{form.cargo}}
+                <label for="fecha">{{form.fecha.label}}</label>
+                {{form.fecha}}
+                
+            </div>
+            <div class="card-footer">
+    
+            </div>
+        </div>
+        <div class="card col-sm-6">
+            <div class="card-header bg-primary">
+                <h6>Mas Datos</h6>
+            </div>
+            <div class="card-body">
+                <label for="h_inicio">{{form.h_inicio.label}}</label>
+                {{form.h_inicio}}
+                <label for="h_termino">{{form.h_termino.label}}</label>
+                {{form.h_termino}}
+                <label for="sala">{{form.sala.label}}</label>
+                {{form.sala}}
+                <label for="tipo">{{form.tipo.label}}</label>
+                {{form.tipo}}
+                <label for="v_marca">{{form.v_marca.label}}</label>
+                {{form.v_marca}}
+                <label for="v_modelo">{{form.v_modelo.label}}</label>
+                {{form.v_modelo}}
+                <label for="v_placa">{{form.v_placa.label}}</label>
+                {{form.v_placa}}
+                <label for="fv_soat">{{form.fv_soat.label}}</label>
+                {{form.fv_soat}}
+                <label for="strc_salud">{{form.strc_salud.label}}</label>
+                {{form.strc_salud}}
+                <label for="n_parqueo">{{form.n_parqueo.label}}</label>
+                {{form.n_parqueo}}
+              
+            </div>
+            <div class="card-footer">
+    
+            </div>
+        </div>
+    </div>
+    
+{% endblock %}
+{% block javascript %}
+    <script>
+        $('#id_user').val('{{request.user}}')
+    </script>
+{% endblock javascript %}

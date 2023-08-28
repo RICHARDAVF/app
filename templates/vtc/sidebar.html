@@ -1,0 +1,78 @@
+{% load static %}
+<aside class="main-sidebar sidebar-light-primary elevation-4">
+    <a href="">
+        <img src="{% static 'img/logo.png' %}" alt="erp siia" class="brand-image elevation-3 bg-primary"
+            style="opacity: .8;width:100%">
+        <span>ERP SIIA</span>
+    </a>
+    <div class="sidebar">
+        <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+            <div class="image">
+                <img src="{{ request.user.get_image }}"  alt="User Image" class="img-circle">
+            </div>
+            <div class="info">
+                <a href="#" class="d-block">{{request.user.username}}</a>
+            </div>
+        </div>
+        <nav class="mt-2">
+            
+            <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+                <li class="nav-header">Mantenimientos</li>
+                <li class="nav-item">
+                    <a href="{% url 'user:user_list' %}" class="nav-link">
+                        <i class="nav-icon fas fa-user"></i>
+                        <p>
+                            Usuarios
+                        </p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'erp:trabajador_list' %}" class="nav-link">
+                        <i class="nav-icon fas fa-hard-hat"></i>
+                        <p>
+                            Trabajadores
+                        </p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                  
+                    <a href="{% url 'erp:visita_list' %}" class="nav-link" id="visitas-toggle" style="text-align: left;">
+                        <i class="nav-icon fas fa-user-friends"></i>
+                        <p>
+                           Visitas
+                        </p>
+                    </a>
+                 
+                </li>
+                
+                
+                <li class="nav-item">
+                    <a href="{% url 'erp:sala_list' %}" class="nav-link">
+                        <i class="nav-icon fas fa-chair"></i>
+                        <p>
+                            Salas
+                        </p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'erp:parqueo_list' %}" class="nav-link">
+                        <i class="nav-icon fas fa-parking"></i>
+                        <p>
+                            Parqueo
+                        </p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'dashboard:dash_report' %}" class="nav-link">
+                        <i class="nav-icon fas fa-chart-bar"></i>
+                        <p>
+                            Reportes
+                        </p>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</aside>
+
+
