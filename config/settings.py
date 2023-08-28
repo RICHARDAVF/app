@@ -32,7 +32,7 @@ def get_debug_setting():
     django_env = os.environ.get('DJANGO_ENV')
     if django_env == 'produccion':
         return False
-    return True
+    return False
 
 DEBUG = get_debug_setting()
 
