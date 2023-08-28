@@ -17,6 +17,7 @@ $(function () {
             {"data": "full_name"},
             {"data": "username"},
             {"data": "dni"},
+            {"data": "email"},
             {"data": "tipo"},     
             {"data": "image"},     
             {"data": "groups"},     
@@ -24,6 +25,7 @@ $(function () {
           
         ],
         columnDefs: [
+            
             {
                 targets: [-3],
                 class: 'text-center',

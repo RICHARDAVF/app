@@ -19,7 +19,6 @@ class FormUser(ModelForm):
                 attrs={
                     'placeholder':'Ingrese sus nombres',
                     'class':'form-control',
-                    'readonly':'true',
                     'required':'true'
                 }
             ),
@@ -27,7 +26,6 @@ class FormUser(ModelForm):
                 attrs={
                     'placeholder':'Ingrese sus apellidos',
                     'class':'form-control',
-                    'readonly':'true',
                     'required':'true'
                 }
             ),

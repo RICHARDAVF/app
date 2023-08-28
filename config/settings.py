@@ -12,6 +12,10 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from pathlib import Path
 import os
+import dotenv
+
+dotenv.load_dotenv()
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -21,9 +25,16 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "2374687dnjbij(//(=)(086kjbdjlvbxlcv))sdfsdf"
+SECRET_KEY = os.getenv('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+
+def get_debug_setting():
+    django_env = os.environ.get('DJANGO_ENV')
+    if django_env == 'produccion':
+        return False
+    return True
+
+DEBUG = get_debug_setting()
 
 ALLOWED_HOSTS = ["*"]
 
@@ -88,17 +99,20 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 # settings.py
 DATABASES = {
-    "default": {
-        "ENGINE": "mssql",
-        "NAME": "noi_vigiandina",
-        "USER": "sa",
-        "PASSWORD": "Noi2011",
-        "HOST": "192.168.1.81",
-        "PORT": "1433",
-        "OPTIONS": {"driver": "ODBC Driver 17 for SQL Server", 
+    'default': {
+        'ENGINE': os.getenv('DATABASES_DEFAULT_ENGINE'),
+        'NAME': os.getenv('DATABASES_DEFAULT_NAME'),
+        'USER': os.getenv('DATABASES_DEFAULT_USER'),
+        'PASSWORD': os.getenv('DATABASES_DEFAULT_PASSWORD'),
+        'HOST': os.getenv('DATABASES_DEFAULT_HOST'),
+        'PORT': os.getenv('DATABASES_DEFAULT_PORT'),
+        'OPTIONS': {
+            'driver': os.getenv('DATABASES_DEFAULT_OPTIONS_DRIVER'),
         },
-    },
+    }
 }
+
+
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
