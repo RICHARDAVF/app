@@ -12,8 +12,9 @@ urlpatterns = [
     path('visita/list/',ListViewVisita.as_view(),name="visita_list"),
     path('visita/update/<int:pk>/',UpdateViewVisita.as_view(),name="visita_edit"),
     path('visita/delete/<int:pk>/',DeleteViewVisita.as_view(),name="visita_delete"),
+    #ASISTEN EN LA VISITA
+    path('visita/asis/add/',CreateViewAsist.as_view(),name="asis_create"),
     #EPS
- 
     path('epps/list/',ViewEPPS.as_view(),name="epps_list"),
     # path('visita/update/<int:pk>/',UpdateViewVisita.as_view(),name="visita_edit"),
     # path('visita/delete/<int:pk>/',DeleteViewVisita.as_view(),name="visita_delete"),

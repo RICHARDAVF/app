@@ -1,5 +1,5 @@
 from django.forms import ModelForm,TextInput,DateInput,TimeInput,Select,FileInput
-from .models import Visitas,Salas,Parqueo,Trabajadores,AsignacionEPPS,Vehiculos,AsignacionEV
+from .models import Visitas,Salas,Parqueo,Trabajadores,AsignacionEPPS,Vehiculos,AsignacionEV,Asistentes
 from datetime import datetime
 class FormVisitas(ModelForm):
     def __init__(self,*args,**kwargs):
@@ -32,10 +32,11 @@ class FormVisitas(ModelForm):
                 
             }),
             'dni':TextInput(attrs={
-                'placeholder':'DNI',
+                'placeholder':'N° documento',
                 'class':'form-control',
                 'type':'number',
             }),
+
             'nombre':TextInput(attrs={
                 'placeholder':'Nombre',
                 'class':'form-control',
@@ -52,6 +53,10 @@ class FormVisitas(ModelForm):
                 'placeholder':'Empresa de Procedencia',
                 'class':'form-control',
                 
+            }),
+            'p_visita':TextInput(attrs={
+                'placeholder':'Persona a quien visita',
+                'class':'form-control'
             }),
             'motivo':TextInput(attrs={
                 'placeholder':'Motivo de la vista',
@@ -130,7 +135,7 @@ class FormDelivery(ModelForm):
         return data
     class Meta:
         model = Visitas
-        fields = ['estado','dni',"nombre","apellidos","guias","cantidad","tipo","observacion","empresa","user","fecha","h_inicio","h_termino"]
+        fields = ['estado','dni',"nombre","apellidos","guias","cantidad","tipo","observacion","empresa","user","fecha","h_inicio","h_termino","p_visita"]
         widgets= {
             'estado':Select(attrs={
                 "class":"form-control",
@@ -160,8 +165,12 @@ class FormDelivery(ModelForm):
             "empresa":TextInput({
                 "class":"form-control"
             }),
-            "user":Select(attrs={
-                "class":'form-control'
+            "p_visita":TextInput({
+                "class":"form-control"
+            }),
+            "user":TextInput(attrs={
+                "class":'form-control',
+                'readonly':True
             }),
             'fecha':DateInput(format='%Y-%m-%d',attrs={
                 'class':'form-control',
@@ -289,3 +298,9 @@ class FormEPV(ModelForm):
     class Meta:
         model = AsignacionEV
         fields = '__all__'
+class FormAsis(ModelForm):
+    def __init__(self,*args,**kwargs):
+        super().__init__(*args,**kwargs)
+    class Meta:
+        model = Asistentes
+        fields = "__all__"

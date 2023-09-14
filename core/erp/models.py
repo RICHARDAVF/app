@@ -72,7 +72,7 @@ class AsignacionEV(models.Model):#ASIGNACION DE EQUIPO VEHICULAR
         ordering = ['id']
 class IngresoSalida(models.Model):
     e_procedencia = models.CharField(max_length=100,verbose_name="Empresa de procedencia")
-    p_visita = models.CharField(max_length=150,verbose_name="Persona a la que visiata")
+    p_visita = models.CharField(max_length=150,verbose_name="Persona a la que visita")
     motivo = models.CharField(max_length=50,verbose_name="Motivo de la visita")
     p_autoriza = models.CharField(max_length=50,verbose_name="persona que autoriza")
     n_pase = models.CharField(max_length=10,verbose_name="Numero de pase")
@@ -118,7 +118,7 @@ class Parqueo(models.Model):
 class Visitas(models.Model):
     user = models.ForeignKey(User,on_delete=models.DO_NOTHING,verbose_name="Usuario que Autoriza",null=True,blank=True)
     tipo_documento = models.CharField(max_length=10,choices=[("1","DNI"),("2","C.E"),("3","PASAPORTE")],verbose_name="TIPO DOCUMENTO",blank=True,null=True)
-    dni = models.CharField(max_length=10,verbose_name="DNI")
+    dni = models.CharField(max_length=10,verbose_name="N° Documento")
     nombre = models.CharField(max_length=15,verbose_name="Nombres")
     apellidos = models.CharField(max_length=50,verbose_name="Apellidos")
     empresa = models.CharField(max_length=150,verbose_name="Empresa",null=True,blank=True)
@@ -126,6 +126,7 @@ class Visitas(models.Model):
     fecha = models.DateField(auto_now=False,verbose_name="Fecha")
     h_inicio = models.TimeField(auto_now=False,verbose_name="Hora de inicio")
     h_termino = models.TimeField(auto_now=False,verbose_name="Hora de termino",null=True,blank=True)
+    p_visita = models.CharField(max_length=150,verbose_name="Persona a quien visita",null=True,blank=True)
     motivo = models.CharField(max_length=150,verbose_name="Motivo")
     sala = models.ForeignKey(Salas,on_delete = models.DO_NOTHING,null=True,blank=True)
     v_marca = models.CharField(max_length=20,verbose_name="Marca del Vehiculo",null=True,blank=True)
@@ -147,12 +148,57 @@ class Visitas(models.Model):
         verbose_name = 'Visita'
         verbose_name_plural = 'Visitas'
         db_table = 'visitas'
-        ordering = ['id']
     def toJSON(self):
         item = model_to_dict(self)
         item['user'] = self.user.id
         item['guias'] = self.get_file()
         return item
+class Asistentes(models.Model):
+    visita = models.ForeignKey(Visitas,on_delete=models.DO_NOTHING,verbose_name="Visita",unique=False)
+    documento = models.CharField(max_length=11,verbose_name="n° documento")
+    nombre = models.CharField(max_length=50,verbose_name="Nombres")
+    apellidos = models.CharField(max_length=50,verbose_name="Apellidos")
+    empresa = models.CharField(max_length=150,verbose_name="Empresa",null=True,blank=True)
+    marca_v = models.CharField(max_length=50,verbose_name="Marca del vehiculo")
+    modelo_v = models.CharField(max_length=20,verbose_name="Modelo del vehiculo")
+    placa_v = models.CharField(max_length=8,verbose_name="Placa del vehiculo")
+    soat_v = models.DateField(auto_now=False,verbose_name="FV-SOAT")
+    strc = models.FileField(upload_to='strc/', verbose_name="STRC")
+    n_parqueo = models.ForeignKey(Parqueo,on_delete=models.DO_NOTHING,verbose_name="Parqueo",null=True,blank=True)
+    class Meta:
+        verbose_name = "asinten"
+        verbose_name_plural = 'asistentes'
+        db_table = 'asis_visitas'
+    def __str__(self) -> str:
+        return str(self.visita)
+    def toJSON(self):
+        item = model_to_dict(self)
+        item['visita'] = self.visita.id
+        item['strc'] = self.get_file()
+        return item
+
+    def get_file(self):
+        if self.strc:
+            return '{}{}'.format(MEDIA_URL, self.strc)
+        return '{}{}'.format(STATIC_URL, 'img/nopdf.jpg')
+class Unidad(models.Model):
+    unidad = models.CharField(max_length=150,verbose_name="Ubicacon")
+    class Meta:
+        verbose_name = "unidad"
+        verbose_name_plural = "unidaddes"
+        db_table = 'unidades'
+    def __str__(self) -> str:
+        return self.unidad
+class Puesto(models.Model):
+    unidad = models.ForeignKey(Unidad,on_delete=models.DO_NOTHING,verbose_name="Modulo")
+    puesto = models.CharField(max_length=15,verbose_name="Puesto")
+    direccion = models.CharField(max_length=150,verbose_name="Direccion")
+    class Meta:
+        verbose_name = "puesto"
+        verbose_name_plural = "puestos"
+        db_table = 'puestos'
+    def __str__(self) -> str:
+        return self.puesto
 @receiver(post_save, sender=Trabajadores)
 def add_automatic(sender, instance, created, **kwargs):
     if created:

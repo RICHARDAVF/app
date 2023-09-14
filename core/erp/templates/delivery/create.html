@@ -1,7 +1,7 @@
 {% extends 'form.html' %}
 {% load static %}
 {% block head_form %}
-    <script src="{% static 'delivery/js/form.js' %}"></script>
+    <!-- <script src="{% static 'delivery/js/form.js' %}"></script> -->
 {% endblock head_form %}
 {% block form %}
 <div class="row">
@@ -39,6 +39,8 @@
             <h6>Mas Datos</h6>
         </div>
         <div class="card-body">
+            <label for="p_visita">{{form.p_visita.label}}</label>
+            {{form.p_visita}}
             <label for="h_inicio">{{form.h_inicio.label}}</label>
             {{form.h_inicio}}
             <label for="h_termino">{{form.h_termino.label}}</label>

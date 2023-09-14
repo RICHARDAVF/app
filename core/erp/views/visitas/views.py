@@ -1,18 +1,16 @@
-from typing import Any, Dict
-from django.http import JsonResponse
-from django.shortcuts import render
-from django.views.generic import CreateView,ListView,DeleteView,UpdateView
 
+from django.http import JsonResponse
+from django.shortcuts import redirect, render
+from django.views.generic import CreateView,ListView,DeleteView,UpdateView,View
 from core.validation import Validation
-from ...models import Visitas
 from ...forms import FormVisitas,FormDelivery
-from ...models import Salas
-from ...models import Parqueo
+from ...models import Salas,Parqueo,Visitas,Asistentes
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.urls import reverse_lazy
 from django.db.models import Q
 from django.contrib.auth.mixins import LoginRequiredMixin
+import json
 # Create your views here.
 class CreateViewVisita(LoginRequiredMixin,CreateView):
     login_url = reverse_lazy('login')
@@ -27,20 +25,21 @@ class CreateViewVisita(LoginRequiredMixin,CreateView):
         data = {}
         try:
             action =request.POST['action']
+            
             if action == "add":
                 form = self.get_form()
                 data = form.save()
                 sala = request.POST['sala']
-                state_sale = Salas.objects.get(id=sala)
-                state_sale.estado = request.POST['estado']
-                state_sale.save()
+                if sala!='':
+                    state_sale = Salas.objects.get(id=sala)
+                    state_sale.estado = request.POST['estado']
+                    state_sale.save()
                 parqueo = request.POST['n_parqueo']
-                try:
+                if parqueo!='':
                     parking = Parqueo.objects.get(id=parqueo)
-                    parking.estado = parqueo==""
+                    parking.estado = parqueo==''
                     parking.save()
-                except Exception as e:
-                    pass
+               
             elif action =='searchdni':
                 data = Validation(request.POST['dni']).valid()
                
@@ -85,7 +84,15 @@ class ListViewVisita(LoginRequiredMixin,ListView):
                 except Exception as e:
                     data = {}
                     data['error'] = str(e)
-               
+            elif action =="addperson":
+                try:
+                    data = []
+                    for index,value in  enumerate(Asistentes.objects.filter(visita_id=request.POST['id'])):
+                        item = value.toJSON()
+                        print(item)
+                        data.append(item)
+                except Exception as e:
+                    data['error'] = f"Ocurrio un erro {str(e)}"
             else:
                 data['error'] = 'Ha ocurrido un error'
         except Exception as e:
@@ -137,10 +144,13 @@ class UpdateViewVisita(LoginRequiredMixin,UpdateView):
         visitas_instance = self.object
         sala_actual = visitas_instance.sala
         salas_estado_0 = Salas.objects.filter(estado=0)
-        salas_combinadas = list(salas_estado_0) + [sala_actual]
-        salas_queryset = Salas.objects.filter(Q(pk__in=[sala.pk for sala in salas_combinadas]))
-        form.fields['sala'].queryset = salas_queryset
-        form.fields['n_parqueo'].queryset = Parqueo.objects.filter(estado=True)
+        try:
+            salas_combinadas = list(salas_estado_0) + [sala_actual]
+            salas_queryset = Salas.objects.filter(Q(pk__in=[sala.pk for sala in salas_combinadas]))
+            form.fields['sala'].queryset = salas_queryset
+            form.fields['n_parqueo'].queryset = Parqueo.objects.filter(estado=True)
+        except Exception as e:
+            pass
         try:
             parqueo_actual = visitas_instance.n_parqueo
             parqueos_estado_true = Parqueo.objects.filter(estado=True)
@@ -255,4 +265,32 @@ class UpdateViewDelivery(LoginRequiredMixin,UpdateView):
         context['entidad'] = 'Delivery'
         context['list_url'] = self.success_url
         context['action'] = 'edit'
-        return context
+        return context  
+class CreateViewAsist(LoginRequiredMixin,View):
+    login_url = reverse_lazy('login')
+    model = Asistentes
+    @method_decorator(csrf_exempt)
+    def dispatch(self, request, *args, **kwargs) :
+        return super().dispatch(request, *args, **kwargs)
+    def post(self,request,*ars,**kwargs):
+        if request.POST['action'] == "addperson":
+            print(request.POST)
+            
+            for item in json.loads(request.POST['items']):
+                print(item)
+                asis = Asistentes.objects.create(
+                    visita_id=int(item["id"]),
+                    documento=item['documento'],
+                    nombre=item['nombre'],
+                    apellidos = item['apellidos'],
+                    empresa = item['empresa'],
+                    marca_v=item['marca_v'],
+                    modelo_v=item['modelo_v'],
+                    placa_v=item['placa_v'],
+                    soat_v=item['soat_v'],
+                    strc=item['strc'],
+                    n_parqueo_id=item['n_parqueo'],
+                )
+                asis.save()
+        return JsonResponse({"success":"Success"})
+    
