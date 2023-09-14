@@ -274,12 +274,10 @@ class CreateViewAsist(LoginRequiredMixin,View):
         return super().dispatch(request, *args, **kwargs)
     def post(self,request,*ars,**kwargs):
         if request.POST['action'] == "addperson":
-            print(request.POST)
-            
-            for item in json.loads(request.POST['items']):
-                print(item)
-                asis = Asistentes.objects.create(
-                    visita_id=int(item["id"]),
+            id = request.POST['id']
+            item = json.loads(request.POST['items'])
+            asis = Asistentes.objects.create(
+                    visita_id=int(id),
                     documento=item['documento'],
                     nombre=item['nombre'],
                     apellidos = item['apellidos'],
@@ -291,6 +289,6 @@ class CreateViewAsist(LoginRequiredMixin,View):
                     strc=item['strc'],
                     n_parqueo_id=item['n_parqueo'],
                 )
-                asis.save()
+            asis.save()
         return JsonResponse({"success":"Success"})
     

@@ -285,6 +285,7 @@ $(function () {
 
     }
     function showperson(){
+        datos = []
         var rowIndex = miTabla.row($(this).closest('tr')).index();
         var id = miTabla.cell(rowIndex,0).data();
         $.ajax({
@@ -297,7 +298,7 @@ $(function () {
             },
             success:function(data){
                 datos = data
-                console.log(datos)
+               
                 $('.modal-body').html(
                     ` <form  enctype="multipart/form-data" id="myForm">
                         <input type='hidden' class="form-control ml-3" value="${id}" editable='false' id="id" name="id"/>
@@ -369,29 +370,45 @@ $(function () {
         var data = $('#myForm').serializeArray();
         data.push({'name':'strc',"value":$('#strc').val()})
         datos.push(formatJSON(data));
-      
-        listdates()
-    })
-    $(document).on('click','#btnsubmit',function(){
-        var data = {
-            id:$('id').val(),
-            action:"addperson",
-            items:JSON.stringify(datos),
-        }
         $.ajax({
             type:'POST',
             url:'/erp/visita/asis/add/',
             dataType:'json',
-            data:data,
-            
-            success:function(){
-                datos = []
-                $('#miModal').modal('hide');
+            data:{
+                id:$('#id').val(),
+                action:"addperson",
+                items:JSON.stringify(formatJSON(data))
             },
-            error:function(){
-                alert("Ocurrio un error")
+            success:function(data){
+                datos = data;
+               
+            },
+            error:function(error){
+                alert(error)
             }
-        });
+        })
+        listdates()
     })
+    // $(document).on('click','#btnsubmit',function(){
+    //     var data = {
+    //         id:$('id').val(),
+    //         action:"addperson",
+    //         items:JSON.stringify(datos),
+    //     }
+    //     $.ajax({
+    //         type:'POST',
+    //         url:'/erp/visita/asis/add/',
+    //         dataType:'json',
+    //         data:data,
+            
+    //         success:function(){
+    //             datos = []
+    //             $('#miModal').modal('hide');
+    //         },
+    //         error:function(){
+    //             alert("Ocurrio un error")
+    //         }
+    //     });
+    // })
 });
 

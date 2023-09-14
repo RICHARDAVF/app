@@ -2,6 +2,8 @@
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.views.generic import CreateView,ListView,DeleteView,UpdateView,View
+
+from core.validation import Validation
 from ...models import Trabajadores,AsignacionEPPS,AsignacionEV,Vehiculos
 from ...forms import FormTrabajador,FormEPS,FormVH,FormEPV
 from betterforms.multiform import MultiModelForm
@@ -16,6 +18,9 @@ class CreateViewTrabajador(LoginRequiredMixin,CreateView):
     form_class =FormTrabajador   
     template_name = 'trabajadores/create.html'
     success_url = reverse_lazy('erp:trabajador_list')
+    @method_decorator(csrf_exempt)
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
     def post(self, request, *args, **kwargs) :
         data = {}
         try:
@@ -23,6 +28,8 @@ class CreateViewTrabajador(LoginRequiredMixin,CreateView):
             if action == "add":
                 form = self.get_form()
                 data = form.save()
+            elif action =="searchdni":
+                data = Validation(request.POST['dni']).valid()
             else:
                 data['error'] = 'No se a ingresado ninguna opcion'
         except Exception as e:

@@ -1,4 +1,8 @@
 {% extends 'form.html' %}
+{% load static %}
+{% block head_form %}
+    <script src="{% static 'trabajador/js/form.js' %}"></script>
+{% endblock %}
 {% block form %}
 
 <div class="card">

@@ -4,6 +4,7 @@ from config.settings import MEDIA_URL, STATIC_URL
 from core.user.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from datetime import date
 # Create your models here.
 class Trabajadores(models.Model):
     tipo = models.CharField(max_length=3,choices=[('1',"DNI"),('2',"C.E"),('3',"PASAPORTE")],blank=True,null=True)
@@ -162,7 +163,7 @@ class Asistentes(models.Model):
     marca_v = models.CharField(max_length=50,verbose_name="Marca del vehiculo")
     modelo_v = models.CharField(max_length=20,verbose_name="Modelo del vehiculo")
     placa_v = models.CharField(max_length=8,verbose_name="Placa del vehiculo")
-    soat_v = models.DateField(auto_now=False,verbose_name="FV-SOAT")
+    soat_v = models.DateField(default=date.today,verbose_name="FV-SOAT")
     strc = models.FileField(upload_to='strc/', verbose_name="STRC")
     n_parqueo = models.ForeignKey(Parqueo,on_delete=models.DO_NOTHING,verbose_name="Parqueo",null=True,blank=True)
     class Meta:
