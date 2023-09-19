@@ -269,9 +269,9 @@ class FormTrabajador(ModelForm):
                 'class':'form-control',
                 'placeholder':'Ingrese su Apellidos'
             }),
-            'sctr':TextInput(attrs={
+            'sctr':FileInput(attrs={
                 'class':'form-control',
-                'placeholder':'CSTR'
+               
             }),
         }
     def save(self, commit=True):
