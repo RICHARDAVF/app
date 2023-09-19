@@ -60,7 +60,7 @@ $(function () {
             {'data': "v_modelo"},
             {'data': "v_placa"},
             {'data': "fv_soat"},
-            {'data': "strc_salud"},
+            {'data': "sctr_salud"},
             {'data': "n_parqueo"},
             {'data': "id"},
         ],
@@ -160,7 +160,7 @@ $(function () {
         ],
 
         initComplete: function (settings, json) {
-            // Habilitar los botones de exportación
+          
             new $.fn.dataTable.Buttons(miTabla, {
                 buttons: [
                     {
@@ -238,7 +238,6 @@ $(function () {
                             
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-success" id="btnsubmit">GUARDAR</button>
                                 <button type="button" class="btn btn-danger" data-dismiss="modal">CERRAR</button>
                             </div>
                         </div>
@@ -321,7 +320,7 @@ $(function () {
                             <label class="form-label ml-1">FV-SOAT: </label><input  class="form-control ml-3" type='date'  id="soat_v" name="soat_v"  />
                         </div>
                         <div class="mt-1 d-flex felx-row">
-                            <label class="form-label">STRC: </label><input  class="form-control ml-3" type='file'  id="strc" name="strc" />
+                            <label class="form-label">SCTR: </label><input  class="form-control ml-3" type='file'  id="strc" name="sctr" />
                             <label class="form-label ml-1">N° Parqueo: </label><input  class="form-control ml-3"  id="n_parqueo" name="n_parqueo"  />
                         </div>
                     <form>
@@ -338,7 +337,7 @@ $(function () {
                                     <th style='width:100'>MODELO</th>
                                     <th style='width:100'>PLACA</th>
                                     <th style='width:100'>SOAT</th>
-                                    <th style='width:100'>STRC</th>
+                                    <th style='width:100'>SCTR</th>
                                     <th style='width:50'>PARQUE</th>
                                 </tr>
                                 </thead>
@@ -383,32 +382,45 @@ $(function () {
                 datos = data;
                
             },
-            error:function(error){
-                alert(error)
+            error:function(data){
+                alert(data.error)
             }
         })
         listdates()
     })
-    // $(document).on('click','#btnsubmit',function(){
-    //     var data = {
-    //         id:$('id').val(),
-    //         action:"addperson",
-    //         items:JSON.stringify(datos),
-    //     }
-    //     $.ajax({
-    //         type:'POST',
-    //         url:'/erp/visita/asis/add/',
-    //         dataType:'json',
-    //         data:data,
-            
-    //         success:function(){
-    //             datos = []
-    //             $('#miModal').modal('hide');
-    //         },
-    //         error:function(){
-    //             alert("Ocurrio un error")
-    //         }
-    //     });
-    // })
+    $(document).on('input','#documento',function(event){
+        const doc = $('#documento').val();
+        $('#nombre').val('')
+        $('#apellidos').val('')
+        if (doc.trim().length==8){
+            $.ajax({
+                type:'POST',
+                url:'/erp/visita/create/',
+                dataType:'json',
+                data:{
+                    action:'searchdni',
+                    dni:doc.trim(),
+                },
+                success:function(data){
+                    if(data.error){
+                        $('#nombre').val('')
+                        $('#apellidos').val('')
+                        return alert(data.error);
+                    }
+                
+                    $('#nombre').val(`${data.data.nombres}`)
+                    $('#apellidos').val(`${data.data.apellido_paterno} ${data.data.apellido_materno}`)
+                   
+                },
+                error:function(data){
+                    $('#nombre').val('')
+                    $('#apellidos').val('')
+                    alert(data.error)
+                }
+    
+            })
+        }
+        
+    })
 });
 
