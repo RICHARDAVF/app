@@ -1,12 +1,9 @@
-
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.views.generic import CreateView,ListView,DeleteView,UpdateView,View
-
 from core.validation import Validation
 from ...models import Trabajadores,AsignacionEPPS,AsignacionEV,Vehiculos
-from ...forms import FormTrabajador,FormEPS,FormVH,FormEPV
-from betterforms.multiform import MultiModelForm
+from ...forms import FormTrabajador
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.urls import reverse_lazy
@@ -51,9 +48,11 @@ class ListViewTrabajador(LoginRequiredMixin,ListView):
         return super().dispatch(request, *args, **kwargs)
     def listar(self):
         data = []
+       
         for value in Trabajadores.objects.all():
             item = value.toJSON()
             data.append(item)
+       
         return data
     def post(self, request, *args, **kwargs):
         data = {}

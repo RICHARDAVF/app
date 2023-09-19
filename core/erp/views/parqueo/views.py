@@ -49,7 +49,7 @@ class ListViewParqueo(LoginRequiredMixin,ListView):
             action = request.POST['action']
             if action == 'searchdata':
                 data = []
-                for value in Parqueo.objects.all():
+                for value in Parqueo.objects.filter(empresa_id=request.user.empresa_id,unidad_id=request.user.unidad_id,puesto_id=request.user.puesto_id):
                     item = value.toJSON()
                     data.append(item)
             else:
