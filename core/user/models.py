@@ -17,8 +17,8 @@ class Empresa(models.Model):
     def __str__(self) -> str:
         return str(self.razon_social)
 class Unidad(models.Model):
-    unidad = models.CharField(max_length=150,verbose_name="Ubicacion")
     empresa = models.ForeignKey(Empresa,on_delete=models.DO_NOTHING,null=True,blank=True,verbose_name="Empresa")
+    unidad = models.CharField(max_length=150,verbose_name="Unidad")
     class Meta:
         verbose_name = "unidad"
         verbose_name_plural = "unidades"
@@ -30,7 +30,7 @@ class Unidad(models.Model):
     def __str__(self) -> str:
         return str(self.unidad)
 class Puesto(models.Model):
-    unidad = models.ForeignKey(Unidad,on_delete=models.DO_NOTHING,verbose_name="Modulo")
+    unidad = models.ForeignKey(Unidad,on_delete=models.DO_NOTHING,verbose_name="Unidad")
     puesto = models.CharField(max_length=15,verbose_name="Puesto")
     direccion = models.CharField(max_length=150,verbose_name="Direccion")
     class Meta:

@@ -1,7 +1,7 @@
 from django.forms import ModelForm,TextInput,DateInput,TimeInput,Select,FileInput,HiddenInput
 from .models import Visitas,Salas,Parqueo,Trabajadores,AsignacionEPPS,Vehiculos,AsignacionEV,Asistentes,IngresoSalida
 from datetime import datetime
-from core.user.models import Empresa
+from core.user.models import Empresa,Unidad,Puesto
 class FormVisitas(ModelForm):
     def __init__(self,*args,**kwargs):
         super().__init__(*args,**kwargs)
@@ -380,4 +380,59 @@ class FormEmpresa(ModelForm):
             "direccion":TextInput(attrs={
                 "class":"form-control",
             })
+        }
+class FormUnidad(ModelForm):
+    def __init__(self,*args,**kwargs):
+        super().__init__(*args,**kwargs)
+        
+    def save(self,commit=True):
+        data = {}
+        form = super()
+        try:
+            if form.is_valid():
+                form.save()
+            else:
+                data['error'] = form.errors
+        except Exception as e:
+            data['error'] = str(e)
+        return data
+    class Meta:
+        model = Unidad
+        fields = '__all__'
+        widgets = {
+            'unidad':TextInput(attrs={
+                "class":'form-control'
+            }),
+            'empresa':Select(attrs={
+                "class":'form-control'
+            }),
+        }
+class FormPuesto(ModelForm):
+    def __init__(self,*args,**kwargs):
+        super().__init__(*args,**kwargs)
+        
+    def save(self,commit=True):
+        data = {}
+        form = super()
+        try:
+            if form.is_valid():
+                form.save()
+            else:
+                data['error'] = form.errors
+        except Exception as e:
+            data['error'] = str(e)
+        return data
+    class Meta:
+        model = Puesto
+        fields = '__all__'
+        widgets = {
+            'unidad':Select(attrs={
+                "class":'form-control'
+            }),
+            'puesto':TextInput(attrs={
+                "class":'form-control'
+            }),
+            'direccion':TextInput(attrs={
+                "class":'form-control'
+            }),
         }

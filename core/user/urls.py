@@ -8,6 +8,6 @@ urlpatterns = [
     path('usuario/create/', CreateViewUser.as_view(), name='user_create'),
     path('usuario/delete/<int:pk>/', DeleteViewUser.as_view(), name='user_delete'),
     path('usuario/update/<int:pk>/', UpdateViewUser.as_view(), name='user_update'),
-     path('usuario/change/group/<int:pk>/', UserChangeGroup.as_view(), name='user_change_group'),
+    path('usuario/change/group/<int:pk>/', UserChangeGroup.as_view(), name='user_change_group'),
     
 ]

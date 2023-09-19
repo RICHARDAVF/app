@@ -2,14 +2,14 @@
 {% load static %}
 {% block columnas %}
 <tr>
-    <td>ID</td>
-    <td>RUC</td>
-    <td>EMPRESA</td>
+    <th>ID</th>
+    <th>RUC</th>
+    <th>EMPRESA</th>
 </tr>
 {% endblock columnas %}
 {% block filas %}
     {% for empresa in object_list  %}
-    <tr class="table-primary" >
+    <tr>
         <td  scope="row">{{empresa.id}}</td>
         <td>{{empresa.ruc}}</td>
         <td>{{empresa.razon_social}}</td>

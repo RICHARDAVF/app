@@ -12,16 +12,20 @@ class Trabajadores(models.Model):
     documento = models.CharField(max_length=10,verbose_name="Documento")
     nombre = models.CharField(max_length=25,verbose_name="Nombres")
     apellidos = models.CharField(max_length=50,verbose_name="Apellidos")
-    sctr = models.CharField(max_length=50,verbose_name="SCTR salud y Pension")
+    sctr = models.FileField(upload_to='sctr/',verbose_name="SCTR salud y Pension")
     def toJSON(self):
         item = model_to_dict(self)
-       
+        item['cstr'] = self.get_file()
         return item
     class Meta:
         verbose_name = "Trabajadores"
         verbose_name_plural = "Trabajadores"
         db_table = "trabajadores"
         ordering = ['id']
+    def get_file(self):
+        if self.sctr:
+            return '{}{}'.format(MEDIA_URL, self.sctr)
+        return '{}{}'.format(STATIC_URL, 'img/empty.png') 
 class Vehiculos(models.Model):
     trabajador = models.ForeignKey(Trabajadores,on_delete=models.CASCADE,verbose_name="Trabajador",blank=True,null=True)
     marca = models.CharField(max_length=15,verbose_name='Marca del Vehiculo',default='')

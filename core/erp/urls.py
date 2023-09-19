@@ -5,6 +5,8 @@ from .views.parqueo.views import*
 from .views.trabajadores.views import*
 from .views.ingre_salidas.views import*
 from .views.empresas.views import*
+from .views.unidad.views import*
+from .views.puesto.views import*
 from .views.views import PageNotFoundView
 handler404 = PageNotFoundView.as_view()
 app_name = 'erp'
@@ -12,6 +14,16 @@ urlpatterns = [
     #EMPRESAS
     path('empresa/list/',LisViewEmpresa.as_view(),name="empresa_list"),
     path('empresa/add/',CreateViewEmpresa.as_view(),name="empresa_create"),
+    #UNIDAD
+    path('unidad/list/',ListViewUnidad.as_view(),name='unidad_list'),
+    path('unidad/add/',CreateViewUnidad.as_view(),name='unidad_create'),
+    path('unidad/edit/<int:pk>/',UpdateViewUnidad.as_view(),name='unidad_update'),
+    path('unidad/delete/<int:pk>/',DeleteViewUnidad.as_view(),name='unidad_delete'),
+    #PUESTO
+    path('puesto/list/',ListViewPuesto.as_view(),name='puesto_list'),
+    path('puesto/add/',CreateViewPuesto.as_view(),name='puesto_create'),
+    path('puesto/edit/<int:pk>/',UpdateViewPuesto.as_view(),name='puesto_update'),
+    path('puesto/delete/<int:pk>/',DeleteViewPuesto.as_view(),name='puesto_delete'),
     #VISITAS
     path('visita/create/',CreateViewVisita.as_view(),name="visita_create"),
     path('visita/list/',ListViewVisita.as_view(),name="visita_list"),
