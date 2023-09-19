@@ -1,12 +1,22 @@
-from django.forms import ModelForm
+from django.forms import ModelForm,Form
 from django import forms
 from .models import User
+from .models import Empresa,Unidad,Puesto
 class FormUser(ModelForm):
+    empresa=forms.ModelChoiceField(queryset=Empresa.objects.all(),widget=forms.Select(attrs={
+                "class":"form-control select2"
+            }))
+    unidad=forms.ModelChoiceField(queryset=Unidad.objects.all(),widget=forms.Select(attrs={
+                "class":"form-control select2"
+            }))
+    puesto=forms.ModelChoiceField(queryset=Puesto.objects.all(),widget=forms.Select(attrs={
+                "class":"form-control select2"
+            }))
     def __init__(self,*args,**kwargs):
         super().__init__(*args,**kwargs)
     class Meta:
         model = User
-        fields = ['first_name','last_name','email','username','password','image','groups','dni','image']
+        fields = ['first_name','last_name','email','username','password','image','groups','dni',"empresa","unidad","puesto"]
         widgets = {
             'dni':forms.TextInput(
                 attrs={
@@ -56,8 +66,9 @@ class FormUser(ModelForm):
                 attrs={
                     'class':'form-control',
                     'type':'file'
-                }
-            )
+            }),
+            
+           
         }
         exclude = ['user_permissions','last_login','date_joined','is_superuser','is_active','is_staff']
     def save(self,commit=True):

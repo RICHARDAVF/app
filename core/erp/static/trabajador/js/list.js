@@ -52,7 +52,7 @@ $(function () {
            
             {
                 targets:[-4],
-                class:'rext-center',
+                class:'text-center',
                 render:function(date,type,row){
                    
                     
@@ -61,7 +61,7 @@ $(function () {
             },
             {
                 targets:[-3],
-                class:'rext-center',
+                class:'text-center',
                 render:function(date,type,row){
                    
                     
@@ -70,7 +70,7 @@ $(function () {
             },
             {
                 targets:[-2],
-                class:'rext-center',
+                class:'text-center',
                 render:function(date,type,row){
                    
                     
@@ -79,7 +79,7 @@ $(function () {
             },
             {
                 targets:[-1],
-                class:'rext-center',
+                class:'text-center',
                 render:function(date,type,row){
                     var buttons = '<div class="d-flex justify-content-center"><a href="/erp/trab/update/' + row.id + '/" class="btn btn-warning btn-xs btn-flat"><i class="fas fa-edit"></i></a> ';
                     buttons += '<a href="/erp/trab/delete/' + row.id + '/" type="button" class="btn btn-danger btn-xs btn-flat"><i class="fas fa-trash-alt"></i></a></row>';
@@ -328,6 +328,12 @@ $(function () {
                         <div class="d-flex justify-content-around mt-1">
                             <label class="form-label" style="width:50px;">TACO: </label><input type="checkbox" class="form-control ml-3" ${data.taco? 'checked':''} id="taco" name="taco"  />
                         </div>
+                        <div class="d-flex justify-content-around mt-1">
+                            <label class="form-label" style="width:50px;">CIRCULINA: </label><input type="checkbox" class="form-control ml-3" ${data.circulina? 'checked':''} id="circulina" name="circulina"  />
+                        </div>
+                        <div class="d-flex justify-content-around mt-1">
+                            <label class="form-label" style="width:50px;">PERTIGA: </label><input type="checkbox" class="form-control ml-3" ${data.pertiga? 'checked':''} id="pertiga" name="pertiga"  />
+                        </div>
                     <form>
                     `
                 );
@@ -342,6 +348,8 @@ $(function () {
                     "triangulo_s": $("#triangulo_s").prop("checked") ? 1 : 0,
                     "cono_s": $("#cono_s").prop("checked") ? 1 : 0,
                     "taco": $("#taco").prop("checked") ? 1 : 0,
+                    "circulina": $("#circulina").prop("checked") ? 1 : 0,
+                    "pertiga": $("#pertiga").prop("checked") ? 1 : 0,
                 };
                 $.ajax({
                     type : "POST",

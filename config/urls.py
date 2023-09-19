@@ -22,7 +22,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('core.login.urls')),
     
-
     #APLICACIONES
     path('erp/', include('core.erp.urls')),
     path('user/',include('core.user.urls')),

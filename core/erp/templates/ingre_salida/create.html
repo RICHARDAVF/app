@@ -1,0 +1,31 @@
+{% extends 'form.html' %}
+{% block form %}
+<div class="row">
+    <div class="card col-sm-6">
+        <div class="card-header bg-primary">
+            <h6>Datos del trabajador</h6>
+        </div>
+        <div class="card-boy"> 
+            
+            <label for="documento">{{form.documento.label}}</label>
+            {{form.documento}}
+            <label for="nombres">{{form.nombres.label}}</label>
+            {{form.nombres}}
+        </div>
+    </div>
+    <div class="car col-sm-6">
+        <div class="card-header bg-primary">
+            <h6>Control de Fecha</h6>
+        </div>
+        <div class="card-body">
+            <label for="h_entrada">{{form.h_entrada.label}}</label>
+            {{form.h_entrada}}
+            <label for="h_salida">{{form.h_salida.label}}</label>
+            {{form.h_salida}}
+            <label for="fecha">{{form.fecha.label}}</label>
+            {{form.fecha}}
+        </div>
+           
+    </div>
+</div>  
+{% endblock form %}

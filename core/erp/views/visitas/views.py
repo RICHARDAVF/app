@@ -11,6 +11,7 @@ from django.urls import reverse_lazy
 from django.db.models import Q
 from django.contrib.auth.mixins import LoginRequiredMixin
 import json
+from datetime import date
 # Create your views here.
 class CreateViewVisita(LoginRequiredMixin,CreateView):
     login_url = reverse_lazy('login')
@@ -42,7 +43,7 @@ class CreateViewVisita(LoginRequiredMixin,CreateView):
                
             elif action =='searchdni':
                 data = Validation(request.POST['dni']).valid()
-               
+                
             else:
                 data['error'] = 'No se a ingresado ninguna opcion'
         except Exception as e:
@@ -69,7 +70,6 @@ class ListViewVisita(LoginRequiredMixin,ListView):
     @method_decorator(csrf_exempt)
     def dispatch(self, request, *args, **kwargs):
         return super().dispatch(request, *args, **kwargs)
-   
     def post(self, request, *args, **kwargs):
         data = {}
         try:
@@ -77,10 +77,10 @@ class ListViewVisita(LoginRequiredMixin,ListView):
             if action == 'searchdata':
                 data = []
                 try:
-                    for value in Visitas.objects.all():
+                    for value in Visitas.objects.filter(user_id=self.request.user.id):
                         item = value.toJSON()
                         data.append(item)
-                    
+                    print(data)
                 except Exception as e:
                     data = {}
                     data['error'] = str(e)
@@ -89,7 +89,6 @@ class ListViewVisita(LoginRequiredMixin,ListView):
                     data = []
                     for index,value in  enumerate(Asistentes.objects.filter(visita_id=request.POST['id'])):
                         item = value.toJSON()
-                        print(item)
                         data.append(item)
                 except Exception as e:
                     data['error'] = f"Ocurrio un erro {str(e)}"
@@ -117,7 +116,6 @@ class UpdateViewVisita(LoginRequiredMixin,UpdateView):
     def dispatch(self, request, *args, **kwargs):
         self.object = self.get_object()
         return super().dispatch(request, *args, **kwargs)
-
     def post(self, request, *args, **kwargs):
         data = {}
         try:
@@ -125,8 +123,14 @@ class UpdateViewVisita(LoginRequiredMixin,UpdateView):
             if action == 'edit':
                 form = self.get_form()
                 data = form.save()
+                
+                sala = request.POST['sala']
+                try:
+                    Salas.objects.filter(sala=sala).update(estado=1)
+
+                except:
+                    pass
                 if request.POST['h_termino']!='':
-                    sala = request.POST['sala']
                     Salas.objects.filter(sala=sala).update(estado=0)
                     try:
                         Parqueo.objects.filter(numero=request.POST['n_parqueo']).update(estado=True)
@@ -273,22 +277,30 @@ class CreateViewAsist(LoginRequiredMixin,View):
     def dispatch(self, request, *args, **kwargs) :
         return super().dispatch(request, *args, **kwargs)
     def post(self,request,*ars,**kwargs):
+        data = {}
         if request.POST['action'] == "addperson":
             id = request.POST['id']
             item = json.loads(request.POST['items'])
-            asis = Asistentes.objects.create(
-                    visita_id=int(id),
-                    documento=item['documento'],
-                    nombre=item['nombre'],
-                    apellidos = item['apellidos'],
-                    empresa = item['empresa'],
-                    marca_v=item['marca_v'],
-                    modelo_v=item['modelo_v'],
-                    placa_v=item['placa_v'],
-                    soat_v=item['soat_v'],
-                    strc=item['strc'],
-                    n_parqueo_id=item['n_parqueo'],
-                )
-            asis.save()
-        return JsonResponse({"success":"Success"})
+            if len(item['soat_v'])==0:
+                fecha =date.today
+            else:
+                fecha = item['soat_v']
+            try:
+                asis = Asistentes.objects.create(
+                        visita_id=int(id),
+                        documento=item['documento'],
+                        nombre=item['nombre'],
+                        apellidos = item['apellidos'],
+                        empresa = item['empresa'],
+                        marca_v=item['marca_v'],
+                        modelo_v=item['modelo_v'],
+                        placa_v=item['placa_v'],
+                        soat_v=fecha,
+                        strc=item['strc'],
+                        n_parqueo_id=item['n_parqueo'],
+                    )
+                asis.save()
+            except Exception as e:
+                data['error'] = f"Ocurrio un error: {str(e)}"
+        return JsonResponse(data,safe=False)
     

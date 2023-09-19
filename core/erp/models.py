@@ -5,6 +5,7 @@ from core.user.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from datetime import date
+from core.user.models import Empresa,Unidad,Puesto
 # Create your models here.
 class Trabajadores(models.Model):
     tipo = models.CharField(max_length=3,choices=[('1',"DNI"),('2',"C.E"),('3',"PASAPORTE")],blank=True,null=True)
@@ -61,7 +62,8 @@ class AsignacionEV(models.Model):#ASIGNACION DE EQUIPO VEHICULAR
     triangulo_s = models.BooleanField(default=False,verbose_name="Triangulo de Seguridad")
     cono_s = models.BooleanField(default=False,verbose_name="Cono de seguridad")
     taco = models.BooleanField(default=False,verbose_name="taco")
-    
+    pertiga = models.BooleanField(default=False,verbose_name="pertiga")
+    circulina = models.BooleanField(default=False,verbose_name="Circulina")
     def toJSON(self):
         item = model_to_dict(self)
         item['trabajador'] = self.trabajador.id
@@ -72,16 +74,11 @@ class AsignacionEV(models.Model):#ASIGNACION DE EQUIPO VEHICULAR
         db_table = 'asignacion_ev'
         ordering = ['id']
 class IngresoSalida(models.Model):
-    e_procedencia = models.CharField(max_length=100,verbose_name="Empresa de procedencia")
-    p_visita = models.CharField(max_length=150,verbose_name="Persona a la que visita")
-    motivo = models.CharField(max_length=50,verbose_name="Motivo de la visita")
-    p_autoriza = models.CharField(max_length=50,verbose_name="persona que autoriza")
-    n_pase = models.CharField(max_length=10,verbose_name="Numero de pase")
-    n_parqueo = models.CharField(max_length=10,verbose_name="Numero de parqueo")
-    sala = models.CharField(max_length=10,verbose_name="Asignacion de sala")
-    e_declarados = models.CharField(max_length=500,verbose_name="Equipos declarados")
-    hora_entrada = models.DateTimeField(auto_now=True,verbose_name="Hora de Entrada")
-    hora_salida = models.DateTimeField(auto_now=True,verbose_name="Hora de salida")
+    documento = models.CharField(max_length=11,verbose_name="N° Documento",null=True,blank=True)
+    nombres = models.CharField(max_length=150,verbose_name="Nombre Completo",null=True,blank=True)
+    fecha = models.DateField(auto_created=False,verbose_name="Fecha",null=True,blank=True)
+    h_salida = models.TimeField(auto_created=False,verbose_name="Hora de salida",null=True,blank=True)
+    h_entrada = models.TimeField(auto_now=False,verbose_name="Hora de ingreso",null=True,blank=True)
     class Meta:
         verbose_name = "IngresoSalida"
         verbose_name_plural = "IngresosSalidas"
@@ -93,6 +90,9 @@ class IngresoSalida(models.Model):
 class Salas(models.Model):
     sala = models.CharField(max_length=10,verbose_name="Sala",unique=True)
     estado= models.IntegerField(verbose_name="Estado",default=0,null=True,blank=True)
+    empresa = models.ForeignKey(Empresa,on_delete=models.DO_NOTHING,verbose_name="Empresa",null=True,blank=True)
+    unidad = models.ForeignKey(Unidad,on_delete=models.DO_NOTHING,verbose_name="unidad",null=True,blank=True)
+    puesto = models.ForeignKey(Puesto,on_delete=models.DO_NOTHING,verbose_name="puesto",null=True,blank=True)
     class Meta:
         verbose_name = 'Sala'
         verbose_name_plural = 'Salas'
@@ -106,6 +106,9 @@ class Salas(models.Model):
 class Parqueo(models.Model):
     numero = models.CharField(max_length=5,verbose_name="Numero de Parqueo",unique=True)
     estado = models.BooleanField(default=True,verbose_name="Estado",null=True,blank=True)
+    empresa = models.ForeignKey(Empresa,on_delete=models.DO_NOTHING,verbose_name="Empresa",null=True,blank=True)
+    unidad = models.ForeignKey(Unidad,on_delete=models.DO_NOTHING,verbose_name="unidad",null=True,blank=True)
+    puesto = models.ForeignKey(Puesto,on_delete=models.DO_NOTHING,verbose_name="puesto",null=True,blank=True)
     class Meta:
         verbose_name = "Parqueo"
         verbose_name_plural = "Parqueos"
@@ -134,10 +137,10 @@ class Visitas(models.Model):
     v_modelo = models.CharField(max_length=20,verbose_name="Modelo del vehiculo",null=True,blank=True)
     v_placa =  models.CharField(max_length=10,verbose_name="Placa de rodaje",null=True,blank=True)
     fv_soat = models.CharField(max_length=50,verbose_name="SOAT-VEHICULO",null=True,blank=True)
-    strc_salud = models.CharField(max_length=30,verbose_name="STRC-SALUD",null=True,blank=True)
+    sctr_salud = models.CharField(max_length=30,verbose_name="SCTR-SALUD",null=True,blank=True)
     n_parqueo = models.ForeignKey(Parqueo,on_delete=models.DO_NOTHING,verbose_name="Numero de Parqueo",null=True,blank=True)
     estado = models.CharField(max_length=10,choices=[('1','PROGRAMÓ'),('2','ENTRÓ'),('3','VISITÓ')],null=True,blank=True)
-    guias = models.FileField(upload_to='archivos/guias/',verbose_name="Guias de remision",blank=True,null=True)
+    guias = models.FileField(upload_to='guias/',verbose_name="Guias de remision",blank=True,null=True)
     cantidad = models.CharField(verbose_name="Cantidad",max_length=20,blank=True,null=True)
     tipo = models.CharField(max_length=3,choices=[('1','VISITA'),("2","COURRIER"),("3","DELIVERY")],default='1')
     observacion = models.CharField(max_length=100,verbose_name="Observaciones",blank=True,null=True)
@@ -182,24 +185,7 @@ class Asistentes(models.Model):
         if self.strc:
             return '{}{}'.format(MEDIA_URL, self.strc)
         return '{}{}'.format(STATIC_URL, 'img/nopdf.jpg')
-class Unidad(models.Model):
-    unidad = models.CharField(max_length=150,verbose_name="Ubicacon")
-    class Meta:
-        verbose_name = "unidad"
-        verbose_name_plural = "unidaddes"
-        db_table = 'unidades'
-    def __str__(self) -> str:
-        return self.unidad
-class Puesto(models.Model):
-    unidad = models.ForeignKey(Unidad,on_delete=models.DO_NOTHING,verbose_name="Modulo")
-    puesto = models.CharField(max_length=15,verbose_name="Puesto")
-    direccion = models.CharField(max_length=150,verbose_name="Direccion")
-    class Meta:
-        verbose_name = "puesto"
-        verbose_name_plural = "puestos"
-        db_table = 'puestos'
-    def __str__(self) -> str:
-        return self.puesto
+
 @receiver(post_save, sender=Trabajadores)
 def add_automatic(sender, instance, created, **kwargs):
     if created:

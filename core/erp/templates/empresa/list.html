@@ -1,0 +1,26 @@
+{% extends 'list.html' %}
+{% load static %}
+{% block columnas %}
+<tr>
+    <td>ID</td>
+    <td>RUC</td>
+    <td>EMPRESA</td>
+</tr>
+{% endblock columnas %}
+{% block filas %}
+    {% for empresa in object_list  %}
+    <tr class="table-primary" >
+        <td  scope="row">{{empresa.id}}</td>
+        <td>{{empresa.ruc}}</td>
+        <td>{{empresa.razon_social}}</td>
+    </tr>
+    {% endfor %}
+{% endblock filas %}
+{% block javascript %}
+    <script>
+        new DataTable('#data',{
+            responsive:true,
+        }
+        )
+    </script>
+{% endblock javascript %}

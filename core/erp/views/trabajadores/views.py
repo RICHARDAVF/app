@@ -88,6 +88,8 @@ class ListViewTrabajador(LoginRequiredMixin,ListView):
                     triangulo_s = request.POST['triangulo_s'],
                     cono_s = request.POST['cono_s'],
                     taco = request.POST['taco'],
+                    pertiga = request.POST['pertiga'],
+                    circulina = request.POST['circulina']
                 )
                 data = self.listar()
             else:
@@ -199,6 +201,9 @@ class ViewEPPS(LoginRequiredMixin,View):
                 data['triangulo_s'] = datos.triangulo_s
                 data['cono_s'] = datos.cono_s
                 data['taco'] = datos.taco
+                data['pertiga'] = datos.pertiga
+                data['circulina'] = datos.circulina
+                print(datos)
         except Exception as e:
             data['error'] = str(e)
        

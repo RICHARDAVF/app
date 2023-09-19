@@ -3,12 +3,10 @@ from django.shortcuts import render
 from django.views.generic import ListView,CreateView,UpdateView,DeleteView,View
 from core.validation import Validation
 from core.user.forms import FormUser
-from core.user.models import User
+from core.user.models import User,Puesto,Unidad
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
-import requests
-import json
 from django.contrib.auth.models import Group
 from django.contrib.auth.mixins import LoginRequiredMixin
 
@@ -58,25 +56,24 @@ class CreateViewUser(LoginRequiredMixin,CreateView):
         
         try:
             action = request.POST['action']
-            
             if action == 'add':
                 form = self.get_form()
                 data = form.save()
             elif action =='searchdni':
-                dni = request.POST['dni']
-                response = requests.get(f'https://apiperu.dev/api/dni/{dni}',headers = {
-                    "Authorization":'Bearer 7d41929a0671ebe6d17c4976dab50e2feedb3736e905ec9712ab7d865a56a3c8'
-                })
-                res=json.loads(response.text)
-                if not (res['success']):
-                    data['error'] = res['message']
-                else:
-                    data = res
+                data = Validation(request.POST['dni']).valid()
+            elif action == 'search_unidad':
+                data = []
+                for value in Unidad.objects.filter(empresa_id=request.POST['id']):
+                    data.append(value.toJSON())
+            elif action == 'search_puesto':
+                data = []
+                for value in Puesto.objects.filter(unidad_id=request.POST['id']):
+                    data.append(value.toJSON())
             else:
                 data['error'] = 'No ha ingresado a ninguna opción'
         except Exception as e:
             data['error'] = str(e)
-        return JsonResponse(data)
+        return JsonResponse(data,safe=False)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -105,13 +102,23 @@ class UpdateViewUser(LoginRequiredMixin,UpdateView):
             if action == 'edit':
                 form = self.get_form()
                 data = form.save()
+            elif action =='searchdni':
+                data = Validation(request.POST['dni']).valid()
+            elif action == 'search_unidad':
+                data = []
+                for value in Unidad.objects.filter(empresa_id=request.POST['id']):
+                    data.append(value.toJSON())
+            elif action == 'search_puesto':
+                data = []
+                for value in Puesto.objects.filter(unidad_id=request.POST['id']):
+                    data.append(value.toJSON())
             elif action == 'searchdni':
                 data = Validation(request.POST['dni']).valid()
             else:
                 data['error'] = 'No ha ingresado a ninguna opción'
         except Exception as e:
             data['error'] = str(e)
-        return JsonResponse(data)
+        return JsonResponse(data,safe=False)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

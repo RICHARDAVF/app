@@ -1,6 +1,7 @@
-from django.forms import ModelForm,TextInput,DateInput,TimeInput,Select,FileInput
-from .models import Visitas,Salas,Parqueo,Trabajadores,AsignacionEPPS,Vehiculos,AsignacionEV,Asistentes
+from django.forms import ModelForm,TextInput,DateInput,TimeInput,Select,FileInput,HiddenInput
+from .models import Visitas,Salas,Parqueo,Trabajadores,AsignacionEPPS,Vehiculos,AsignacionEV,Asistentes,IngresoSalida
 from datetime import datetime
+from core.user.models import Empresa
 class FormVisitas(ModelForm):
     def __init__(self,*args,**kwargs):
         super().__init__(*args,**kwargs)
@@ -24,9 +25,7 @@ class FormVisitas(ModelForm):
         model = Visitas
         fields = '__all__'
         widgets = {
-            'user':Select(attrs={
-                'class':'form-control',
-            }),
+            'user':HiddenInput(),
             'tipo_documento':Select(attrs={
                 "class":'form-control',
                 
@@ -106,7 +105,7 @@ class FormVisitas(ModelForm):
                 'class':'form-control',
                 'placeholder':'Fecha de vencimiento del SOAT'
             }),
-            'strc_salud' :TextInput(attrs={
+            'sctr_salud' :TextInput(attrs={
                 'class':'form-control',
                 'placeholder':'STRC SALUD'
             }),
@@ -200,7 +199,10 @@ class FormSala(ModelForm):
             'sala':TextInput(attrs={
                 'placeholer':'Numero de sala',
                 'class':'form-control'
-            })
+            }),
+            "empresa":HiddenInput(),
+            "unidad":HiddenInput(),
+            "puesto":HiddenInput(),
         }
     def save(self, commit=True):
         data = {}
@@ -224,7 +226,11 @@ class FormParqueo(ModelForm):
             'numero':TextInput(attrs={
                 'placeholer':'Numero de parqueo',
                 'class':'form-control'
-            })
+            }),
+            "estado":HiddenInput(),
+            "empresa":HiddenInput(),
+            "unidad":HiddenInput(),
+            "puesto":HiddenInput()
         }
     def save(self, commit=True):
         data = {}
@@ -304,3 +310,74 @@ class FormAsis(ModelForm):
     class Meta:
         model = Asistentes
         fields = "__all__"
+class FormIngSal(ModelForm):
+    def __init__(self,*args,**kwargs):
+        super().__init__(*args,**kwargs)
+    def save(self,commit=True):
+        data = {}
+        form = super()
+        try:
+            if form.is_valid():
+                form.save()
+            else:
+                data['error'] = form.errors
+        except Exception as e:
+            data['error'] = str(e)
+        return data
+    class Meta:
+        model = IngresoSalida
+        fields = "__all__"
+        widgets = {
+            "h_entrada":TimeInput(attrs={
+                "class":'form-control form-control-sm',
+                'type':'time',
+                'value':datetime.now().strftime('%H:%M')
+            }),
+            "h_salida":TimeInput(attrs={
+                "class":'form-control form-control-sm',
+                'type':'time',
+            }),
+            "fecha":DateInput(format='%Y-%m-%d',attrs={
+                "class":'form-control form-control-sm',
+                'type':'date',
+                'value':datetime.now().date
+            }),
+            "documento":DateInput(attrs={
+                "class":'form-control',
+                'type':'number'
+            }),
+            "nombres":DateInput(attrs={
+                "class":'form-control',
+              
+            }),
+            
+        }
+class FormEmpresa(ModelForm):
+    def __init__(self,*args,**kwargs):
+        super().__init__(*args,**kwargs)
+    def save(self,commit=True):
+        data = {}
+        form = super()
+        try:
+            if form.is_valid():
+                form.save()
+            else:
+                data['error'] = form.errors
+        except Exception as e:
+            data['error'] = str(e)
+        return data
+    class Meta:
+        model = Empresa
+        fields = '__all__'
+        widgets = {
+            "ruc":TextInput(attrs={
+                "class":'form-control',
+                "type":"number",
+            }),
+            "razon_social":TextInput(attrs={
+                "class":"form-control",
+            }),
+            "direccion":TextInput(attrs={
+                "class":"form-control",
+            })
+        }

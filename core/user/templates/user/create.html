@@ -22,9 +22,10 @@
                 {{form.last_name}}
                 <label for="">Nombre de Usuario</label>
                 {{form.username}}
-               
-                <label for="">Email</label>
+                <label for="email">{{form.email.label}}</label>
                 {{form.email}}
+                <label for="">Foto</label>
+                {{form.image}}
             </div>
         
         </div>
@@ -34,16 +35,19 @@
             </div>
             <div class="card-body">
                 
-                <label for="">Contraseña</label>
+                <label for="password">{{form.password.label}}</label>
                 {{form.password}}
                 <label for="">Confirmar Contraseña</label>
                 <input class="form-control" type="password" name="password1" id="password1" placeholder="Ingrese su contraseña nuevamente">
                 <div id="alerta"></div>
                 <label for="">Grupos</label>
                 {{form.groups}}
-                <label for="">Foto</label>
-                {{form.image}}
-               
+                <label for="empresa">{{form.empresa.label}}</label>
+                {{form.empresa}}
+                <label for="unidad">{{form.unidad.label}}</label>
+                {{form.unidad}}
+                <label for="puesto">{{form.puesto.label}}</label>
+                {{form.puesto}}
             </div>
         
         </div>
@@ -78,5 +82,69 @@
                 `
             )
         })
+        var unidad = $('select[name="unidad"]');
+        var puesto = $('select[name="puesto"]');
+        $(function(){
+            $('.select2').select2({
+                theme:'bootstrap4',
+                languaje:'es'
+            });
+            $('select[name="empresa"]').on("change",function(){
+                var id = $(this).val();
+                if(id===''){
+                    return -1
+                }
+
+                var  options = "<option value=''>--------------</option>";
+                $.ajax({
+                    type:'POST',
+                    url : window.location.pathname,
+                    data:{
+                        "action":'search_unidad',
+                        "id":id
+                    },
+                    success:function(data){
+                        if(data.error){
+                            return alert(data.error)
+                        }
+                        for(item in data){
+                            options+=`<option value='${data[item].id}'>${data[item].unidad}</option>`
+                        }
+                        unidad.html(options)
+                    },
+                    error:function(error){
+                        alert(error)
+                    }
+                })
+            })
+            $('select[name="unidad"]').on("change",function(){
+                var id = $(this).val();
+                if(id==''){
+                    return -1
+                }
+                var options = "<option value=''>----------</option>"
+                $.ajax({
+                    type:'POST',
+                    url:window.location.pathname,
+                    data:{
+                        "action":'search_puesto',
+                        "id":id
+                    },
+                    success:function(data){
+                        if(data.error){
+                            return alert(data.error)
+                        }
+                        for(item in data){
+                            options+=`<option value='${data[item].id}'>${data[item].puesto}</option>`
+                        }
+                        puesto.html(options)
+                    },
+                    error:function(error){
+                        alert(error)
+                    }
+                });
+            })
+        })
+        
     </script>
 {% endblock javascript %}

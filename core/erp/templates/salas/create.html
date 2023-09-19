@@ -3,10 +3,21 @@
 {% block form %}
     <label for="">{{ form.sala.label }}:</label>
     {{form.sala}}
+    {{form.empresa}}
+    {{form.unidad}}
+    {{form.puesto}}
     <!-- {% for field in form.visible_fields %}
         <div class="form-group">
             <label for="">{{ field.label }}:</label>
             {{ field|add_class:'form-control'|attr:'autocomplete:off' }}
         </div>
     {% endfor %} -->
+
 {% endblock form %}
+{% block javascript %}
+    <script>
+        $('#id_empresa').val("{{request.user.empresa_id}}")
+        $('#id_unidad').val("{{request.user.unidad_id}}")
+        $('#id_puesto').val("{{request.user.puesto_id}}")
+    </script>
+{% endblock javascript %}

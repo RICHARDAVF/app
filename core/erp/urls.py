@@ -3,10 +3,15 @@ from .views.visitas.views import*
 from .views.salas.views import*
 from .views.parqueo.views import*
 from .views.trabajadores.views import*
+from .views.ingre_salidas.views import*
+from .views.empresas.views import*
 from .views.views import PageNotFoundView
 handler404 = PageNotFoundView.as_view()
 app_name = 'erp'
 urlpatterns = [
+    #EMPRESAS
+    path('empresa/list/',LisViewEmpresa.as_view(),name="empresa_list"),
+    path('empresa/add/',CreateViewEmpresa.as_view(),name="empresa_create"),
     #VISITAS
     path('visita/create/',CreateViewVisita.as_view(),name="visita_create"),
     path('visita/list/',ListViewVisita.as_view(),name="visita_list"),
@@ -36,5 +41,9 @@ urlpatterns = [
     path('trab/list/',ListViewTrabajador.as_view(),name="trabajador_list"),
     path('trab/update/<int:pk>/',UpdateViewTrabajador.as_view(),name="trabajador_edit"),
     path('trab/delete/<int:pk>/',DeleteViewTrabajador.as_view(),name="trabajador_delete"),
+    #INGRESO Y SALIDAS DE TRABAJADORES
+    path('ingsal/list/',ListViewIngSal.as_view(),name='ingsal_list'),
+    path('ingsal/add/',CreateViewIngSal.as_view(),name='ingsal_create'),
+    path('ingsal/edit/<int:pk>/',UpdateViewIngSal.as_view(),name='ingsal_update'),
 
 ]
