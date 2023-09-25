@@ -6,8 +6,8 @@ class Validation:
 
     def valid(self):
         data = {}
-        response = requests.get(f'https://apiperu.dev/api/dni/{self.dni}',headers = {
-                    "Authorization":'Bearer 7d41929a0671ebe6d17c4976dab50e2feedb3736e905ec9712ab7d865a56a3c8'
+        response = requests.get(f'https://my.apidevs.pro/api/dni/{self.dni}',headers = {
+                    "Authorization":'Bearer 7d41929a0671ebe6d17c4976dab50e2f11db3736e915ec2712ab8d865a56a3c8'
                 })
         res=json.loads(response.text)
         if not (res['success']):

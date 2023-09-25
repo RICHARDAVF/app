@@ -44,9 +44,7 @@ class CreateViewUser(LoginRequiredMixin,CreateView):
     form_class = FormUser
     template_name = 'user/create.html'
     success_url = reverse_lazy('user:user_list')
-   
     url_redirect = success_url
-
     @method_decorator(csrf_exempt)
     def dispatch(self, request, *args, **kwargs):
         return super().dispatch(request, *args, **kwargs)
@@ -154,7 +152,6 @@ class DeleteViewUser(LoginRequiredMixin,DeleteView):
         return context
 class UserChangeGroup(LoginRequiredMixin,View):
     login_url = reverse_lazy('login')
-
     def get(self, request, *args, **kwargs):
         try:
             request.session['group'] = Group.objects.get(pk=self.kwargs['pk'])

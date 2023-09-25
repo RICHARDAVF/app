@@ -1,14 +1,18 @@
 from django.views.generic import CreateView,ListView,DeleteView,UpdateView
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin,PermissionRequiredMixin
 from core.user.models import Unidad
 from core.erp.forms import FormUnidad
 from django.urls import reverse_lazy
 from django.http import JsonResponse
+
 class CreateViewUnidad(LoginRequiredMixin,CreateView):
     model = Unidad
     form_class = FormUnidad
     template_name = 'unidad/create.html'
     success_url = reverse_lazy('erp:unidad_list')
+    # permission_required = 'erp.view_unidad'
+    # permission_denied_message = 'Usted no tiene acceso a esta vista'
+    # login_url = None
     def post(self, request, *args, **kwargs) :
         data = {}
         try:
@@ -68,7 +72,6 @@ class UpdateViewUnidad(LoginRequiredMixin,UpdateView):
     template_name = 'unidad/create.html'
     success_url = reverse_lazy('erp:unidad_list')
     url_redirect = success_url
-
     def post(self, request, *args, **kwargs):
         data = {}
         try:

@@ -77,3 +77,15 @@ class User(AbstractUser):
             pass
     def __str__(self):
         return str(self.id)
+class TokenBearer(models.Model):
+    token = models.CharField(max_length=250,verbose_name="Token")
+    nombre = models.CharField(max_length=50,verbose_name="Nombre del proveedor")
+    descripcion = models.CharField(max_length=150,verbose_name="Descripcion")
+    class Meta:
+        verbose_name = 'token'
+        verbose_name_plural = 'tokens'
+        db_table = 'tokens'
+    def toJSON(self):
+        item = model_to_dict(self)
+        return item
+    
