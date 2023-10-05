@@ -1,5 +1,8 @@
 $(function(){
-    var table = $('#data').DataTable({
+    var miTabla = new DataTable('#data',{
+        language: {
+            url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json',
+        },
         responsive:true,
         autoWidth:false,
         destroy:true,
@@ -57,7 +60,7 @@ $(function(){
             }
         ],
         initComplete:function(settings,json){
-            new $.fn.dataTable.Buttons(table,{
+            new $.fn.dataTable.Buttons(miTabla,{
                 buttons:[
                     'copy','excel',"csv","pdf"
                 ],
@@ -68,7 +71,7 @@ $(function(){
                 }
             });
             var $exportButtonsContainer = $('<div class="export-buttons-container"></div>');
-            table.buttons().container().appendTo($exportButtonsContainer);
+            miTabla.buttons().container().appendTo($exportButtonsContainer);
 
             // Agregar el contenedor de botones antes del input de búsqueda
             $exportButtonsContainer.insertBefore($('#data_wrapper .dataTables_filter'));
