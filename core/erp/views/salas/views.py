@@ -49,9 +49,14 @@ class ListViewSala(LoginRequiredMixin,ListView):
             action = request.POST['action']
             if action == 'searchdata':
                 data = []
-                for value in Salas.objects.filter(empresa_id=request.user.empresa_id,unidad_id=request.user.unidad_id,puesto_id=request.user.puesto_id):
-                    item = value.toJSON()
-                    data.append(item)
+                if not request.user.is_superuser:
+                    for value in Salas.objects.filter(empresa_id=request.user.empresa_id,unidad_id=request.user.unidad_id,puesto_id=request.user.puesto_id):
+                        item = value.toJSON()
+                        data.append(item)
+                else:
+                    for value in Salas.objects.all():
+                        item = value.toJSON()
+                        data.append(item)
             else:
                 data['error'] = 'Ha ocurrido un error'
         except Exception as e:

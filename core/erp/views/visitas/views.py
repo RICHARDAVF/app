@@ -11,10 +11,11 @@ from django.urls import reverse_lazy
 from django.db.models import Q
 from django.contrib.auth.mixins import LoginRequiredMixin
 import json
-from datetime import date
+from datetime import date,datetime,time
 # Create your views here.
 class CreateViewVisita(LoginRequiredMixin,CreateView):
     login_url = reverse_lazy('login')
+    user = ''
     model = Visitas
     form_class = FormVisitas
     template_name = 'visitas/create.html'
@@ -52,12 +53,15 @@ class CreateViewVisita(LoginRequiredMixin,CreateView):
         return JsonResponse(data)
     def get_form(self,form_class=None):
         form = super().get_form(form_class)
-        form.fields['n_parqueo'].queryset=Parqueo.objects.filter(estado=True)
-        form.fields['sala'].queryset=Salas.objects.filter(estado=0)
+        form.fields['n_parqueo'].queryset=Parqueo.objects.filter(estado=True,empresa_id=self.request.user.empresa_id,
+                                                        unidad_id=self.request.user.unidad_id,
+                                                        puesto_id=self.request.user.puesto_id)
+        form.fields['sala'].queryset=Salas.objects.filter(estado=0,empresa_id=self.request.user.empresa_id,
+                                                        unidad_id=self.request.user.unidad_id,
+                                                        puesto_id=self.request.user.puesto_id)
         return form
     def get_context_data(self, **kwargs):
         context= super().get_context_data(**kwargs)
-       
         context['title'] = 'Creacion de Visitas'
         context['entidad'] = 'Visitas'
         context['list_url'] = self.success_url
@@ -74,30 +78,80 @@ class ListViewVisita(LoginRequiredMixin,ListView):
         data = {}
         try:
             action = request.POST['action']
+           
             if action == 'searchdata':
                 data = []
                 try:
-                    for value in Visitas.objects.filter(user_id=self.request.user.id):
-                        item = value.toJSON()
-                        data.append(item)
-                    print(data)
+                    if request.user.is_superuser:
+                        
+                        for value in Visitas.objects.select_related("p_visita").all():
+                            item = value.toJSON()
+                            if  value.p_visita is not None:
+                                item['p_visita'] = f"{value.p_visita.nombre} {value.p_visita.apellidos}"
+                            data.append(item)
+                    else:
+                        for value in Visitas.objects.select_related("p_visita").filter(user_id=self.request.user.id):
+                            item = value.toJSON()
+                            item['p_visita'] = f"{value.p_visita.nombre} {value.p_visita.apellidos}"
+                            data.append(item)
+                    
                 except Exception as e:
                     data = {}
                     data['error'] = str(e)
             elif action =="addperson":
                 try:
-                    data = []
+                    data = {'asis':[],'parking':[]}
                     for index,value in  enumerate(Asistentes.objects.filter(visita_id=request.POST['id'])):
                         item = value.toJSON()
-                        data.append(item)
+                        data['asis'].append(item)
+                   
+                    for value in Parqueo.objects.filter(estado=True,
+                                                        empresa_id=request.user.empresa_id,
+                                                        unidad_id=request.user.unidad_id,
+                                                        puesto_id=request.user.puesto_id
+                                                        ):
+                        item = value.toJSON()
+                        data['parking'].append(item)
                 except Exception as e:
                     data['error'] = f"Ocurrio un erro {str(e)}"
+            elif action =='confirm':
+                Visitas.objects.filter(id=request.POST['id']).update(h_llegada=datetime.now().strftime('%H:%M:%S'),estado=2)
+            elif action =='h_final':
+                Visitas.objects.filter(id=request.POST['id']).update(h_termino=datetime.now().strftime('%H:%M:%S'),estado=3)
+            elif action =="addvh":
+                data = {}
+                for value in Visitas.objects.filter(id=request.POST['id']).values_list("v_marca", "v_modelo", "v_placa", "fv_soat", "observacion","n_parqueo"):
+                    try:
+                        parqueo = Parqueo.objects.get(id=value[5]).numero
+                    except:
+                        parqueo = None
+                    data['vh']={"v_marca":value[0],"v_modelo":value[1],"v_placa":value[2],"fv_soat":"-".join(str(i) for i in reversed(str(value[3]).split('/'))),"observacion":value[4],"n_parqueo":parqueo}
+                parqueos = []
+                for value in Parqueo.objects.filter(estado=1,puesto_id=request.user.puesto_id).values_list("id","numero"):
+                    parqueos.append({"id":value[0],"numero":value[1]})
+                data['parking']=parqueos
+            elif action=="h_salida":
+                Visitas.objects.filter(id=request.POST['id']).update(h_salida=datetime.now().strftime("%H:%M:%S"))
+            elif action=="anular":
+                Visitas.objects.filter(id=request.POST['id']).update(estado=0,h_llegada=time(0,0),h_salida=time(0,0))
+            elif action == "formvh":
+                print(request.POST)
+                Visitas.objects.filter(id=request.POST['id']).update(
+                    v_marca=request.POST['v_marca'],
+                    v_modelo=request.POST['v_modelo'],
+                    v_placa=request.POST['v_placa'],
+                    fv_soat = request.POST['fv_soat'],
+                    observacion = request.POST['observacion'],
+                    n_parqueo = int(request.POST['n_parqueo'])
+                )
+                Parqueo.objects.filter(id=request.POST['n_parqueo']).update(estado=0)
             else:
                 data['error'] = 'Ha ocurrido un error'
         except Exception as e:
             data['error'] = str(e)
        
         return JsonResponse(data, safe=False)
+    
     def get_context_data(self, **kwargs) :
         context =  super().get_context_data(**kwargs)
         context['title'] = 'Listado de Visitas'
@@ -280,27 +334,29 @@ class CreateViewAsist(LoginRequiredMixin,View):
         data = {}
         if request.POST['action'] == "addperson":
             id = request.POST['id']
-            item = json.loads(request.POST['items'])
-            if len(item['soat_v'])==0:
-                fecha =date.today
+            if request.POST['soat_v']=='':
+                fecha =date.today()
             else:
-                fecha = item['soat_v']
+                fecha = request.POST['soat_v']
+            
             try:
+                sctr = request.FILES.get('sctr', None)
                 asis = Asistentes.objects.create(
                         visita_id=int(id),
-                        documento=item['documento'],
-                        nombre=item['nombre'],
-                        apellidos = item['apellidos'],
-                        empresa = item['empresa'],
-                        marca_v=item['marca_v'],
-                        modelo_v=item['modelo_v'],
-                        placa_v=item['placa_v'],
+                        documento=request.POST['documento'],
+                        nombre=request.POST['nombre'],
+                        apellidos = request.POST['apellidos'],
+                        empresa = request.POST['empresa'],
+                        marca_v=request.POST['marca_v'],
+                        modelo_v=request.POST['modelo_v'],
+                        placa_v=request.POST['placa_v'],
                         soat_v=fecha,
-                        strc=item['strc'],
-                        n_parqueo_id=item['n_parqueo'],
+                        sctr=sctr,
+                        n_parqueo_id=request.POST['n_parqueo'],
                     )
                 asis.save()
             except Exception as e:
+                print(e)
                 data['error'] = f"Ocurrio un error: {str(e)}"
         return JsonResponse(data,safe=False)
     

@@ -1,8 +1,13 @@
 from django.forms import ModelForm,TextInput,DateInput,TimeInput,Select,FileInput,HiddenInput
+from django import forms
 from .models import Visitas,Salas,Parqueo,Trabajadores,AsignacionEPPS,Vehiculos,AsignacionEV,Asistentes,IngresoSalida
 from datetime import datetime
+
 from core.user.models import Empresa,Unidad,Puesto
 class FormVisitas(ModelForm):
+    p_visita=forms.ModelChoiceField(queryset=Trabajadores.objects.all(),widget=forms.Select(attrs={
+                "class":"form-control select2"
+            }),to_field_name='nombre')
     def __init__(self,*args,**kwargs):
         super().__init__(*args,**kwargs)
         self.fields['estado'].initial = '1'
@@ -53,10 +58,6 @@ class FormVisitas(ModelForm):
                 'class':'form-control',
                 
             }),
-            'p_visita':TextInput(attrs={
-                'placeholder':'Persona a quien visita',
-                'class':'form-control'
-            }),
             'motivo':TextInput(attrs={
                 'placeholder':'Motivo de la vista',
                 'class':'form-control'
@@ -74,14 +75,12 @@ class FormVisitas(ModelForm):
             'h_inicio':TimeInput(attrs={
                 'type':'time',
                 'class':'form-control',
-                'value':datetime.now().strftime('%H:%M:%S')
+                'value':datetime.now().strftime('%H:%M')
                
             }),
             'h_termino':TimeInput(attrs={
                 'type':'time',
                 'class':'form-control',
-                
-                
             }),
             'sala':Select(attrs={
                 'class':'form-control',  

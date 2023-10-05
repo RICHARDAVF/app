@@ -1,5 +1,8 @@
 $(function () {
-    var miTabla = $('#data').DataTable({
+    var miTabla = new DataTable('#data',{
+        language: {
+            url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json',
+        },
         responsive: false,
         autoWidth: false,
         destroy: true,
@@ -8,7 +11,7 @@ $(function () {
         dom:'Qlfrtip',
         fixedColumns:{
             left:3,
-            right:2
+            // right:2
         },
         conditions:{
             num:{
@@ -42,49 +45,101 @@ $(function () {
             dataSrc: ""
         },
         columns: [
-            {"data": "id"},
-            {"data": "estado"},
-            {"data": "user"},
-            {"data": "nombre"},
-            {"data": "apellidos"},
-            {"data": "dni"},
-            {"data": "id"},
-            {"data": "empresa"},
-            {"data": "cargo"},
-            {"data": "h_inicio"},
-            {"data": "h_termino"},
-            {"data": "fecha"},
-            {'data': "motivo"},
-            {'data': "sala"},
-            {'data': "v_marca"},
-            {'data': "v_modelo"},
-            {'data': "v_placa"},
-            {'data': "fv_soat"},
-            {'data': "sctr_salud"},
-            {'data': "n_parqueo"},
-            {'data': "id"},
+            {"data": "id"},//0
+            {"data": "estado"},//1
+            {"data": "nombre"},//2
+            {"data": "apellidos"},//3
+            {"data": "h_inicio"},//4
+            {"data":"h_llegada"},//5
+            {"data": "h_termino"},//6
+            {"data": "h_salida"},//7
+            {"data": "fecha"},//8
+            {"data": "dni"},//9
+            {"data": "id"},//10
+            {"data": "empresa"},//11
+            {"data": "cargo"},//12
+            {'data': "motivo"},//13
+            {'data': "sala"},//14
+            {'data': "sctr_salud"},//15
+            {'data': "p_visita"},//15
+            {'data': "id"},//16
         ],
         columnDefs:[
             {
                 targets:[1],
                 class:'text-center',
                 render:function(data,type,row){
-                    var estado = (row.estado==1)?'PROGRAMÓ':(row.estado==2)?'ENTRÓ':'VISITÓ'
-                    return '<strong class="bg-success" style="font-size:11px;border-radius:5px">'+estado+'</strong>'
+                    var opt = ''
+                    if(row.estado==1){
+                        opt = `<div style="width:150px;display: flex; align-items: center; height: 50px;">
+                        <strong class="bg-success" style="font-size:11px;border-radius:5px; padding:5px;">PROGRAMADO</strong>
+                        <input class="btn btn-danger btn-sm" id="anular" type="button" value="ANULAR" style="font-size:11px;border-radius:5px; padding:5px;"/>
+                    </div>`
+                    }else if(row.estado==2){
+                       
+                        opt = `<div style="width:150px;display: flex; align-items: center; height: 50px;">
+                                    <strong class="bg-success" style="font-size:11px;border-radius:5px; padding:5px;">EN CURSO</strong>
+                                    <input class="btn btn-danger btn-sm" id="hora_final" type="button" value="FINALIZAR" style="font-size:11px;border-radius:5px; padding:5px;"/>
+                                </div>
+                                `
+                    }else if(row.estado==3){
+                        opt='<strong class="bg-success" style="font-size:11px;border-radius:5px; padding:5px;">FINALIZADO</strong>'
+                    }else{
+                        opt = '<strong class="bg-danger" style="font-size:11px;border-radius:5px; padding:5px;">ANULADO</strong>'
+                    }
+                   
+                    return opt
                 }
             },
             {
                
                 class:'text-center',
-                targets:[4],
+                targets:[2],
                 render:function(data,type,row){
-                    return '<div style="width:200px;"><strong style="width:font-size:13px;">'+row.apellidos+'</strong></div>'
+                    return '<div style="width:100px;font-size:12px; font-weight: bold;">'+row.nombre+'</div>'
                 }
             },
             {
                
                 class:'text-center',
-                targets:[6],
+                targets:[3],
+                render:function(data,type,row){
+                    return '<div style="width:200px;font-size:12px; font-weight: bold;">'+row.apellidos+'</div>'
+                }
+            },
+            {
+                targets:[5],
+                class:'text-center',
+                render:function(data,type,row){
+                    var hora = '<input type="button" value="Confirmar" id="hora_llegada" class="form-control form-control-xs btn btn-secondary">'
+                    if(row.h_llegada!==null){
+                        hora = '<strong style="font-weight:bold;">'+row.h_llegada+'</strong>'
+                    }
+                    return hora
+                }
+            },
+           
+            {
+                targets:[7],
+                class:'text-center',
+                render:function(data,type,row){
+                    if(row.h_salida===null){
+                        return '<input class="btn btn-secondary" value="MARCAR" type="button" id="h_salida"/>'
+                    }
+                    return row.h_salida
+                }
+            },
+             {
+                targets:[8],
+                class:'text-center',
+                render:function(data,type,row){
+                    return `<div style="width:110px;">${row.fecha}</div>`
+                }
+            },
+            {
+               
+                class:'text-center',
+                targets:[10],
                 render:function(data,type,row){
                    var date = (row.tipo==1)?`<input type='button' id='btnaddperson' class='btn btn-success' value='Asistente.'/>`:'';
                     return date
@@ -93,72 +148,53 @@ $(function () {
             {
                
                 class:'text-center',
-                targets:[7],
-                render:function(data,type,row){
-                    return '<div style="width:200px;"><strong style="width:font-size:13px;">'+row.empresa+'</strong></div>'
-                }
-            },
-            {
-               
-                class:'text-center',
-                targets:[8],
+                targets:[11],
                 render:function(data,type,row){
                     var cargo = (row.cargo!=null)?row.cargo:"";
                     return '<div style="width:200px;"><strong style="width:font-size:13px;">'+cargo+'</strong></div>'
                 }
             },
             {
-                targets:[9],
+               
                 class:'text-center',
-                render:function(data,type,row){
-                    return '<div style="width:100px;"><strong>'+row.h_inicio+'</strong></div>'
-                }
-            },
-            {
-                targets:[10],
-                class:'text-center',
-                render:function(data,type,row){
-                    var h_termino = (row.h_termino!=null)?row.h_termino:""
-                    return '<div style="width:100px;"><strong>'+h_termino+'</strong></div>'
-                }
-            },
-            {
-                targets:[11],
-                class:'text-center',
-                render:function(data,type,row){
-                   
-                    return '<div style="width:100px;"><strong>'+row.fecha+'</strong></div>'
-                }
-            },
-            {
                 targets:[12],
+                render:function(data,type,row){
+                    return '<div style="width:200px;"><strong style="width:font-size:13px;">'+row.empresa+'</strong></div>'
+                }
+            },
+           
+           
+            {
+                targets:[13],
                 class:'text-center',
                 render:function(data,type,row){
                     return '<div style="width:200px;"><strong style="font-size:13px;"">'+row.motivo+'</strong></div>'
                 }
             },
             {
-                targets:[-4],
+                targets:[-2],
                 class:'text-center',
                 render:function(data,type,row){
-                    var fecha = (row.fv_soat!=null)?row.fv_soat:''
-                    return '<div style="width:100px;"><strong style="font-size:13px;"">'+fecha+'</strong></div>'
+                    return `<div style="width:150px; font-weight: bold;font-size:12px;">${row.p_visita}</div>`
                 }
             },
             {
                 targets:[-1],
                 class:'text-center',
-                orderable: false,
-                render: function (data, type, row) {
-                    var url = (parseInt(row.tipo) ==1)?'/erp/visita/update/':'/erp/delivery/update/'
-                    var buttons = `<div class="row d-flex justify-content-center"><a href="${url}${row.id}/"` + '" class="btn btn-warning btn-xs btn-flat"><i class="fas fa-edit"></i></a> ';
-                    buttons += '<a href="/erp/visita/delete/' + row.id + '/" type="button" class="btn btn-danger btn-xs btn-flat"><i class="fas fa-trash-alt"></i></a></row>';
-                    return buttons;
+                render:function(data,type,row){
+                    return '<input type="button" class="btn btn-warning" value="info." id="addvehiculo"/>'
                 }
             },
+            
 
         ],
-
+        createdRow: function (row, data, dataIndex) {
+            
+            if (data.estado==0) {
+                $(row).css('background-color','#f58d8d'); 
+               
+            }
+        },
         initComplete: function (settings, json) {
           
             new $.fn.dataTable.Buttons(miTabla, {
@@ -214,14 +250,15 @@ $(function () {
                 }
             });
 
-            // Crear un contenedor para los botones de exportación
+           
             var $exportButtonsContainer = $('<div class="export-buttons-container"></div>');
             miTabla.buttons().container().appendTo($exportButtonsContainer);
 
-            // Agregar el contenedor de botones antes del input de búsqueda
+           
             $exportButtonsContainer.insertBefore($('#data_wrapper .dataTables_filter'));
         }
     });
+   
     $('.btnTest').css('display','none')
     const contenidoModal = ()=>{
         return (`
@@ -246,18 +283,12 @@ $(function () {
     
                     `)};
     var datos = []
-    function formatJSON(data){
-        var dates = {}
-        data.forEach(function(field){
-            dates[field.name] = field.value;
-        });
-        
-        return dates;
-    }
+    var parqueos = []
     function listdates(){
         var tdhtml = ''
+        
         for(item in datos){
-          
+            
             tdhtml+=`<tr>
             <td>${datos[item].documento}</td>
             <td>${datos[item].nombre}</td>
@@ -266,8 +297,11 @@ $(function () {
             <td>${datos[item].modelo_v}</td>
             <td>${datos[item].placa_v}</td>
             <td>${datos[item].soat_v}</td>
-            <td>${datos[item].strc}</td>
-            <td>${datos[item].n_parqueo}</td>
+            <td>
+            <p>
+                <a href="${datos[item].sctr}" target="_blank">file</a></>
+            </td>
+            <td>${(datos[item].n_parqueo===null)?'':datos[item].n_parqueo}</td>
             <tr>`
         }
         $('.table-group-divider').html(
@@ -296,7 +330,16 @@ $(function () {
                 "action":'addperson',
             },
             success:function(data){
-                datos = data
+                
+                datos = data.asis
+                parqueos = data.parking
+                var opt_select = '<select name="n_parqueo"  class="form-control ml-3"  id="n_parqueo">'
+                for(var item of parqueos){
+                    opt_select+=`
+                    <option value="${item.id}" class="form-control">${item.numero}</option>
+                `
+                }
+                opt_select+= "</select>"
                
                 $('.modal-body').html(
                     ` <form  enctype="multipart/form-data" id="myForm">
@@ -320,8 +363,8 @@ $(function () {
                             <label class="form-label ml-1">FV-SOAT: </label><input  class="form-control ml-3" type='date'  id="soat_v" name="soat_v"  />
                         </div>
                         <div class="mt-1 d-flex felx-row">
-                            <label class="form-label">SCTR: </label><input  class="form-control ml-3" type='file'  id="strc" name="sctr" />
-                            <label class="form-label ml-1">N° Parqueo: </label><input  class="form-control ml-3"  id="n_parqueo" name="n_parqueo"  />
+                            <label class="form-label">SCTR: </label><input  class="form-control ml-3" type='file'  id="sctr" name="sctr" />
+                            <label class="form-label ml-1">N° Parqueo: </label>${opt_select}
                         </div>
                     <form>
                     <a type='button' class='btn btn-primary mt-1 mb-1' id='addperson'><i class='fas fa-plus'></i>Agregar</a>
@@ -365,29 +408,32 @@ $(function () {
     
     $(document).on("click","#btnaddperson",showperson);
    
-    $(document).on('click','#addperson',function(){
-        var data = $('#myForm').serializeArray();
-        data.push({'name':'strc',"value":$('#strc').val()})
-        datos.push(formatJSON(data));
+    $(document).on('click', '#addperson', function () {
+        var datas = {}
+        var formData = new FormData($('#myForm')[0]);
+        formData.append('action', 'addperson');
+        for (var pair of formData.entries()) {
+           datas[pair[0]]=pair[1]
+        }
+        datos.push(datas)
         $.ajax({
-            type:'POST',
-            url:'/erp/visita/asis/add/',
-            dataType:'json',
-            data:{
-                id:$('#id').val(),
-                action:"addperson",
-                items:JSON.stringify(formatJSON(data))
+            type: 'POST',
+            url: '/erp/visita/asis/add/',
+            dataType: 'json',
+            data: formData,
+            processData: false, 
+            contentType: false,
+            success: function (data) {
+                console.log(data)
             },
-            success:function(data){
-                datos = data;
-               
-            },
-            error:function(data){
-                alert(data.error)
+            error: function (data) {
+                alert(data.error);
             }
-        })
-        listdates()
-    })
+        });
+    
+        listdates();
+    });
+    
     $(document).on('input','#documento',function(event){
         const doc = $('#documento').val();
         $('#nombre').val('')
@@ -421,6 +467,177 @@ $(function () {
             })
         }
         
+    })
+    $(document).on('click',"#hora_llegada",function(){
+        var rowIndex = miTabla.row($(this).closest('tr')).index();
+        var id = miTabla.cell(rowIndex,0).data();
+        $.ajax({
+            type:'POST',
+            url:window.location.pathname,
+            dataType:'json',
+            data:{
+                "id":id,
+                "action":"confirm",
+            },
+            success:function(data){
+                window.location.reload()
+                if(data.error){
+                    return alert(data.error)
+                }
+              
+            },
+            error:function(){
+                alert("Hubo un error en la peticion")
+            }
+        })
+    })
+    $(document).on('click',"#hora_final",function(){
+        var rowIndex = miTabla.row($(this).closest('tr')).index();
+        var id = miTabla.cell(rowIndex,0).data();
+        $.ajax({
+            type:'POST',
+            url:window.location.pathname,
+            dataType:'json',
+            data:{
+                "id":id,
+                "action":"h_final",
+            },
+            success:function(data){
+                window.location.reload()
+                if(data.error){
+                    
+                    return alert(data.error)
+                }
+            },
+            error:function(){
+                alert("Hubo un error en la peticion")
+            }
+        })
+    })
+    $(document).on("click","#addvehiculo",function(){
+        $('body').append(contenidoModal);
+        var rowIndex = miTabla.row($(this).closest('tr')).index();
+        var id = miTabla.cell(rowIndex,0).data();
+        $.ajax({
+            type:'POST',
+            url:window.location.pathname,
+            dataType:'json',
+            data:{
+                "id":id,
+                "action":"addvh"
+            },
+            success:function(data){
+                console.log(data)
+                if(data.error){
+                    return alert(data.error)
+                }
+                var opt = '<select class="form-control" id="num_park">'
+                if(data.vh.n_parqueo==null){
+                    opt+=`<option value="">-------</option>`
+                    for(let item of  data.parking){
+                        opt+=`<option value="${item.id}">${item.numero}</option>`
+                    }
+                }else{
+                    opt+=`<option>${data.vh.n_parqueo}</option>`
+                }
+                
+                opt+="</select>"
+                $('.modal-body').html(
+                    ` <form  enctype="multipart/form-data" id="FormVH">
+                        <input type='hidden' class="form-control ml-3" value="${id}" editable='false' id="id" name="id"/>
+                        <div class="mt-1">
+                            <div class="d-flex">
+                                <label class="form-label">MARCA: </label><input class="form-control ml-4" ${(data.vh.v_marca!==null)?'value="'+data.vh.v_marca+'"':''}  id="v_marca" name="v_marca"/>
+                            </div>
+                            <div class="d-flex mt-2">
+                                <label class="form-label">MODELO: </label><input  class="form-control ml-4 " ${(data.vh.v_modelo!==null)?'value="'+data.vh.v_modelo+'"':''}  id="v_modelo" name="v_modelo"/>
+                            </div>
+                            <div class="d-flex mt-2">
+                                <label class="form-label">Placa: </label><input  class="form-control ml-4 " ${(data.vh.v_placa!==null)?'value="'+data.vh.v_placa+'"':''} id="v_placa" name="v_placa" />
+                            </div>
+                            <div class="d-flex mt-2">
+                                <label class="form-label">FV-SOAT: </label><input  class="form-control ml-4 " ${(data.vh.fv_soat!=='None')?'value="'+data.vh.fv_soat+'"':''} id="fv_soat" name="fv_soat" type="date" />
+                            </div>
+                            <div class="d-flex mt-2">
+                                <label class="form-label ml-1">N° Parqueo: </label>
+                                ${opt}
+                            </div>
+                            <div class="d-flex mt-2">
+                                <label class="form-label">Obervacion: </label><input  class="form-control ml-4 " ${(data.vh.observacion!==null)?'value="'+data.vh.observacion+'"':''} id="observacion" name="observacion" />
+                            </div>
+                        </div>
+                        <input type="button" class="btn btn-success" value="GUARDAR" id="formvh"/>
+                    <form>`
+                )
+                $('#miModal').modal('show')
+            },
+            error:function(){
+                alert("Ocurrio un error")
+            }
+        })
+        
+    })
+    $(document).on("click","#h_salida",function(){
+        var rowIndex = miTabla.row($(this).closest('tr')).index();
+        var id = miTabla.cell(rowIndex,0).data();
+        $.ajax({
+            type:"POST",
+            url:window.location.pathname,
+            dataType:'json',
+            data:{
+                "id":id,
+                "action":"h_salida"
+            },
+            success:function(data){
+                window.location.reload()
+            },
+            error:function(jqXHR, textStatus, errorThrown){
+                alert("Error en la solicitud "+textStatus,errorThrown)
+            }
+        })
+    })
+    $(document).on("click","#anular",function(){
+        var rowIndex = miTabla.row($(this).closest('tr')).index();
+        var id = miTabla.cell(rowIndex,0).data();
+        $.ajax({
+            type:"POST",
+            url:window.location.pathname,
+            dataType:'json',
+            data:{
+                "id":id,
+                "action":"anular"
+            },
+            success:function(data){
+                window.location.reload()
+            },
+            error:function(jqXHR, textStatus, errorThrown){
+                alert("Error en la solicitud "+textStatus,errorThrown)
+            }
+        })
+    })
+    $(document).on('click','#formvh',function(){
+        const formData = new FormData($('#FormVH')[0])
+        formData.append('action', 'formvh');
+        formData.append('n_parqueo',$('#num_park').val() );
+        console.log(formData)
+        $.ajax({
+            type:'POST',
+            dataType:'json',
+            url:window.location.pathname,
+            data:formData,
+            processData: false, 
+            contentType: false,
+            success:function(data){
+                window.location.reload()
+                if(data.error){
+                    return alert(data.error)
+                }
+            },
+            error:function(jqXHR, textStatus, errorThrown){
+                alert("Ocurrio un error ",textStatus,errorThrown)
+                window.location.reload()
+            }
+        })
     })
 });
 

@@ -34,6 +34,8 @@ class ListViewPuesto(LoginRequiredMixin,ListView):
     model = Puesto
     template_name = 'puesto/list.html'
     def get_queryset(self):
+        if not self.request.user.is_superuser:
+            return Puesto.objects.select_related("unidad__empresa").filter(id=self.request.user.puesto_id)
         return Puesto.objects.select_related("unidad__empresa").all()
     def get_context_data(self, **kwargs):
         context =  super().get_context_data(**kwargs)

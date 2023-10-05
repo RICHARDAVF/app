@@ -1,11 +1,4 @@
 $(function(){
-    $('#id_v_marca').on('input',function(event){
-        $('#id_estado').val(2)
-    });
-    $('#id_h_termino').on('change',function(event){
-        
-        $('#id_estado').val(3)
-    })
     function searchDNI(dni){
         const url = window.location.pathname,
         data = {dni:dni,action:'searchdni'};

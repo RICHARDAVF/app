@@ -15,7 +15,7 @@ class Trabajadores(models.Model):
     sctr = models.FileField(upload_to='sctr/',verbose_name="SCTR",blank=True,null=True)
     def toJSON(self):
         item = model_to_dict(self)
-        item['cstr'] = self.get_file()
+        item['sctr'] = self.get_file()
         return item
     class Meta:
         verbose_name = "Trabajadores"
@@ -25,7 +25,9 @@ class Trabajadores(models.Model):
     def get_file(self):
         if self.sctr:
             return '{}{}'.format(MEDIA_URL, self.sctr)
-        return '{}{}'.format(STATIC_URL, 'img/empty.png') 
+        return '{}{}'.format(STATIC_URL, 'img/empty.png')
+    def __str__(self) -> str:
+        return f"{self.nombre} {self.apellidos}"
 class Vehiculos(models.Model):
     trabajador = models.ForeignKey(Trabajadores,on_delete=models.CASCADE,verbose_name="Trabajador",blank=True,null=True)
     marca = models.CharField(max_length=15,verbose_name='Marca del Vehiculo',default='')
@@ -92,7 +94,7 @@ class IngresoSalida(models.Model):
         item = model_to_dict(self)
         return item
 class Salas(models.Model):
-    sala = models.CharField(max_length=10,verbose_name="Sala",unique=True)
+    sala = models.CharField(max_length=100,verbose_name="Sala",unique=True)
     estado= models.IntegerField(verbose_name="Estado",default=0,null=True,blank=True)
     empresa = models.ForeignKey(Empresa,on_delete=models.DO_NOTHING,verbose_name="Empresa",null=True,blank=True)
     unidad = models.ForeignKey(Unidad,on_delete=models.DO_NOTHING,verbose_name="unidad",null=True,blank=True)
@@ -108,7 +110,7 @@ class Salas(models.Model):
     def __str__(self) -> str:
         return self.sala
 class Parqueo(models.Model):
-    numero = models.CharField(max_length=5,verbose_name="Numero de Parqueo",unique=True)
+    numero = models.CharField(max_length=5,verbose_name="Numero de Parqueo",unique=False)
     estado = models.BooleanField(default=True,verbose_name="Estado",null=True,blank=True)
     empresa = models.ForeignKey(Empresa,on_delete=models.DO_NOTHING,verbose_name="Empresa",null=True,blank=True)
     unidad = models.ForeignKey(Unidad,on_delete=models.DO_NOTHING,verbose_name="unidad",null=True,blank=True)
@@ -133,8 +135,10 @@ class Visitas(models.Model):
     cargo = models.CharField(max_length=50,verbose_name="Cargo",null=True,blank=True)
     fecha = models.DateField(auto_now=False,verbose_name="Fecha")
     h_inicio = models.TimeField(auto_now=False,verbose_name="Hora de inicio")
-    h_termino = models.TimeField(auto_now=False,verbose_name="Hora de termino",null=True,blank=True)
-    p_visita = models.CharField(max_length=150,verbose_name="Persona a quien visita",null=True,blank=True)
+    h_termino = models.TimeField(auto_now=False,verbose_name="Hora de Finalizacion",null=True,blank=True)
+    h_llegada = models.TimeField(auto_now=False,verbose_name="Hora de llegada",null=True,blank=True)
+    h_salida = models.TimeField(auto_now=False,verbose_name="Hora de Salida",null=True,blank=True)
+    p_visita = models.ForeignKey(Trabajadores,on_delete=models.DO_NOTHING,null=True,blank=True)
     motivo = models.CharField(max_length=150,verbose_name="Motivo")
     sala = models.ForeignKey(Salas,on_delete = models.DO_NOTHING,null=True,blank=True)
     v_marca = models.CharField(max_length=20,verbose_name="Marca del Vehiculo",null=True,blank=True)
@@ -143,7 +147,7 @@ class Visitas(models.Model):
     fv_soat = models.CharField(max_length=50,verbose_name="SOAT-VEHICULO",null=True,blank=True)
     sctr_salud = models.CharField(max_length=30,verbose_name="SCTR-SALUD",null=True,blank=True)
     n_parqueo = models.ForeignKey(Parqueo,on_delete=models.DO_NOTHING,verbose_name="Numero de Parqueo",null=True,blank=True)
-    estado = models.CharField(max_length=10,choices=[('1','PROGRAMÓ'),('2','ENTRÓ'),('3','VISITÓ')],null=True,blank=True)
+    estado = models.CharField(max_length=10,choices=[('1','PROGRAMADO'),('2','EN CURSO'),('3','FINALIZO')],null=True,blank=True)
     guias = models.FileField(upload_to='guias/',verbose_name="Guias de remision",blank=True,null=True)
     cantidad = models.CharField(verbose_name="Cantidad",max_length=20,blank=True,null=True)
     tipo = models.CharField(max_length=3,choices=[('1','VISITA'),("2","COURRIER"),("3","DELIVERY")],default='1')
@@ -167,11 +171,11 @@ class Asistentes(models.Model):
     nombre = models.CharField(max_length=50,verbose_name="Nombres")
     apellidos = models.CharField(max_length=50,verbose_name="Apellidos")
     empresa = models.CharField(max_length=150,verbose_name="Empresa",null=True,blank=True)
-    marca_v = models.CharField(max_length=50,verbose_name="Marca del vehiculo")
-    modelo_v = models.CharField(max_length=20,verbose_name="Modelo del vehiculo")
-    placa_v = models.CharField(max_length=8,verbose_name="Placa del vehiculo")
-    soat_v = models.DateField(default=date.today,verbose_name="FV-SOAT")
-    strc = models.FileField(upload_to='strc/', verbose_name="STRC")
+    marca_v = models.CharField(max_length=50,verbose_name="Marca del vehiculo",null=True,blank=True)
+    modelo_v = models.CharField(max_length=20,verbose_name="Modelo del vehiculo",null=True,blank=True)
+    placa_v = models.CharField(max_length=8,verbose_name="Placa del vehiculo",null=True,blank=True)
+    soat_v = models.DateField(default=date.today,verbose_name="FV-SOAT",null=True,blank=True)
+    sctr = models.FileField(upload_to='strc/', verbose_name="STRC",null=True,blank=True)
     n_parqueo = models.ForeignKey(Parqueo,on_delete=models.DO_NOTHING,verbose_name="Parqueo",null=True,blank=True)
     class Meta:
         verbose_name = "asinten"
@@ -182,12 +186,12 @@ class Asistentes(models.Model):
     def toJSON(self):
         item = model_to_dict(self)
         item['visita'] = self.visita.id
-        item['strc'] = self.get_file()
+        item['sctr'] = self.get_file()
         return item
 
     def get_file(self):
-        if self.strc:
-            return '{}{}'.format(MEDIA_URL, self.strc)
+        if self.sctr:
+            return '{}{}'.format(MEDIA_URL, self.sctr)
         return '{}{}'.format(STATIC_URL, 'img/nopdf.jpg')
 
 @receiver(post_save, sender=Trabajadores)

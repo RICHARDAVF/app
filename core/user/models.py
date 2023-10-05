@@ -25,7 +25,7 @@ class Unidad(models.Model):
         db_table = 'unidades'
     def toJSON(self):
         item = model_to_dict(self)
-        item['empresa'] = self.empresa.id
+        # item['empresa'] = self.empresa.id
         return item 
     def __str__(self) -> str:
         return str(self.unidad)

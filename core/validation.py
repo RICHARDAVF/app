@@ -3,7 +3,6 @@ import json
 import dotenv
 import os
 dotenv.load_dotenv()
-
 class Validation:
     def __init__(self,dni) -> None:
         self.dni  = dni
