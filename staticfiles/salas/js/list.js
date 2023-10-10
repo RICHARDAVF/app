@@ -43,6 +43,7 @@ $(function () {
             {"data": "id"},
             {"data": "sala"},
             {"data": "estado"},
+            {"data": "capacidad"},
             {"data": "id"},
         ],
         

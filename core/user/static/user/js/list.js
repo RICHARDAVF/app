@@ -22,7 +22,7 @@ $(function () {
             {"data": "username"},
             {"data": "dni"},
             {"data": "email"},
-            {"data": "tipo"},     
+            {"data": "is_superuser"},     
             {"data": "image"},     
             {"data": "groups"},     
             {"data": "id"},
@@ -30,6 +30,14 @@ $(function () {
         ],
         columnDefs: [
             
+            {
+                targets: [-4],
+                class: 'text-center',
+                orderable: false,
+                render: function (data, type, row) {
+                    return `<span class='badge badge-success'>${row.is_superuser?'Administrador':'usuario'}</span>`;
+                }
+            },
             {
                 targets: [-3],
                 class: 'text-center',

@@ -12,6 +12,8 @@ class Trabajadores(models.Model):
     documento = models.CharField(max_length=10,verbose_name="Documento")
     nombre = models.CharField(max_length=25,verbose_name="Nombres")
     apellidos = models.CharField(max_length=50,verbose_name="Apellidos")
+    telefono = models.PositiveIntegerField(verbose_name="Celular",null=True,blank=True)
+    direccion = models.CharField(max_length=100,verbose_name="Direccion",null=True,blank=True)
     sctr = models.FileField(upload_to='sctr/',verbose_name="SCTR",blank=True,null=True)
     def toJSON(self):
         item = model_to_dict(self)
@@ -97,6 +99,7 @@ class Salas(models.Model):
     sala = models.CharField(max_length=100,verbose_name="Sala",unique=True)
     estado= models.IntegerField(verbose_name="Estado",default=0,null=True,blank=True)
     empresa = models.ForeignKey(Empresa,on_delete=models.DO_NOTHING,verbose_name="Empresa",null=True,blank=True)
+    capacidad = models.PositiveIntegerField(verbose_name="Capacidad",null=True,blank=True)
     unidad = models.ForeignKey(Unidad,on_delete=models.DO_NOTHING,verbose_name="unidad",null=True,blank=True)
     puesto = models.ForeignKey(Puesto,on_delete=models.DO_NOTHING,verbose_name="puesto",null=True,blank=True)
     class Meta:

@@ -196,9 +196,15 @@ class FormSala(ModelForm):
         fields = '__all__'
         widgets = {
             'sala':TextInput(attrs={
-                'placeholer':'Numero de sala',
+                'placeholder':'Numero de sala',
                 'class':'form-control'
             }),
+            'capacidad':TextInput(attrs={
+                'placeholder':'Capacidad de la sala',
+                'class':'form-control',
+                'type':'number'
+            }),
+            'estado':HiddenInput(),
             "empresa":HiddenInput(),
             "unidad":HiddenInput(),
             "puesto":HiddenInput(),
@@ -268,9 +274,17 @@ class FormTrabajador(ModelForm):
                 'class':'form-control',
                 'placeholder':'Ingrese su Apellidos'
             }),
+            'telefono':TextInput(attrs={
+                'class':'form-control',
+                'placeholder':'999999999'
+            }),
+            'direccion':TextInput(attrs={
+                'class':'form-control',
+                'placeholder':'Ingrese su direccion'
+            }),
+            
             'sctr':FileInput(attrs={
                 'class':'form-control',
-               
             }),
         }
     def save(self, commit=True):

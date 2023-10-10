@@ -4,11 +4,12 @@ $(function () {
         language: {
             url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json',
         },
-        responsive: true,
-        autoWidth: false,
-        destroy: true,
-        deferRender: true,
+        // responsive: true,
+        // autoWidth: false,
+        // destroy: true,
+        // deferRender: true,
         dom:'Qlfrtip',
+        scrollX:true,
         conditions:{
             num:{
                 'MultipleOf':{
@@ -46,6 +47,8 @@ $(function () {
             {"data": "documento"},
             {"data": "nombre"},
             {"data": "apellidos"},
+            {"data": "telefono"},
+            {"data": "direccion"},
             {"data": "id"},
             {"data": "id"},
             {"data": "id"},
@@ -59,7 +62,7 @@ $(function () {
                 render:function(date,type,row){
                    
                     
-                    return '<button id="btnepps" class="btn btn-primary" >VER DATOS</button>'
+                    return '<button id="btnepps" class="btn btn-primary" style="font-size: 10px;" >VER DATOS</button>'
                 }
             },
             {
@@ -68,7 +71,7 @@ $(function () {
                 render:function(date,type,row){
                    
                     
-                    return '<button id="btnvh" class="btn btn-secondary" >VER DATOS</button>'
+                    return '<button id="btnvh" class="btn btn-secondary" style="font-size: 10px;">VER DATOS</button>'
                 }
             },
             {
@@ -77,7 +80,7 @@ $(function () {
                 render:function(date,type,row){
                    
                     
-                    return '<button id="btnepv" class="btn btn-success" >VER DATOS</button>'
+                    return '<button id="btnepv" class="btn btn-success" style="font-size: 10px;" >VER DATOS</button>'
                 }
             },
             {
@@ -125,7 +128,7 @@ $(function () {
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="miModalLabel">VEHICULO</h5>
+                            <h5 class="modal-title" id="miModalLabel"></h5>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>
@@ -145,6 +148,7 @@ $(function () {
     function showepps(){
         var rowIndex = miTabla.row($(this).closest('tr')).index();
         var id = miTabla.cell(rowIndex, 0).data();
+       
         $.ajax({
             type: "POST",
             url: "/erp/epps/list/",
@@ -223,7 +227,7 @@ $(function () {
       
            
         $("body").append(contenidoModal);
-
+        $('#miModalLabel').text('EPPS TRAB.')
         
         $("#miModal").modal("show");
     }
@@ -232,7 +236,7 @@ $(function () {
     function showvh(){
         var rowIndex = miTabla.row($(this).closest('tr')).index();
         var id = miTabla.cell(rowIndex, 0).data();
-
+       
 
         $.ajax({
             type: "POST",
@@ -294,7 +298,7 @@ $(function () {
       
             // Agrega el contenido del modal al cuerpo de la página
             $("body").append(contenidoModal);
-    
+            $('#miModalLabel').text('AUTO')
             // Activa el modal utilizando la función modal() de Bootstrap
             $("#miModal").modal("show");
     }
@@ -304,7 +308,7 @@ $(function () {
     function showepv(){
         var rowIndex = miTabla.row($(this).closest('tr')).index();
         var id = miTabla.cell(rowIndex, 0).data();
-
+       
 
         $.ajax({
             type: "POST",
@@ -385,7 +389,7 @@ $(function () {
       
             // Agrega el contenido del modal al cuerpo de la página
             $("body").append(contenidoModal);
-    
+            $('#miModalLabel').text('EPPS AUTO')
             // Activa el modal utilizando la función modal() de Bootstrap
             $("#miModal").modal("show");
     }
