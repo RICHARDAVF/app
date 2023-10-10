@@ -200,34 +200,10 @@ $(function () {
             new $.fn.dataTable.Buttons(miTabla, {
                 buttons: [
                     {
-                        extend:'copy',
-                        text: '<i class="fas fa-copy"></i>',
-                        className: 'btn btn-primary'
-                    },
-                    {
-                        extend:'excel',
-                        text: '<i class="fas fa-file-excel"></i>',
-                        className:'btn btn-success'
-                    },
-                    {
-                        extend:'csv',
-                        text: '<i class="fas fa-file-csv"></i>',
-                        className:'btn btn-success'
-                    },
-                    {
-                        extend: "pdf",
-                        text: '<i class="fas fa-file-pdf"></i>',
-                        className:"btn btn-danger",
-                        orientation: "landscape", 
-                        pageSize: "LEGAL", 
-                        exportOptions: {
-                          columns: ':visible',
+                        text:"<i class='fas fa-plus'></i> VISITA",
+                        action:function ( e, dt, node, conf ) {
+                            window.location.href = '/erp/visita/create/';
                         }
-                    },
-                    {
-                        extend:'print',
-                        text: '<i class="fas fa-print"></i>',
-                        className:'btn btn-success'
                     },
                     {
                         text:"<i class='fas fa-plus'></i> DELIVERY",
@@ -235,12 +211,20 @@ $(function () {
                             window.location.href = '/erp/delivery/create/';
                         }
                     },
+                    'copy',
+                    'excel',
+                    'csv',
                     {
-                        text:"<i class='fas fa-plus'></i> VISITA",
-                        action:function ( e, dt, node, conf ) {
-                            window.location.href = '/erp/visita/create/';
+                        extend: "pdf",
+                        text: 'pdf',
+                        orientation: "landscape", 
+                        pageSize: "LEGAL", 
+                        exportOptions: {
+                          columns: ':visible',
                         }
                     },
+                    'print',
+                    
                 ],
                
                 dom: {

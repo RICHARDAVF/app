@@ -62,6 +62,12 @@ $(function(){
         initComplete:function(settings,json){
             new $.fn.dataTable.Buttons(miTabla,{
                 buttons:[
+                    {
+                        text:'<i class="fas fa-plus"></i>Nuevo registro',
+                        action:function(e,dt,node,conf){
+                            window.location.href = '/erp/ingsal/add/'
+                        }
+                    },
                     'copy','excel',"csv","pdf"
                 ],
                 dom:{

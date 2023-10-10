@@ -1,5 +1,5 @@
 {% load static %}
-<aside class="main-sidebar sidebar-light-primary elevation-4" style="scroll-behavior: auto;">
+<aside class="main-sidebar sidebar-light-primary elevation-4" id="side">
     <a href="{% url 'dashboard:dash_report' %}">
         <img src="{% static 'img/logo.png' %}" alt="Control de visitas" class="brand-image"
             style="opacity: .8;width:100%">
@@ -48,7 +48,7 @@
                     <a href="{% url 'erp:unidad_list' %}" class="nav-link">
                         <i class="nav-icon fas fa-location-arrow"></i>
                         <p>
-                            Unidad
+                            Unidades
                         </p>
                     </a>
                 </li>
@@ -73,7 +73,7 @@
                     <a href="{% url 'erp:parqueo_list' %}" class="nav-link">
                         <i class="nav-icon fas fa-parking"></i>
                         <p>
-                            Parqueo
+                            Parqueos
                         </p>
                     </a>
                 </li>

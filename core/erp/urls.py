@@ -14,6 +14,8 @@ urlpatterns = [
     #EMPRESAS
     path('empresa/list/',LisViewEmpresa.as_view(),name="empresa_list"),
     path('empresa/add/',CreateViewEmpresa.as_view(),name="empresa_create"),
+    path('empresa/update/<int:pk>/',UpdateViewEmpresa.as_view(),name="empresa_update"),
+    path('empresa/delete/<int:pk>/',DeleteViewEmpresa.as_view(),name="empresa_delete"),
     #UNIDAD
     path('unidad/list/',ListViewUnidad.as_view(),name='unidad_list'),
     path('unidad/add/',CreateViewUnidad.as_view(),name='unidad_create'),

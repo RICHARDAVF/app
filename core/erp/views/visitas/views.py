@@ -356,7 +356,7 @@ class CreateViewAsist(LoginRequiredMixin,View):
                     )
                 asis.save()
             except Exception as e:
-                print(e)
+             
                 data['error'] = f"Ocurrio un error: {str(e)}"
         return JsonResponse(data,safe=False)
     

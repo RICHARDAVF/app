@@ -1,8 +1,12 @@
 $(function(){
-   var table = new DataTable('#data',{
+    var table = new DataTable('#data',{
+        responsive:true,
         language: {
             url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json',
         },
+        autoWidth: false,
+        destroy: true,
+        deferRender: true,
         dom:'Qlfrtip',
         initComplete: function (settings, json) {
            
@@ -11,7 +15,7 @@ $(function(){
                     {
                         text:'<i class="fas fa-plus"></i>Nuevo registro',
                         action:function(e,dt,node,conf){
-                            window.location.href = '/erp/unidad/add/'
+                            window.location.href = '/erp/empresa/add/'
                         }
                     },
                     'copy', 'excel', 'csv', 'pdf', 'print'
@@ -31,5 +35,6 @@ $(function(){
             // Agregar el contenedor de botones antes del input de búsqueda
             $exportButtonsContainer.insertBefore($('#data_wrapper .dataTables_filter'));
         }
-    })
+    }
+    )
 })

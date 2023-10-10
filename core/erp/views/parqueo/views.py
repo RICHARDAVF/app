@@ -30,7 +30,7 @@ class CreateViewParqueo(LoginRequiredMixin,CreateView):
         return JsonResponse(data)
     def get_context_data(self, **kwargs):
         context= super().get_context_data(**kwargs)
-        context['title'] = 'Creacion de una Parqueo'
+        context['title'] = 'Creacion de un Parqueo'
         context['entidad'] = 'Parqueos'
         context['list_url'] = self.success_url
         context['action'] = 'add'
@@ -65,7 +65,7 @@ class ListViewParqueo(LoginRequiredMixin,ListView):
         return JsonResponse(data, safe=False)
     def get_context_data(self, **kwargs) :
         context =  super().get_context_data(**kwargs)
-        context['title'] = 'Listado de Parquos'
+        context['title'] = 'Listado de Parqueos'
         context['create_url'] = reverse_lazy('erp:parqueo_create')
         context['list_url'] = reverse_lazy('erp:parqueo_list')
         context['entidad'] = 'Parqueos'
@@ -75,7 +75,7 @@ class UpdateViewParqueo(LoginRequiredMixin,UpdateView):
     model = Parqueo
     form_class = FormParqueo
     template_name = 'parqueo/create.html'
-    success_url = reverse_lazy('erp:visita_list')
+    success_url = reverse_lazy('erp:parqueo_list')
     url_redirect = success_url
     def dispatch(self, request, *args, **kwargs):
         self.object = self.get_object()

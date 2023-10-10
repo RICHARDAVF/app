@@ -72,6 +72,12 @@ $(function () {
             // Habilitar los botones de exportación
             new $.fn.dataTable.Buttons(miTabla, {
                 buttons: [
+                    {
+                        text:'<i class="fas fa-plus"></i>Nuevo registro',
+                        action:function(e,dt,node,conf){
+                            window.location.href = '/erp/parqueo/create/'
+                        }
+                    },
                     'copy', 'excel', 'csv', 'pdf', 'print'
                 ],
                 // Personalizar la apariencia de los botones (opcional)
