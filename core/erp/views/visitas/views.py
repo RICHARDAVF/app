@@ -131,7 +131,7 @@ class ListViewVisita(LoginRequiredMixin,ListView):
                     parqueos.append({"id":value[0],"numero":value[1]})
                 data['parking']=parqueos
             elif action=="h_salida":
-                Visitas.objects.filter(id=request.POST['id']).update(h_salida=datetime.now().strftime("%H:%M:%S"))
+                Visitas.objects.filter(id=request.POST['id']).update(h_salida=datetime.now().strftime("%H:%M:%S"),estado=3)
             elif action=="anular":
                 Visitas.objects.filter(id=request.POST['id']).update(estado=0,h_llegada=time(0,0),h_salida=time(0,0))
             elif action == "formvh":
@@ -300,7 +300,6 @@ class UpdateViewDelivery(LoginRequiredMixin,UpdateView):
     template_name = 'delivery/create.html'
     success_url = reverse_lazy('erp:visita_list')
     url_redirect = success_url
-
     def dispatch(self, request, *args, **kwargs):
         self.object = self.get_object()
         return super().dispatch(request, *args, **kwargs)

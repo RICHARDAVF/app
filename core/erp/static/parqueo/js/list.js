@@ -42,12 +42,13 @@ $(function () {
         columns: [
             {"data": "id"},
             {"data": "numero"},
+            {"data": "nombre"},
             {"data": "estado"},
             {"data": "id"},
         ],
         columnDefs:[
             {
-                targets:[2],
+                targets:[3],
                 class:'rext-center',
                 render:function(date,type,row){
                     var state = 'LIBRE'

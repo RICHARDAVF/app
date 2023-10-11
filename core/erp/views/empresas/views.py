@@ -1,12 +1,13 @@
-from typing import Any
-from django.db.models.query import QuerySet
 from django.views.generic import CreateView,ListView,DeleteView,UpdateView
 from django.urls import reverse_lazy
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin,PermissionRequiredMixin
+from core.mixins import PermisosMixins
 from core.user.models import Empresa
 from core.erp.forms import FormEmpresa
 from django.http import JsonResponse
-class CreateViewEmpresa(LoginRequiredMixin,CreateView):
+
+class CreateViewEmpresa(LoginRequiredMixin,PermissionRequiredMixin,CreateView):
+    permission_required = ('erp.view_empresa',)
     model = Empresa
     form_class = FormEmpresa
     template_name = 'empresa/create.html'
@@ -30,7 +31,8 @@ class CreateViewEmpresa(LoginRequiredMixin,CreateView):
         context['action'] = "add"
         context['list_url'] = self.success_url
         return context
-class LisViewEmpresa(LoginRequiredMixin,ListView):
+class LisViewEmpresa(LoginRequiredMixin,PermisosMixins,ListView):
+    permission_required=('erp.view_empresa',)
     model = Empresa
     template_name = 'empresa/list.html'
     def get_context_data(self, **kwargs):
@@ -39,13 +41,13 @@ class LisViewEmpresa(LoginRequiredMixin,ListView):
         context['entidad'] = "Empresas"
         context['create_url'] = reverse_lazy('erp:empresa_create')
         return context
-class UpdateViewEmpresa(LoginRequiredMixin,UpdateView):
+class UpdateViewEmpresa(LoginRequiredMixin,PermissionRequiredMixin,UpdateView):
+    permission_required = 'erp.view_empresa'
     login_url = reverse_lazy('login')
     model = Empresa
     form_class = FormEmpresa
     template_name = 'empresa/create.html'
     success_url = reverse_lazy('erp:empresa_list')
-   
     url_redirect = success_url
 
     def dispatch(self, request, *args, **kwargs):

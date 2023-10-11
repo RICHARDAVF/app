@@ -47,20 +47,19 @@ $(function () {
         columns: [
             {"data": "id"},//0
             {"data": "estado"},//1
-            {"data": "nombre"},//2
-            {"data": "apellidos"},//3
-            {"data": "h_inicio"},//4
+            {"data": "names"},//2
+            {"data": "h_inicio"},//3
+            {"data": "h_termino"},//4
             {"data":"h_llegada"},//5
-            {"data": "h_termino"},//6
-            {"data": "h_salida"},//7
-            {"data": "fecha"},//8
-            {"data": "dni"},//9
-            {"data": "id"},//10
-            {"data": "empresa"},//11
-            {"data": "cargo"},//12
-            {'data': "motivo"},//13
-            {'data': "sala"},//14
-            {'data': "sctr_salud"},//15
+            {"data": "h_salida"},//6
+            {"data": "fecha"},//7
+            {"data": "dni"},//8
+            {"data": "id"},//9
+            {"data": "empresa"},//10
+            {"data": "cargo"},//11
+            {'data': "motivo"},//12
+            {'data': "sala"},//13
+            {'data': "sctr_salud"},//14
             {'data': "p_visita"},//15
             {'data': "id"},//16
         ],
@@ -96,15 +95,7 @@ $(function () {
                 class:'text-center',
                 targets:[2],
                 render:function(data,type,row){
-                    return '<div style="width:100px;font-size:12px; font-weight: bold;">'+row.nombre+'</div>'
-                }
-            },
-            {
-               
-                class:'text-center',
-                targets:[3],
-                render:function(data,type,row){
-                    return '<div style="width:200px;font-size:12px; font-weight: bold;">'+row.apellidos+'</div>'
+                    return '<div style="width:250px;font-size:12px; font-weight: bold;">'+row.names+'</div>'
                 }
             },
             {
@@ -120,7 +111,7 @@ $(function () {
             },
            
             {
-                targets:[7],
+                targets:[6],
                 class:'text-center',
                 render:function(data,type,row){
                     if(row.h_salida===null){
@@ -130,7 +121,7 @@ $(function () {
                 }
             },
              {
-                targets:[8],
+                targets:[7],
                 class:'text-center',
                 render:function(data,type,row){
                     return `<div style="width:110px;">${row.fecha}</div>`
@@ -139,7 +130,7 @@ $(function () {
             {
                
                 class:'text-center',
-                targets:[10],
+                targets:[9],
                 render:function(data,type,row){
                    var date = (row.tipo==1)?`<input type='button' id='btnaddperson' class='btn btn-success' value='Asistente.'/>`:'';
                     return date
@@ -148,7 +139,7 @@ $(function () {
             {
                
                 class:'text-center',
-                targets:[11],
+                targets:[10],
                 render:function(data,type,row){
                     var cargo = (row.cargo!=null)?row.cargo:"";
                     return '<div style="width:200px;"><strong style="width:font-size:13px;">'+cargo+'</strong></div>'
@@ -157,7 +148,7 @@ $(function () {
             {
                
                 class:'text-center',
-                targets:[12],
+                targets:[11],
                 render:function(data,type,row){
                     return '<div style="width:200px;"><strong style="width:font-size:13px;">'+row.empresa+'</strong></div>'
                 }
@@ -165,7 +156,7 @@ $(function () {
            
            
             {
-                targets:[13],
+                targets:[12],
                 class:'text-center',
                 render:function(data,type,row){
                     return '<div style="width:200px;"><strong style="font-size:13px;"">'+row.motivo+'</strong></div>'
@@ -583,19 +574,48 @@ $(function () {
     $(document).on("click","#anular",function(){
         var rowIndex = miTabla.row($(this).closest('tr')).index();
         var id = miTabla.cell(rowIndex,0).data();
-        $.ajax({
-            type:"POST",
-            url:window.location.pathname,
-            dataType:'json',
-            data:{
-                "id":id,
-                "action":"anular"
-            },
-            success:function(data){
-                window.location.reload()
-            },
-            error:function(jqXHR, textStatus, errorThrown){
-                alert("Error en la solicitud "+textStatus,errorThrown)
+        $.confirm({
+            theme: 'material',
+            title: 'Alerta',
+            icon: 'fas fa-info',
+            content: "¿Esta seguro de anular?",
+            columnClass: 'small',
+            typeAnimated: true,
+            cancelButtonClass: 'btn-primary',
+            draggable: true,
+            dragWindowBorder: false,
+            buttons:{
+                info:{
+                    text:'Si',
+                    btnClass:'btn-primary',
+                    action:function(){
+                        $.ajax({
+                            type:'POST',
+                            url : window.location.pathname,
+                            dataType:'json',
+                            data:{
+                                "id":id,
+                                "action":'anular'
+                            },
+                            success:function(data){
+                                if(data.error){
+                                    return alert(data.error)
+                                }
+                                window.location.reload()
+                            },
+                            error:function(jqXHR, textStatus, errorThrown){
+                                        alert("Error en la solicitud "+textStatus,errorThrown)
+                                    }
+                        })
+                    }
+                },
+                danger:{
+                    text:'No',
+                    btnClass:'btn-red',
+                    action:function(){
+
+                    }
+                }
             }
         })
     })

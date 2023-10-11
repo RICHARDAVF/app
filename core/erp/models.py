@@ -112,9 +112,11 @@ class Salas(models.Model):
         return item
     def __str__(self) -> str:
         return self.sala
+  
 class Parqueo(models.Model):
     numero = models.CharField(max_length=5,verbose_name="Numero de Parqueo",unique=False)
     estado = models.BooleanField(default=True,verbose_name="Estado",null=True,blank=True)
+    nombre = models.CharField(max_length=150,verbose_name="Nombre del parqueo",null=True,blank=True)
     empresa = models.ForeignKey(Empresa,on_delete=models.DO_NOTHING,verbose_name="Empresa",null=True,blank=True)
     unidad = models.ForeignKey(Unidad,on_delete=models.DO_NOTHING,verbose_name="unidad",null=True,blank=True)
     puesto = models.ForeignKey(Puesto,on_delete=models.DO_NOTHING,verbose_name="puesto",null=True,blank=True)
@@ -141,19 +143,19 @@ class Visitas(models.Model):
     h_termino = models.TimeField(auto_now=False,verbose_name="Hora de Finalizacion",null=True,blank=True)
     h_llegada = models.TimeField(auto_now=False,verbose_name="Hora de llegada",null=True,blank=True)
     h_salida = models.TimeField(auto_now=False,verbose_name="Hora de Salida",null=True,blank=True)
-    p_visita = models.ForeignKey(Trabajadores,on_delete=models.DO_NOTHING,null=True,blank=True)
+    p_visita = models.ForeignKey(Trabajadores,on_delete=models.DO_NOTHING,null=True,blank=True,verbose_name="Persona a quien visita")
     motivo = models.CharField(max_length=150,verbose_name="Motivo")
     sala = models.ForeignKey(Salas,on_delete = models.DO_NOTHING,null=True,blank=True)
     v_marca = models.CharField(max_length=20,verbose_name="Marca del Vehiculo",null=True,blank=True)
     v_modelo = models.CharField(max_length=20,verbose_name="Modelo del vehiculo",null=True,blank=True)
     v_placa =  models.CharField(max_length=10,verbose_name="Placa de rodaje",null=True,blank=True)
-    fv_soat = models.CharField(max_length=50,verbose_name="SOAT-VEHICULO",null=True,blank=True)
+    fv_soat = models.CharField(max_length=50,verbose_name="Fecha de vencimiento del SOAT",null=True,blank=True)
     sctr_salud = models.CharField(max_length=30,verbose_name="SCTR-SALUD",null=True,blank=True)
     n_parqueo = models.ForeignKey(Parqueo,on_delete=models.DO_NOTHING,verbose_name="Numero de Parqueo",null=True,blank=True)
     estado = models.CharField(max_length=10,choices=[('1','PROGRAMADO'),('2','EN CURSO'),('3','FINALIZO')],null=True,blank=True)
     guias = models.FileField(upload_to='guias/',verbose_name="Guias de remision",blank=True,null=True)
     cantidad = models.CharField(verbose_name="Cantidad",max_length=20,blank=True,null=True)
-    tipo = models.CharField(max_length=3,choices=[('1','VISITA'),("2","COURRIER"),("3","DELIVERY")],default='1')
+    tipo = models.CharField(max_length=3,choices=[('1','VISITA'),("2","COURRIER/DELIVERY")],default='1')
     observacion = models.CharField(max_length=100,verbose_name="Observaciones",blank=True,null=True)
     def get_file(self):
         if self.guias:
@@ -167,6 +169,7 @@ class Visitas(models.Model):
         item = model_to_dict(self)
         item['user'] = self.user.id
         item['guias'] = self.get_file()
+        item['names'] = f"{self.nombre} {self.apellidos}"
         return item
 class Asistentes(models.Model):
     visita = models.ForeignKey(Visitas,on_delete=models.DO_NOTHING,verbose_name="Visita",unique=False)

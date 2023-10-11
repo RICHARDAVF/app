@@ -1,6 +1,7 @@
 from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.views.generic import ListView,CreateView,UpdateView,DeleteView,View
+from core.mixins import PermisosMixins
 from core.validation import Validation
 from core.user.forms import FormUser
 from core.user.models import User,Puesto,Unidad
@@ -10,7 +11,8 @@ from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import Group
 from django.contrib.auth.mixins import LoginRequiredMixin
 
-class ListViewUser(LoginRequiredMixin,ListView):
+class ListViewUser(LoginRequiredMixin,PermisosMixins,ListView):
+    permission_required = ('user.view_user',)
     login_url = reverse_lazy('login')
     model = User
     template_name = 'user/list.html'
@@ -38,7 +40,8 @@ class ListViewUser(LoginRequiredMixin,ListView):
         context['list_url'] = reverse_lazy('user:user_list')
         context['entidad'] = 'Usuarios'
         return context
-class CreateViewUser(LoginRequiredMixin,CreateView):
+class CreateViewUser(LoginRequiredMixin,PermisosMixins,CreateView):
+    permission_required = ('user.view_user','user.create_user')
     login_url = reverse_lazy('login')
     model = User
     form_class = FormUser
@@ -80,7 +83,8 @@ class CreateViewUser(LoginRequiredMixin,CreateView):
         context['list_url'] = self.success_url
         context['action'] = 'add'
         return context
-class UpdateViewUser(LoginRequiredMixin,UpdateView):
+class UpdateViewUser(LoginRequiredMixin,PermisosMixins,UpdateView):
+    permission_required = ('user.view_user','user.update_user')
     login_url = reverse_lazy('login')
     model = User
     form_class = FormUser
@@ -126,12 +130,13 @@ class UpdateViewUser(LoginRequiredMixin,UpdateView):
         context['action'] = 'edit'
         return context
 class DeleteViewUser(LoginRequiredMixin,DeleteView):
+    permission_required = ('user.view_user','user.delete_user')
     login_url = reverse_lazy('login')
     model = User
     template_name = 'user/delete.html'
     success_url = reverse_lazy('user:user_list')
     url_redirect = success_url
-
+    
     def dispatch(self, request, *args, **kwargs):
         self.object = self.get_object()
         return super().dispatch(request, *args, **kwargs)

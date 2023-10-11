@@ -1,7 +1,8 @@
-from typing import Any, Dict
+
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.views.generic import CreateView,ListView,UpdateView,DeleteView
+from core.mixins import PermisosMixins
 from ...models import Parqueo
 from ...forms import FormParqueo
 from django.utils.decorators import method_decorator
@@ -9,7 +10,8 @@ from django.views.decorators.csrf import csrf_exempt
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
 # Create your views here.
-class CreateViewParqueo(LoginRequiredMixin,CreateView):
+class CreateViewParqueo(LoginRequiredMixin,PermisosMixins,CreateView):
+    permission_required = ('erp.add_parqueo',)
     login_url = reverse_lazy('login')
     model = Parqueo
     form_class = FormParqueo
@@ -20,8 +22,26 @@ class CreateViewParqueo(LoginRequiredMixin,CreateView):
         try:
             action =request.POST['action']
             if action == "add":
-                form = self.get_form()
-                data = form.save()
+                if int(request.POST['desde'])<=int(request.POST['hasta']):
+                    for num in range(int(request.POST['desde']),int(request.POST['hasta'])+1):
+                        if Parqueo.objects.filter(
+                                            numero=num,
+                                            nombre=request.POST['nombre'],
+                                            empresa_id=request.user.empresa_id,
+                                            unidad_id=request.user.unidad_id,
+                                            puesto_id=request.user.puesto_id
+                                        ).exists():
+                            data['error'] = "Ya existe parqueos en ese rango"
+                            return JsonResponse(data)
+                    for num in range(int(request.POST['desde']),int(request.POST['hasta'])+1):
+                        Parqueo.objects.create(
+                            numero=num,
+                            nombre=request.POST['nombre'],
+                            empresa_id=request.user.empresa_id,
+                            unidad_id=request.user.unidad_id,
+                            puesto_id = request.user.puesto_id)
+                else:
+                    data['error'] = 'ingreseo un rango incorrecto'
             else:
                 data['error'] = 'No se a ingresado ninguna opcion'
         except Exception as e:
@@ -35,7 +55,8 @@ class CreateViewParqueo(LoginRequiredMixin,CreateView):
         context['list_url'] = self.success_url
         context['action'] = 'add'
         return context
-class ListViewParqueo(LoginRequiredMixin,ListView):
+class ListViewParqueo(LoginRequiredMixin,PermisosMixins,ListView):
+    permission_required = ('erp.view_parqueo',)
     login_url = reverse_lazy('login')
     model = Parqueo
     template_name = 'parqueo/list.html'
@@ -70,7 +91,9 @@ class ListViewParqueo(LoginRequiredMixin,ListView):
         context['list_url'] = reverse_lazy('erp:parqueo_list')
         context['entidad'] = 'Parqueos'
         return context
-class UpdateViewParqueo(LoginRequiredMixin,UpdateView):
+class UpdateViewParqueo(LoginRequiredMixin,PermisosMixins,UpdateView):
+    permission_required = ('erp.change_parqueo',)
+
     login_url = reverse_lazy('login')
     model = Parqueo
     form_class = FormParqueo
@@ -101,7 +124,8 @@ class UpdateViewParqueo(LoginRequiredMixin,UpdateView):
         context['list_url'] = self.success_url
         context['action'] = 'edit'
         return context
-class DeleteViewParqueo(LoginRequiredMixin,DeleteView):
+class DeleteViewParqueo(LoginRequiredMixin,PermisosMixins,DeleteView):
+    permission_required = ('erp.delete_parqueo',)
     login_url = reverse_lazy('login')
     model = Parqueo
     template_name = 'parqueo/delete.html'
