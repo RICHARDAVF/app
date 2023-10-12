@@ -79,8 +79,7 @@ class UpdateViewUnidad(LoginRequiredMixin,UpdateView):
         try:
             action = request.POST['action']
             if action == 'edit':
-                form = self.get_form()
-                data = form.save()
+                Unidad.objects.filter(id=kwargs['pk']).update(empresa_id=request.POST['empresa'],unidad=request.POST['unidad'])
             else:
                 data['error'] = 'No ha ingresado a ninguna opción'
         except Exception as e:

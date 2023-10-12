@@ -3,8 +3,8 @@ from django.http import JsonResponse
 from django.shortcuts import render
 from django.views.generic import CreateView,ListView,UpdateView,DeleteView
 from core.mixins import PermisosMixins
-from ...models import Parqueo
-from ...forms import FormParqueo
+from ...models import Parqueo,Unidad,Puesto
+from ...forms import FormParqueo,FormParqueoAdmin
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.urls import reverse_lazy
@@ -15,8 +15,21 @@ class CreateViewParqueo(LoginRequiredMixin,PermisosMixins,CreateView):
     login_url = reverse_lazy('login')
     model = Parqueo
     form_class = FormParqueo
-    template_name = 'parqueo/create.html'
     success_url = reverse_lazy('erp:parqueo_list')
+    @method_decorator(csrf_exempt)
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_template_names(self):
+        if self.request.user.is_superuser:
+           return 'parqueo/create_parqueo_admin.html'
+        else:
+           return 'parqueo/create_parqueo_user.html'
+    def get_form_class(self):
+        if self.request.user.is_superuser:
+            return FormParqueoAdmin
+        return FormParqueo
+    
     def post(self, request, *args, **kwargs) :
         data = {}
         try:
@@ -27,9 +40,9 @@ class CreateViewParqueo(LoginRequiredMixin,PermisosMixins,CreateView):
                         if Parqueo.objects.filter(
                                             numero=num,
                                             nombre=request.POST['nombre'],
-                                            empresa_id=request.user.empresa_id,
-                                            unidad_id=request.user.unidad_id,
-                                            puesto_id=request.user.puesto_id
+                                            empresa_id=request.POST['empresa'],
+                                            unidad_id=request.POST['unidad'],
+                                            puesto_id=request.POST['puesto']
                                         ).exists():
                             data['error'] = "Ya existe parqueos en ese rango"
                             return JsonResponse(data)
@@ -37,23 +50,32 @@ class CreateViewParqueo(LoginRequiredMixin,PermisosMixins,CreateView):
                         Parqueo.objects.create(
                             numero=num,
                             nombre=request.POST['nombre'],
-                            empresa_id=request.user.empresa_id,
-                            unidad_id=request.user.unidad_id,
-                            puesto_id = request.user.puesto_id)
+                            empresa_id=request.POST['empresa'],
+                            unidad_id=request.POST['unidad'],
+                            puesto_id=request.POST['puesto'])
                 else:
                     data['error'] = 'ingreseo un rango incorrecto'
+            elif action == 'search_unidad':
+                data = []
+                for value in Unidad.objects.filter(empresa_id=request.POST['id']):
+                    data.append(value.toJSON())
+            elif action == 'search_puesto':
+                data = []
+                for value in Puesto.objects.filter(unidad_id=request.POST['id']):
+                    data.append(value.toJSON())
             else:
                 data['error'] = 'No se a ingresado ninguna opcion'
         except Exception as e:
             data['error'] = str(e)
 
-        return JsonResponse(data)
+        return JsonResponse(data,safe=False)
     def get_context_data(self, **kwargs):
         context= super().get_context_data(**kwargs)
-        context['title'] = 'Creacion de un Parqueo'
+        context['title'] = 'Creacion de parqueos'
         context['entidad'] = 'Parqueos'
         context['list_url'] = self.success_url
         context['action'] = 'add'
+       
         return context
 class ListViewParqueo(LoginRequiredMixin,PermisosMixins,ListView):
     permission_required = ('erp.view_parqueo',)
@@ -103,7 +125,6 @@ class UpdateViewParqueo(LoginRequiredMixin,PermisosMixins,UpdateView):
     def dispatch(self, request, *args, **kwargs):
         self.object = self.get_object()
         return super().dispatch(request, *args, **kwargs)
-
     def post(self, request, *args, **kwargs):
         data = {}
         try:

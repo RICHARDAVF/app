@@ -1,6 +1,7 @@
 from django.views.generic import CreateView,ListView,DeleteView,UpdateView
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin,PermissionRequiredMixin
+from core.validation import Validation
 from core.mixins import PermisosMixins
 from core.user.models import Empresa
 from core.erp.forms import FormEmpresa
@@ -19,6 +20,8 @@ class CreateViewEmpresa(LoginRequiredMixin,PermissionRequiredMixin,CreateView):
             if action == "add":
                 form = self.get_form()
                 data = form.save()
+            elif action =="search_ruc":
+                data = Validation(request.POST['doc'],'ruc').valid()
             else:
                 data['error'] = f'No se ingreso ninguna opcion'
         except Exception as e:

@@ -235,6 +235,10 @@ class FormParqueo(ModelForm):
                 'placeholer':'Numero de parqueo',
                 'class':'form-control'
             }),
+            'nombre':TextInput(attrs={
+                'placeholer':'Nombre del parqueo',
+                'class':'form-control'
+            }),
             "estado":HiddenInput(),
             "empresa":HiddenInput(),
             "unidad":HiddenInput(),
@@ -252,7 +256,37 @@ class FormParqueo(ModelForm):
         except Exception as e:
             data['error'] = str(e)
         return data
-
+class FormParqueoAdmin(ModelForm):
+    empresa = forms.ModelChoiceField(queryset=Empresa.objects.all(),widget=Select(attrs={
+        'class':'form-control select2'
+    }),label="Empresa")
+    unidad = forms.ModelChoiceField(queryset=Unidad.objects.all(),widget=Select({
+        'class':'form-control select2'
+    }),label="Unidad")
+    puesto = forms.ModelChoiceField(queryset=Puesto.objects.all(),widget=Select({
+        'class':'form-control select2'
+    }),label="Puesto")
+    desde = forms.CharField(widget=TextInput(attrs={
+        'class':'form-control',
+        'type':'number'
+    }))
+    hasta = forms.CharField(widget=TextInput(attrs={
+        'class':'form-control',
+        'type':'number'
+    }))
+    def __init__(self,*args,**kwargs):
+        super().__init__(*args,**kwargs)
+    class Meta:
+        model = Parqueo
+        exclude = ['numero','estado','unidad']
+        widgets = {
+            'nombre':TextInput(attrs={
+                'class':'form-control',
+                "placeholder":'Nombre del parqueo'
+            })
+        }
+   
+        
 class FormTrabajador(ModelForm):
     def __init__(self,*args,**kwargs):
         super().__init__(*args,**kwargs)
@@ -427,17 +461,6 @@ class FormPuesto(ModelForm):
     def __init__(self,*args,**kwargs):
         super().__init__(*args,**kwargs)
         
-    def save(self,commit=True):
-        data = {}
-        form = super()
-        try:
-            if form.is_valid():
-                form.save()
-            else:
-                data['error'] = form.errors
-        except Exception as e:
-            data['error'] = str(e)
-        return data
     class Meta:
         model = Puesto
         fields = '__all__'
@@ -452,3 +475,14 @@ class FormPuesto(ModelForm):
                 "class":'form-control'
             }),
         }
+    def save(self,commit=True):
+        data = {}
+        form = super()
+        try:
+            if form.is_valid():
+               form.save()
+            else:
+                data['error'] = form.errors
+        except Exception as e:
+            data['error'] = str(e)
+        return data

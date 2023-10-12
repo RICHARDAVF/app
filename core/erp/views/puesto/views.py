@@ -1,11 +1,10 @@
 
-from typing import Any
 from django.views.generic import CreateView,ListView,DeleteView,UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from core.user.models import Puesto
 from core.erp.forms import FormPuesto
 from django.urls import reverse_lazy
-from django.http import HttpRequest, HttpResponse, JsonResponse
+from django.http import JsonResponse
 class CreateViewPuesto(LoginRequiredMixin,CreateView):
     model = Puesto
     form_class = FormPuesto
@@ -35,7 +34,7 @@ class ListViewPuesto(LoginRequiredMixin,ListView):
     template_name = 'puesto/list.html'
     def get_queryset(self):
         if not self.request.user.is_superuser:
-            return Puesto.objects.select_related("unidad__empresa").filter(id=self.request.user.puesto_id)
+            return Puesto.objects.select_related("unidad__empresa").filter(unidad_id=self.request.user.unidad_id)
         return Puesto.objects.select_related("unidad__empresa").all()
     def get_context_data(self, **kwargs):
         context =  super().get_context_data(**kwargs)
@@ -72,14 +71,16 @@ class UpdateViewPuesto(LoginRequiredMixin,UpdateView):
     template_name = 'puesto/create.html'
     success_url = reverse_lazy('erp:puesto_list')
     url_redirect = success_url
-
     def post(self, request, *args, **kwargs):
         data = {}
         try:
             action = request.POST['action']
             if action == 'edit':
-                form = self.get_form()
-                data = form.save()
+                Puesto.objects.filter(id=kwargs['pk']).update(
+                    unidad_id=request.POST['unidad'],
+                    puesto=request.POST['puesto'],
+                    direccion = request.POST['direccion']
+                    )   
             else:
                 data['error'] = 'No ha ingresado a ninguna opción'
         except Exception as e:

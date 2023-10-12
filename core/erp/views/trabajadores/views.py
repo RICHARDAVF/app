@@ -26,7 +26,7 @@ class CreateViewTrabajador(LoginRequiredMixin,CreateView):
                 form = self.get_form()
                 data = form.save()
             elif action =="searchdni":
-                data = Validation(request.POST['dni']).valid()
+                data = Validation(request.POST['dni'],'dni').valid()
             else:
                 data['error'] = 'No se a ingresado ninguna opcion'
         except Exception as e:

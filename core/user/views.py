@@ -53,15 +53,14 @@ class CreateViewUser(LoginRequiredMixin,PermisosMixins,CreateView):
         return super().dispatch(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
-        data = {}
-        
+        data = {}        
         try:
             action = request.POST['action']
             if action == 'add':
                 form = self.get_form()
                 data = form.save()
             elif action =='searchdni':
-                data = Validation(request.POST['dni']).valid()
+                data = Validation(request.POST['dni'],'dni').valid()
             elif action == 'search_unidad':
                 data = []
                 for value in Unidad.objects.filter(empresa_id=request.POST['id']):
@@ -105,7 +104,7 @@ class UpdateViewUser(LoginRequiredMixin,PermisosMixins,UpdateView):
                 form = self.get_form()
                 data = form.save()
             elif action =='searchdni':
-                data = Validation(request.POST['dni']).valid()
+                data = Validation(request.POST['dni'],'dni').valid()
             elif action == 'search_unidad':
                 data = []
                 for value in Unidad.objects.filter(empresa_id=request.POST['id']):
@@ -115,7 +114,7 @@ class UpdateViewUser(LoginRequiredMixin,PermisosMixins,UpdateView):
                 for value in Puesto.objects.filter(unidad_id=request.POST['id']):
                     data.append(value.toJSON())
             elif action == 'searchdni':
-                data = Validation(request.POST['dni']).valid()
+                data = Validation(request.POST['dni'],'dni').valid()
             else:
                 data['error'] = 'No ha ingresado a ninguna opción'
         except Exception as e:

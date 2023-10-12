@@ -43,7 +43,7 @@ class CreateViewVisita(LoginRequiredMixin,CreateView):
                     parking.save()
                
             elif action =='searchdni':
-                data = Validation(request.POST['dni']).valid()
+                data = Validation(request.POST['dni'],'dni').valid()
                 
             else:
                 data['error'] = 'No se a ingresado ninguna opcion'
@@ -135,14 +135,13 @@ class ListViewVisita(LoginRequiredMixin,ListView):
             elif action=="anular":
                 Visitas.objects.filter(id=request.POST['id']).update(estado=0,h_llegada=time(0,0),h_salida=time(0,0))
             elif action == "formvh":
-                print(request.POST)
                 Visitas.objects.filter(id=request.POST['id']).update(
                     v_marca=request.POST['v_marca'],
                     v_modelo=request.POST['v_modelo'],
                     v_placa=request.POST['v_placa'],
                     fv_soat = request.POST['fv_soat'],
                     observacion = request.POST['observacion'],
-                    n_parqueo = int(request.POST['n_parqueo'])
+                    n_parqueo = request.POST['n_parqueo']
                 )
                 Parqueo.objects.filter(id=request.POST['n_parqueo']).update(estado=0)
             else:
@@ -274,7 +273,7 @@ class CreateViewDelivery(LoginRequiredMixin,CreateView):
                 form = self.get_form()
                 data = form.save()
             elif action =='searchdni':
-                data = Validation(request.POST['dni']).valid()
+                data = Validation(request.POST['dni'],'dni').valid()
                
             else:
                 data['error'] = 'No se a ingresado ninguna opcion'

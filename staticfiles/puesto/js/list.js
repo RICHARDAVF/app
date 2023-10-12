@@ -16,7 +16,7 @@ $(function(){
                     },
                     'copy', 'excel', 'csv', 'pdf', 'print'
                 ],
-                
+
                 dom: {
                     button: {
                         className: 'btn btn-primary'
