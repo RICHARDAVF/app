@@ -8,7 +8,7 @@ from core.erp.forms import FormEmpresa
 from django.http import JsonResponse
 
 class CreateViewEmpresa(LoginRequiredMixin,PermissionRequiredMixin,CreateView):
-    permission_required = ('erp.view_empresa',)
+    permission_required = ('user.view_empresa',)
     model = Empresa
     form_class = FormEmpresa
     template_name = 'empresa/create.html'
@@ -35,7 +35,7 @@ class CreateViewEmpresa(LoginRequiredMixin,PermissionRequiredMixin,CreateView):
         context['list_url'] = self.success_url
         return context
 class LisViewEmpresa(LoginRequiredMixin,PermisosMixins,ListView):
-    permission_required=('erp.view_empresa',)
+    permission_required=('user.view_empresa',)
     model = Empresa
     template_name = 'empresa/list.html'
     def get_context_data(self, **kwargs):
@@ -45,7 +45,7 @@ class LisViewEmpresa(LoginRequiredMixin,PermisosMixins,ListView):
         context['create_url'] = reverse_lazy('erp:empresa_create')
         return context
 class UpdateViewEmpresa(LoginRequiredMixin,PermissionRequiredMixin,UpdateView):
-    permission_required = 'erp.view_empresa'
+    permission_required = 'user.view_empresa'
     login_url = reverse_lazy('login')
     model = Empresa
     form_class = FormEmpresa

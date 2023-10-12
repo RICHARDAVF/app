@@ -1,3 +1,4 @@
+from typing import Any
 from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.views.generic import ListView,CreateView,UpdateView,DeleteView,View
@@ -10,6 +11,8 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import Group
 from django.contrib.auth.mixins import LoginRequiredMixin
+
+from .forms import PermissionSelectionForm
 
 class ListViewUser(LoginRequiredMixin,PermisosMixins,ListView):
     permission_required = ('user.view_user',)
@@ -162,3 +165,54 @@ class UserChangeGroup(LoginRequiredMixin,View):
         except:
             pass
         return HttpResponseRedirect(reverse_lazy('user:user_list'))
+
+
+class SelectPermissionsView(CreateView):
+    form_class = PermissionSelectionForm
+    template_name = 'user/perms.html'  
+    success_url = reverse_lazy('user:user_list')  
+
+    def form_valid(self, form):
+        data = {}
+        try:
+            user = form.cleaned_data['user']
+            selected_permissions = form.cleaned_data['permissions']
+            user.user_permissions.set(selected_permissions)
+        except Exception as e:
+            data['error'] = f"Ocurrio un error {str(e)}"
+        return JsonResponse()
+    def get_context_data(self, **kwargs):
+        context =  super().get_context_data(**kwargs)
+        context['title'] = "Asignacion de Permisos"
+        context['list_url'] = self.success_url
+        context['entidad'] = "Permisos"
+        return context
+
+class UpdatePermissionsView(UpdateView):
+    model = User  # Reemplaza 'User' con tu modelo de usuario
+    form_class = PermissionSelectionForm
+    template_name = 'user/perms.html'
+    success_url = reverse_lazy('user:user_list')
+
+    def get(self, request, *args, **kwargs):
+        user_id = kwargs.get('pk')  # 'pk' es el nombre de la clave primaria del usuario
+        user = User.objects.get(pk=user_id)  # Obtén el usuario que deseas editar
+        self.object = user  # Asigna la instancia de usuario al objeto de la vista
+        return super().get(request, *args, **kwargs)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = "Editar Permisos"
+        context['entidad'] = "Permisos"
+        context['list_url'] = self.success_url
+        context['username'] = User.objects.get(id=self.object.id)
+        return context
+
+    def form_valid(self, form):
+        data = {}
+        try:
+            user = form.cleaned_data['user']
+            selected_permissions = form.cleaned_data['permissions']
+            user.user_permissions.set(selected_permissions)
+        except Exception as e:
+            data['error'] = f"Ocurrió un error: {e}"
+        return JsonResponse(data)

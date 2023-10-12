@@ -135,15 +135,20 @@ class ListViewVisita(LoginRequiredMixin,ListView):
             elif action=="anular":
                 Visitas.objects.filter(id=request.POST['id']).update(estado=0,h_llegada=time(0,0),h_salida=time(0,0))
             elif action == "formvh":
-                Visitas.objects.filter(id=request.POST['id']).update(
-                    v_marca=request.POST['v_marca'],
-                    v_modelo=request.POST['v_modelo'],
-                    v_placa=request.POST['v_placa'],
-                    fv_soat = request.POST['fv_soat'],
-                    observacion = request.POST['observacion'],
-                    n_parqueo = request.POST['n_parqueo']
-                )
-                Parqueo.objects.filter(id=request.POST['n_parqueo']).update(estado=0)
+                try:
+                    int(request.POST['n_parqueo'])
+                    Visitas.objects.filter(id=request.POST['id']).update(
+                        v_marca=request.POST['v_marca'],
+                        v_modelo=request.POST['v_modelo'],
+                        v_placa=request.POST['v_placa'],
+                        fv_soat = request.POST['fv_soat'],
+                        observacion = request.POST['observacion'],
+                        n_parqueo = request.POST['n_parqueo']
+                    )
+                    Parqueo.objects.filter(id=request.POST['n_parqueo']).update(estado=0)
+                except :
+                    data['error'] = 'Seleccione un numero de parqueo'
+                    
             else:
                 data['error'] = 'Ha ocurrido un error'
         except Exception as e:

@@ -1,7 +1,33 @@
-from django.forms import ModelForm,Form
+from django.forms import ModelForm
 from django import forms
 from .models import User
 from .models import Empresa,Unidad,Puesto
+from django.contrib.auth.models import Permission
+
+
+class PermissionSelectionForm(forms.ModelForm):
+    user = forms.ModelChoiceField(queryset=User.objects.all(),to_field_name='username',widget=forms.Select(attrs={
+        'class':'form-control',
+    }),label="ID Usuario")
+    permissions = forms.ModelMultipleChoiceField(
+        queryset=Permission.objects.all(),
+        widget=forms.CheckboxSelectMultiple,
+    )
+    
+    class Meta:
+        model = User
+        fields = ['user', 'permissions']
+    def __init__(self, *args, **kwargs):
+        super(PermissionSelectionForm, self).__init__(*args, **kwargs)
+        
+        if self.instance:
+            # Si ya hay una instancia de usuario (edición), establece los permisos actuales en el formulario
+            self.fields['user'].initial = self.instance.username
+            # print(self.instance.username)
+            self.fields['permissions'].initial = self.instance.user_permissions.all()
+    def label_from_instance(self, obj):
+        # Personaliza cómo se muestra cada opción en el elemento select
+        return obj.username
 class FormUser(ModelForm):
     empresa=forms.ModelChoiceField(queryset=Empresa.objects.all(),widget=forms.Select(attrs={
                 "class":"form-control select2"
@@ -67,8 +93,6 @@ class FormUser(ModelForm):
                     'class':'form-control',
                     'type':'file'
             }),
-            
-           
         }
         exclude = ['user_permissions','last_login','date_joined','is_superuser','is_active','is_staff']
     def save(self,commit=True):

@@ -632,10 +632,10 @@ $(function () {
             processData: false, 
             contentType: false,
             success:function(data){
-                window.location.reload()
                 if(data.error){
                     return alert(data.error)
                 }
+                window.location.reload()
             },
             error:function(jqXHR, textStatus, errorThrown){
                 alert("Ocurrio un error ",textStatus,errorThrown)
