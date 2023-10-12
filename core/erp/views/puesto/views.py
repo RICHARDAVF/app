@@ -1,11 +1,13 @@
 
 from django.views.generic import CreateView,ListView,DeleteView,UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin
+from core.mixins import PermisosMixins
 from core.user.models import Puesto
 from core.erp.forms import FormPuesto
 from django.urls import reverse_lazy
 from django.http import JsonResponse
-class CreateViewPuesto(LoginRequiredMixin,CreateView):
+class CreateViewPuesto(LoginRequiredMixin,PermisosMixins,CreateView):
+    permission_required = 'user.add_puesto'
     model = Puesto
     form_class = FormPuesto
     template_name = 'puesto/create.html'
@@ -29,7 +31,8 @@ class CreateViewPuesto(LoginRequiredMixin,CreateView):
         context['list_url'] = self.success_url
         context['action'] = "add"
         return context
-class ListViewPuesto(LoginRequiredMixin,ListView):
+class ListViewPuesto(LoginRequiredMixin,PermisosMixins,ListView):
+    permission_required = 'user.view_puesto'
     model = Puesto
     template_name = 'puesto/list.html'
     def get_queryset(self):
@@ -42,7 +45,8 @@ class ListViewPuesto(LoginRequiredMixin,ListView):
         context['entidad'] = "Puestos"
         context['create_url'] = reverse_lazy('erp:puesto_create')
         return context
-class DeleteViewPuesto(LoginRequiredMixin,DeleteView):
+class DeleteViewPuesto(LoginRequiredMixin,PermisosMixins,DeleteView):
+    permission_required = 'user.delete_puesto'
     model = Puesto
     success_url = reverse_lazy('erp:puesto_list')
     url_redirect = success_url
@@ -64,8 +68,9 @@ class DeleteViewPuesto(LoginRequiredMixin,DeleteView):
         context['entidad'] = 'Puestos'
         context['list_url'] = self.success_url
         return context
-class UpdateViewPuesto(LoginRequiredMixin,UpdateView):
+class UpdateViewPuesto(LoginRequiredMixin,PermisosMixins,UpdateView):
     login_url = reverse_lazy('login')
+    permission_required = 'user.change_puesto'
     model = Puesto
     form_class = FormPuesto
     template_name = 'puesto/create.html'

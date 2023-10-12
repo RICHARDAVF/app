@@ -1,18 +1,18 @@
 from django.views.generic import CreateView,ListView,DeleteView,UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin,PermissionRequiredMixin
+from core.mixins import PermisosMixins
 from core.user.models import Unidad
 from core.erp.forms import FormUnidad
 from django.urls import reverse_lazy
 from django.http import JsonResponse
 
-class CreateViewUnidad(LoginRequiredMixin,CreateView):
+class CreateViewUnidad(LoginRequiredMixin,PermisosMixins,CreateView):
     model = Unidad
     form_class = FormUnidad
     template_name = 'unidad/create.html'
     success_url = reverse_lazy('erp:unidad_list')
-    # permission_required = 'erp.view_unidad'
-    # permission_denied_message = 'Usted no tiene acceso a esta vista'
-    # login_url = None
+    permission_required = 'user.view_unidad'
+    
     def post(self, request, *args, **kwargs) :
         data = {}
         try:
@@ -32,7 +32,8 @@ class CreateViewUnidad(LoginRequiredMixin,CreateView):
         context['list_url'] = self.success_url
         context['action'] = "add"
         return context
-class ListViewUnidad(LoginRequiredMixin,ListView):
+class ListViewUnidad(LoginRequiredMixin,PermisosMixins,ListView):
+    permission_required = 'user.view_unidad'
     model = Unidad
     template_name = 'unidad/list.html'
     def get_queryset(self):
@@ -45,7 +46,8 @@ class ListViewUnidad(LoginRequiredMixin,ListView):
         context['entidad'] = "Unidades"
         context['create_url'] = reverse_lazy('erp:unidad_create')
         return context
-class DeleteViewUnidad(LoginRequiredMixin,DeleteView):
+class DeleteViewUnidad(LoginRequiredMixin,PermisosMixins,DeleteView):
+    permission_required = 'user.delete_unidad'
     model = Unidad
     success_url = reverse_lazy('erp:unidad_list')
     url_redirect = success_url
@@ -67,8 +69,9 @@ class DeleteViewUnidad(LoginRequiredMixin,DeleteView):
         context['entidad'] = 'Unidades'
         context['list_url'] = self.success_url
         return context
-class UpdateViewUnidad(LoginRequiredMixin,UpdateView):
+class UpdateViewUnidad(LoginRequiredMixin,PermisosMixins,UpdateView):
     login_url = reverse_lazy('login')
+    permission_required = 'user.change_unidad'
     model = Unidad
     form_class = FormUnidad
     template_name = 'unidad/create.html'

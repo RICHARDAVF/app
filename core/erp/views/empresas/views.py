@@ -8,7 +8,7 @@ from core.erp.forms import FormEmpresa
 from django.http import JsonResponse
 
 class CreateViewEmpresa(LoginRequiredMixin,PermissionRequiredMixin,CreateView):
-    permission_required = ('user.view_empresa',)
+    permission_required = ('user.add_empresa',)
     model = Empresa
     form_class = FormEmpresa
     template_name = 'empresa/create.html'
@@ -45,7 +45,7 @@ class LisViewEmpresa(LoginRequiredMixin,PermisosMixins,ListView):
         context['create_url'] = reverse_lazy('erp:empresa_create')
         return context
 class UpdateViewEmpresa(LoginRequiredMixin,PermissionRequiredMixin,UpdateView):
-    permission_required = 'user.view_empresa'
+    permission_required = 'user.change_empresa'
     login_url = reverse_lazy('login')
     model = Empresa
     form_class = FormEmpresa
@@ -77,7 +77,8 @@ class UpdateViewEmpresa(LoginRequiredMixin,PermissionRequiredMixin,UpdateView):
         context['list_url'] = self.success_url
         context['action'] = 'edit'
         return context
-class DeleteViewEmpresa(LoginRequiredMixin,DeleteView):
+class DeleteViewEmpresa(LoginRequiredMixin,PermisosMixins,DeleteView):
+    permission_required = 'user.delete_empresa'
     login_url = reverse_lazy('login')
     model = Empresa
     template_name = 'empresa/delete.html'

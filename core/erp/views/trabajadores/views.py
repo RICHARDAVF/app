@@ -1,6 +1,7 @@
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.views.generic import CreateView,ListView,DeleteView,UpdateView,View
+from core.mixins import PermisosMixins
 from core.validation import Validation
 from ...models import Trabajadores,AsignacionEPPS,AsignacionEV,Vehiculos
 from ...forms import FormTrabajador
@@ -9,8 +10,9 @@ from django.views.decorators.csrf import csrf_exempt
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
 
-class CreateViewTrabajador(LoginRequiredMixin,CreateView):
+class CreateViewTrabajador(LoginRequiredMixin,PermisosMixins,CreateView):
     login_url = reverse_lazy('login')
+    permission_required = 'erp.add_trabajadores'
     model = Trabajadores
     form_class =FormTrabajador   
     template_name = 'trabajadores/create.html'
@@ -39,8 +41,9 @@ class CreateViewTrabajador(LoginRequiredMixin,CreateView):
         context['list_url'] = self.success_url
         context['action'] = 'add'
         return context
-class ListViewTrabajador(LoginRequiredMixin,ListView):
+class ListViewTrabajador(LoginRequiredMixin,PermisosMixins,ListView):
     login_url = reverse_lazy('login')
+    permission_required = 'erp.view_trabajadores'
     model = Trabajadores
     template_name = 'trabajadores/list.html'
     @method_decorator(csrf_exempt)
@@ -105,8 +108,9 @@ class ListViewTrabajador(LoginRequiredMixin,ListView):
         context['list_url'] = reverse_lazy('erp:trabajador_list')
         context['entidad'] = 'Trabajadores'
         return context
-class UpdateViewTrabajador(LoginRequiredMixin,UpdateView):
+class UpdateViewTrabajador(LoginRequiredMixin,PermisosMixins,UpdateView):
     login_url = reverse_lazy('login')
+    permission_required = 'erp.change_trabajadores'
     model = Trabajadores
     form_class = FormTrabajador
     template_name = 'trabajadores/create.html'
@@ -137,8 +141,9 @@ class UpdateViewTrabajador(LoginRequiredMixin,UpdateView):
         context['list_url'] = self.success_url
         context['action'] = 'edit'
         return context
-class DeleteViewTrabajador(LoginRequiredMixin,DeleteView):
+class DeleteViewTrabajador(LoginRequiredMixin,PermisosMixins,DeleteView):
     login_url = reverse_lazy('login')
+    permission_required = 'erp.delete_trabajadores'
     model = Trabajadores
     template_name = 'trabajadores/delete.html'
     success_url = reverse_lazy('erp:trabajador_list')
@@ -165,7 +170,7 @@ class DeleteViewTrabajador(LoginRequiredMixin,DeleteView):
         context['list_url'] = self.success_url
         return context
 
-class ViewEPPS(LoginRequiredMixin,View):
+class ViewEPPS(LoginRequiredMixin,PermisosMixins,View):
     login_url = reverse_lazy('login')
     model = AsignacionEPPS
     @method_decorator(csrf_exempt)

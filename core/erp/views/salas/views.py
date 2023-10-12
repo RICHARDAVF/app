@@ -2,6 +2,8 @@ from typing import Any, Dict
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.views.generic import CreateView,ListView,DeleteView,UpdateView
+
+from core.mixins import PermisosMixins
 from ...models import Salas
 from ...forms import FormSala
 from django.utils.decorators import method_decorator
@@ -9,8 +11,9 @@ from django.views.decorators.csrf import csrf_exempt
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
 # Create your views here.
-class CreateViewSala(LoginRequiredMixin,CreateView):
+class CreateViewSala(LoginRequiredMixin,PermisosMixins,CreateView):
     login_url = reverse_lazy('login')
+    permission_required = "erp.add_salas"
     model = Salas
     form_class = FormSala
     template_name = 'salas/create.html'
@@ -35,8 +38,9 @@ class CreateViewSala(LoginRequiredMixin,CreateView):
         context['list_url'] = self.success_url
         context['action'] = 'add'
         return context
-class ListViewSala(LoginRequiredMixin,ListView):
+class ListViewSala(LoginRequiredMixin,PermisosMixins,ListView):
     login_url = reverse_lazy('login')
+    permission_required = "erp.view_salas"
     model = Salas
     template_name = 'salas/list.html'
     @method_decorator(csrf_exempt)
@@ -75,8 +79,9 @@ class ListViewSala(LoginRequiredMixin,ListView):
         context['list_url'] = reverse_lazy('erp:sala_list')
         context['entidad'] = 'Salas'
         return context
-class UpdateViewSala(LoginRequiredMixin,UpdateView):
+class UpdateViewSala(LoginRequiredMixin,PermisosMixins,UpdateView):
     login_url = reverse_lazy('login')
+    permission_required = "erp.change_salas"
     model = Salas
     form_class = FormSala
     template_name = 'salas/create.html'
@@ -108,8 +113,9 @@ class UpdateViewSala(LoginRequiredMixin,UpdateView):
         context['list_url'] = self.success_url
         context['action'] = 'edit'
         return context
-class DeleteViewSala(LoginRequiredMixin,DeleteView):
+class DeleteViewSala(LoginRequiredMixin,PermisosMixins,DeleteView):
     login_url = reverse_lazy('login')
+    permission_required = "erp.delete_salas"
     model = Salas
     template_name = 'salas/delete.html'
     success_url = reverse_lazy('erp:sala_list')

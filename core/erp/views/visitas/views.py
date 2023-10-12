@@ -2,6 +2,7 @@
 from django.http import JsonResponse
 from django.shortcuts import redirect, render
 from django.views.generic import CreateView,ListView,DeleteView,UpdateView,View
+from core.mixins import PermisosMixins
 from core.validation import Validation
 from ...forms import FormVisitas,FormDelivery
 from ...models import Salas,Parqueo,Visitas,Asistentes
@@ -10,12 +11,12 @@ from django.views.decorators.csrf import csrf_exempt
 from django.urls import reverse_lazy
 from django.db.models import Q
 from django.contrib.auth.mixins import LoginRequiredMixin
-import json
+from django.contrib import messages
 from datetime import date,datetime,time
 # Create your views here.
-class CreateViewVisita(LoginRequiredMixin,CreateView):
+class CreateViewVisita(LoginRequiredMixin,PermisosMixins,CreateView):
     login_url = reverse_lazy('login')
-    user = ''
+    permission_required = 'erp.add_visitas'
     model = Visitas
     form_class = FormVisitas
     template_name = 'visitas/create.html'
@@ -67,7 +68,8 @@ class CreateViewVisita(LoginRequiredMixin,CreateView):
         context['list_url'] = self.success_url
         context['action'] = 'add'
         return context
-class ListViewVisita(LoginRequiredMixin,ListView):
+class ListViewVisita(LoginRequiredMixin,PermisosMixins,ListView):
+    permission_required = 'erp.view_visitas'
     login_url = reverse_lazy('login')
     model = Visitas
     template_name = 'visitas/list.html'
@@ -163,7 +165,8 @@ class ListViewVisita(LoginRequiredMixin,ListView):
         context['list_url'] = reverse_lazy('erp:visita_list')
         context['entidad'] = 'Visitas'
         return context
-class UpdateViewVisita(LoginRequiredMixin,UpdateView):
+class UpdateViewVisita(LoginRequiredMixin,PermisosMixins,UpdateView):
+    permission_required = 'erp.change_visitas'
     login_url = reverse_lazy('login')
     model = Visitas
     form_class = FormVisitas
@@ -235,7 +238,8 @@ class UpdateViewVisita(LoginRequiredMixin,UpdateView):
         context['list_url'] = self.success_url
         context['action'] = 'edit'
         return context
-class DeleteViewVisita(LoginRequiredMixin,DeleteView):
+class DeleteViewVisita(LoginRequiredMixin,PermisosMixins,DeleteView):
+    permission_required = 'erp.delete_visitas'
     login_url = reverse_lazy('login')
     model = Visitas
     template_name = 'visitas/delete.html'
@@ -261,7 +265,8 @@ class DeleteViewVisita(LoginRequiredMixin,DeleteView):
         context['Entidad'] = 'Visitas'
         context['list_url'] = self.success_url
         return context
-class CreateViewDelivery(LoginRequiredMixin,CreateView):
+class CreateViewDelivery(LoginRequiredMixin,PermisosMixins,CreateView):
+    permission_required = 'erp.add_visitas'
     login_url = reverse_lazy('login')
     model = Visitas
     form_class = FormDelivery
@@ -297,7 +302,9 @@ class CreateViewDelivery(LoginRequiredMixin,CreateView):
         context['list_url'] = self.success_url
         context['action'] = 'add'
         return context
-class UpdateViewDelivery(LoginRequiredMixin,UpdateView):
+class UpdateViewDelivery(LoginRequiredMixin,PermisosMixins,UpdateView):
+    permission_required = 'erp.change_visitas'
+
     login_url = reverse_lazy('login')
     model = Visitas
     form_class = FormDelivery
@@ -327,7 +334,9 @@ class UpdateViewDelivery(LoginRequiredMixin,UpdateView):
         context['list_url'] = self.success_url
         context['action'] = 'edit'
         return context  
-class CreateViewAsist(LoginRequiredMixin,View):
+class CreateViewAsist(LoginRequiredMixin,PermisosMixins,View):
+    permission_required = 'erp.add_visitas'
+
     login_url = reverse_lazy('login')
     model = Asistentes
     @method_decorator(csrf_exempt)
