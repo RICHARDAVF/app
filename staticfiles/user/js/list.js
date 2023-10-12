@@ -31,6 +31,14 @@ $(function () {
         columnDefs: [
             
             {
+                targets: [2],
+                class: 'text-center',
+                orderable: false,
+                render: function (data, type, row) {
+                    return `<a href="/user/usuario/perms/${row.id}/">${row.username}</a>`;
+                }
+            },
+            {
                 targets: [-4],
                 class: 'text-center',
                 orderable: false,
