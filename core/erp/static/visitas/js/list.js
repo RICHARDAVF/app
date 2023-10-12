@@ -399,7 +399,7 @@ $(function () {
             processData: false, 
             contentType: false,
             success: function (data) {
-                console.log(data)
+               
             },
             error: function (data) {
                 alert(data.error);
@@ -469,25 +469,52 @@ $(function () {
     $(document).on('click',"#hora_final",function(){
         var rowIndex = miTabla.row($(this).closest('tr')).index();
         var id = miTabla.cell(rowIndex,0).data();
-        $.ajax({
-            type:'POST',
-            url:window.location.pathname,
-            dataType:'json',
-            data:{
-                "id":id,
-                "action":"h_final",
-            },
-            success:function(data){
-                window.location.reload()
-                if(data.error){
-                    
-                    return alert(data.error)
+        $.confirm({
+            theme: 'material',
+            title: 'Alerta',
+            icon: 'fas fa-info',
+            content: "¿Esta seguro de marcar la hora final?",
+            columnClass: 'small',
+            typeAnimated: true,
+            cancelButtonClass: 'btn-primary',
+            draggable: true,
+            dragWindowBorder: false,
+            buttons:{
+                info:{
+                    text:'Si',
+                    btnClass:'btn-primary',
+                    action:function(){
+                        $.ajax({
+                            type:'POST',
+                            url:window.location.pathname,
+                            dataType:'json',
+                            data:{
+                                "id":id,
+                                "action":"h_final",
+                            },
+                            success:function(data){
+                                window.location.reload()
+                                if(data.error){
+                                    
+                                    return alert(data.error)
+                                }
+                            },
+                            error:function(){
+                                alert("Hubo un error en la peticion")
+                            }
+                        })
+                    }
+                },
+                danger:{
+                    text:'No',
+                    btnClass:'btn-red',
+                    action:function(){
+
+                    }
                 }
-            },
-            error:function(){
-                alert("Hubo un error en la peticion")
             }
         })
+       
     })
     $(document).on("click","#addvehiculo",function(){
         $('body').append(contenidoModal);
@@ -502,7 +529,7 @@ $(function () {
                 "action":"addvh"
             },
             success:function(data){
-                console.log(data)
+              
                 if(data.error){
                     return alert(data.error)
                 }
@@ -555,21 +582,48 @@ $(function () {
     $(document).on("click","#h_salida",function(){
         var rowIndex = miTabla.row($(this).closest('tr')).index();
         var id = miTabla.cell(rowIndex,0).data();
-        $.ajax({
-            type:"POST",
-            url:window.location.pathname,
-            dataType:'json',
-            data:{
-                "id":id,
-                "action":"h_salida"
-            },
-            success:function(data){
-                window.location.reload()
-            },
-            error:function(jqXHR, textStatus, errorThrown){
-                alert("Error en la solicitud "+textStatus,errorThrown)
+        $.confirm({
+            theme: 'material',
+            title: 'Alerta',
+            icon: 'fas fa-info',
+            content: "¿Esta seguro de marcar la hora de salida?",
+            columnClass: 'small',
+            typeAnimated: true,
+            cancelButtonClass: 'btn-primary',
+            draggable: true,
+            dragWindowBorder: false,
+            buttons:{
+                info:{
+                    text:'Si',
+                    btnClass:'btn-primary',
+                    action:function(){
+                        $.ajax({
+                            type:"POST",
+                            url:window.location.pathname,
+                            dataType:'json',
+                            data:{
+                                "id":id,
+                                "action":"h_salida"
+                            },
+                            success:function(data){
+                                window.location.reload()
+                            },
+                            error:function(jqXHR, textStatus, errorThrown){
+                                alert("Error en la solicitud "+textStatus,errorThrown)
+                            }
+                        })
+                    }
+                },
+                danger:{
+                    text:'No',
+                    btnClass:'btn-red',
+                    action:function(){
+
+                    }
+                }
             }
         })
+       
     })
     $(document).on("click","#anular",function(){
         var rowIndex = miTabla.row($(this).closest('tr')).index();
@@ -623,7 +677,7 @@ $(function () {
         const formData = new FormData($('#FormVH')[0])
         formData.append('action', 'formvh');
         formData.append('n_parqueo',$('#num_park').val() );
-        console.log(formData)
+        
         $.ajax({
             type:'POST',
             dataType:'json',

@@ -14,21 +14,22 @@ class CreateViewParqueo(LoginRequiredMixin,PermisosMixins,CreateView):
     permission_required = ('erp.add_parqueo',)
     login_url = reverse_lazy('login')
     model = Parqueo
-    form_class = FormParqueo
+    form_class = FormParqueoAdmin
     success_url = reverse_lazy('erp:parqueo_list')
+    template_name = 'parqueo/create_parqueo_admin.html'
     @method_decorator(csrf_exempt)
     def dispatch(self, request, *args, **kwargs):
         return super().dispatch(request, *args, **kwargs)
 
-    def get_template_names(self):
-        if self.request.user.is_superuser:
-           return 'parqueo/create_parqueo_admin.html'
-        else:
-           return 'parqueo/create_parqueo_user.html'
-    def get_form_class(self):
-        if self.request.user.is_superuser:
-            return FormParqueoAdmin
-        return FormParqueo
+    # def get_template_names(self):
+    #     if self.request.user.is_superuser:
+    #        return 'parqueo/create_parqueo_admin.html'
+    #     else:
+    #        return 'parqueo/create_parqueo_user.html'
+    # def get_form_class(self):
+    #     if self.request.user.is_superuser:
+    #         return FormParqueoAdmin
+    #     return FormParqueo
     
     def post(self, request, *args, **kwargs) :
         data = {}
