@@ -38,7 +38,7 @@ class ListViewUnidad(LoginRequiredMixin,PermisosMixins,ListView):
     template_name = 'unidad/list.html'
     def get_queryset(self):
         if not self.request.user.is_superuser:
-            return Unidad.objects.select_related("empresa").filter(id=self.request.user.unidad_id)
+            return Unidad.objects.select_related("empresa").filter(empresa_id=self.request.user.empresa_id)
         return Unidad.objects.select_related("empresa").all()
     def get_context_data(self, **kwargs):
         context =  super().get_context_data(**kwargs)
@@ -82,7 +82,10 @@ class UpdateViewUnidad(LoginRequiredMixin,PermisosMixins,UpdateView):
         try:
             action = request.POST['action']
             if action == 'edit':
-                Unidad.objects.filter(id=kwargs['pk']).update(empresa_id=request.POST['empresa'],unidad=request.POST['unidad'])
+                instance = Unidad.objects.get(id=kwargs['pk'])
+                instance.empresa_id = request.POST['empresa']
+                instance.unidad = request.POST['unidad']
+                instance.save()
             else:
                 data['error'] = 'No ha ingresado a ninguna opción'
         except Exception as e:

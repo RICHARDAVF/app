@@ -158,7 +158,7 @@ $(function () {
                 "action":"epps"
             },
             success: function(data) {
-                
+                console.log(data)
                 $('.modal-body').html(
                     ` <form method="POST" action="." enctype="multipart/form-data" id="myForm1">
                         <input type="hidden" value="${data.action}" readonly="true" id="action" name="action" />
@@ -221,7 +221,7 @@ $(function () {
             },
             error: function(jqXHR, textStatus, errorThrown) {
                 // Función que se ejecutará si hay algún error en la petición
-                console.error("Error en la petición:", textStatus, errorThrown);
+                console.error("Error en la petición:", textStatus, errorThrown,jqXHR);
             }
         });
       

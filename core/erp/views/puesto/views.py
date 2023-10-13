@@ -81,11 +81,11 @@ class UpdateViewPuesto(LoginRequiredMixin,PermisosMixins,UpdateView):
         try:
             action = request.POST['action']
             if action == 'edit':
-                Puesto.objects.filter(id=kwargs['pk']).update(
-                    unidad_id=request.POST['unidad'],
-                    puesto=request.POST['puesto'],
-                    direccion = request.POST['direccion']
-                    )   
+                instance = Puesto.objects.get(id=kwargs['pk'])
+                instance.unidad_id=request.POST['unidad']
+                instance.puesto=request.POST['puesto']
+                instance.direccion = request.POST['direccion']
+                instance.save()
             else:
                 data['error'] = 'No ha ingresado a ninguna opción'
         except Exception as e:

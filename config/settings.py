@@ -55,8 +55,9 @@ INSTALLED_APPS = [
     'core.dashboard',
     #LIBRERIAS
     'widget_tweaks',
+    'simple_history',
     #API,
-    # 'rest_framework'
+    'rest_framework'
 
     
 ]
@@ -69,6 +70,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'simple_history.middleware.HistoryRequestMiddleware',
     'crum.CurrentRequestUserMiddleware',
 
 ]

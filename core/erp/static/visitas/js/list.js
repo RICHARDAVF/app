@@ -62,6 +62,7 @@ $(function () {
             {'data': "sctr_salud"},//14
             {'data': "p_visita"},//15
             {'data': "id"},//16
+            {'data': "id"},//17
         ],
         columnDefs:[
             {
@@ -163,17 +164,26 @@ $(function () {
                 }
             },
             {
-                targets:[-2],
+                targets:[-3],
                 class:'text-center',
                 render:function(data,type,row){
                     return `<div style="width:150px; font-weight: bold;font-size:12px;">${row.p_visita}</div>`
                 }
             },
             {
-                targets:[-1],
+                targets:[-3],
                 class:'text-center',
                 render:function(data,type,row){
                     return '<input type="button" class="btn btn-warning" value="info." id="addvehiculo"/>'
+                }
+            },
+            {
+                targets:[-1],
+                class:'text-center',
+                render:function(data,type,row){
+                    var buttons = '<div class="d-flex justify-content-center"><a href="/erp/visita/update/' + row.id + '/" class="btn btn-warning btn-xs btn-flat"><i class="fas fa-edit"></i></a> ';
+                    buttons += '<a href="/erp/visita/delete/' + row.id + '/" type="button" class="btn btn-danger btn-xs btn-flat"><i class="fas fa-trash-alt"></i></a></row>';
+                    return buttons;
                 }
             },
             
@@ -446,25 +456,52 @@ $(function () {
     $(document).on('click',"#hora_llegada",function(){
         var rowIndex = miTabla.row($(this).closest('tr')).index();
         var id = miTabla.cell(rowIndex,0).data();
-        $.ajax({
-            type:'POST',
-            url:window.location.pathname,
-            dataType:'json',
-            data:{
-                "id":id,
-                "action":"confirm",
-            },
-            success:function(data){
-                window.location.reload()
-                if(data.error){
-                    return alert(data.error)
+        $.confirm({
+            theme: 'material',
+            title: 'Alerta',
+            icon: 'fas fa-info',
+            content: "¿Esta seguro de marcar la hora de llegada?",
+            columnClass: 'small',
+            typeAnimated: true,
+            cancelButtonClass: 'btn-primary',
+            draggable: true,
+            dragWindowBorder: false,
+            buttons:{
+                info:{
+                    text:'Si',
+                    btnClass:'btn-primary',
+                    action:function(){
+                        $.ajax({
+                            type:'POST',
+                            url:window.location.pathname,
+                            dataType:'json',
+                            data:{
+                                "id":id,
+                                "action":"confirm",
+                            },
+                            success:function(data){
+                                window.location.reload()
+                                if(data.error){
+                                    return alert(data.error)
+                                }
+                              
+                            },
+                            error:function(){
+                                alert("Hubo un error en la peticion")
+                            }
+                        })
+                    }
+                },
+                danger:{
+                    text:'No',
+                    btnClass:'btn-red',
+                    action:function(){
+
+                    }
                 }
-              
-            },
-            error:function(){
-                alert("Hubo un error en la peticion")
             }
         })
+        
     })
     $(document).on('click',"#hora_final",function(){
         var rowIndex = miTabla.row($(this).closest('tr')).index();

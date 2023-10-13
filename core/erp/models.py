@@ -6,6 +6,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from datetime import date
 from core.user.models import Empresa,Unidad,Puesto
+from simple_history.models import HistoricalRecords
 # Create your models here.
 class Trabajadores(models.Model):
     tipo = models.CharField(max_length=3,choices=[('1',"DNI"),('2',"C.E"),('3',"PASAPORTE")],blank=True,null=True)
@@ -15,6 +16,8 @@ class Trabajadores(models.Model):
     telefono = models.PositiveIntegerField(verbose_name="Celular",null=True,blank=True)
     direccion = models.CharField(max_length=100,verbose_name="Direccion",null=True,blank=True)
     sctr = models.FileField(upload_to='sctr/',verbose_name="SCTR",blank=True,null=True)
+    history = HistoricalRecords()
+
     def toJSON(self):
         item = model_to_dict(self)
         item['sctr'] = self.get_file()
@@ -36,6 +39,8 @@ class Vehiculos(models.Model):
     modelo = models.CharField(max_length=20,verbose_name="Modelo vel Vehiculo",default='')
     placa = models.CharField(max_length=6,verbose_name="Placa de rodaje",default='')
     fv_soat = models.DateField(auto_now=True,verbose_name="SOAT-Fecha de Vencimiento")
+    history = HistoricalRecords()
+
     def toJSON(self):
         item = model_to_dict(self)
         item['trabajador'] = self.trabajador.id
@@ -54,6 +59,8 @@ class AsignacionEPPS(models.Model):
     lentes = models.BooleanField(default=False,verbose_name="Lentes de seguridad")
     chaleco = models.BooleanField(default=False,verbose_name="Chaleco reflectivo")
     respirador = models.BooleanField(default=False,verbose_name="Respirador doble via")
+    history = HistoricalRecords()
+
     def toJSON(self):
         item = model_to_dict(self)
         item['trabajador'] = self.trabajador.id
@@ -72,6 +79,8 @@ class AsignacionEV(models.Model):#ASIGNACION DE EQUIPO VEHICULAR
     taco = models.BooleanField(default=False,verbose_name="taco")
     pertiga = models.BooleanField(default=False,verbose_name="pertiga")
     circulina = models.BooleanField(default=False,verbose_name="Circulina")
+    history = HistoricalRecords()
+
     def toJSON(self):
         item = model_to_dict(self)
         item['trabajador'] = self.trabajador.id
@@ -87,6 +96,8 @@ class IngresoSalida(models.Model):
     fecha = models.DateField(auto_created=False,verbose_name="Fecha",null=True,blank=True)
     h_salida = models.TimeField(auto_created=False,verbose_name="Hora de salida",null=True,blank=True)
     h_entrada = models.TimeField(auto_now=False,verbose_name="Hora de ingreso",null=True,blank=True)
+    history = HistoricalRecords()
+
     class Meta:
         verbose_name = "IngresoSalida"
         verbose_name_plural = "IngresosSalidas"
@@ -102,6 +113,8 @@ class Salas(models.Model):
     capacidad = models.PositiveIntegerField(verbose_name="Capacidad",null=True,blank=True)
     unidad = models.ForeignKey(Unidad,on_delete=models.DO_NOTHING,verbose_name="unidad",null=True,blank=True)
     puesto = models.ForeignKey(Puesto,on_delete=models.DO_NOTHING,verbose_name="puesto",null=True,blank=True)
+    history = HistoricalRecords()
+
     class Meta:
         verbose_name = 'Sala'
         verbose_name_plural = 'Salas'
@@ -120,6 +133,8 @@ class Parqueo(models.Model):
     empresa = models.ForeignKey(Empresa,on_delete=models.DO_NOTHING,verbose_name="Empresa",null=True,blank=True)
     unidad = models.ForeignKey(Unidad,on_delete=models.DO_NOTHING,verbose_name="unidad",null=True,blank=True)
     puesto = models.ForeignKey(Puesto,on_delete=models.DO_NOTHING,verbose_name="puesto",null=True,blank=True)
+    history = HistoricalRecords()
+
     class Meta:
         verbose_name = "Parqueo"
         verbose_name_plural = "Parqueos"
@@ -157,6 +172,8 @@ class Visitas(models.Model):
     cantidad = models.CharField(verbose_name="Cantidad",max_length=20,blank=True,null=True)
     tipo = models.CharField(max_length=3,choices=[('1','VISITA'),("2","COURRIER/DELIVERY")],default='1')
     observacion = models.CharField(max_length=100,verbose_name="Observaciones",blank=True,null=True)
+    history = HistoricalRecords()
+
     def get_file(self):
         if self.guias:
             return '{}{}'.format(MEDIA_URL, self.guias)
@@ -183,6 +200,8 @@ class Asistentes(models.Model):
     soat_v = models.DateField(default=date.today,verbose_name="FV-SOAT",null=True,blank=True)
     sctr = models.FileField(upload_to='strc/', verbose_name="STRC",null=True,blank=True)
     n_parqueo = models.ForeignKey(Parqueo,on_delete=models.DO_NOTHING,verbose_name="Parqueo",null=True,blank=True)
+    history = HistoricalRecords()
+
     class Meta:
         verbose_name = "asinten"
         verbose_name_plural = 'asistentes'

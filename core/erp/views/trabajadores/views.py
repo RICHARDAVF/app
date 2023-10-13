@@ -116,7 +116,7 @@ class UpdateViewTrabajador(LoginRequiredMixin,PermisosMixins,UpdateView):
     template_name = 'trabajadores/create.html'
     success_url = reverse_lazy('erp:trabajador_list')
     url_redirect = success_url
-
+    permission_denied_message = "Usted no puede accerde aqui"
     def dispatch(self, request, *args, **kwargs):
         self.object = self.get_object()
         return super().dispatch(request, *args, **kwargs)
@@ -207,7 +207,6 @@ class ViewEPPS(LoginRequiredMixin,PermisosMixins,View):
                 data['taco'] = datos.taco
                 data['pertiga'] = datos.pertiga
                 data['circulina'] = datos.circulina
-                print(datos)
         except Exception as e:
             data['error'] = str(e)
        

@@ -2,11 +2,14 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.forms import model_to_dict
 from crum import get_current_request
+from simple_history.models import HistoricalRecords
 from config.settings import MEDIA_URL, STATIC_URL
 class Empresa(models.Model):
     ruc = models.CharField(max_length=11,verbose_name="RUC",unique=True)
     razon_social = models.CharField(max_length=150,verbose_name="Razon social")
     direccion = models.CharField(max_length=150,verbose_name="Direccion",null=True,blank=True)
+    history = HistoricalRecords()
+
     class Meta:
         verbose_name = 'empresa'
         verbose_name_plural = "empresas"
@@ -19,6 +22,8 @@ class Empresa(models.Model):
 class Unidad(models.Model):
     empresa = models.ForeignKey(Empresa,on_delete=models.DO_NOTHING,null=True,blank=True,verbose_name="Empresa")
     unidad = models.CharField(max_length=150,verbose_name="Unidad")
+    history = HistoricalRecords()
+
     class Meta:
         verbose_name = "unidad"
         verbose_name_plural = "unidades"
@@ -33,11 +38,11 @@ class Puesto(models.Model):
     unidad = models.ForeignKey(Unidad,on_delete=models.DO_NOTHING,verbose_name="Unidad")
     puesto = models.CharField(max_length=15,verbose_name="Puesto")
     direccion = models.CharField(max_length=150,verbose_name="Direccion")
+    history = HistoricalRecords()
     class Meta:
         verbose_name = "puesto"
         verbose_name_plural = "puestos"
         db_table = 'puestos'
-
     def toJSON(self):
         item = model_to_dict(self)
         return item
@@ -53,6 +58,8 @@ class User(AbstractUser):
     empresa = models.ForeignKey(Empresa,on_delete=models.DO_NOTHING,verbose_name="Empresa",null=True,blank=True)
     unidad = models.ForeignKey(Unidad,on_delete=models.DO_NOTHING,verbose_name='Unidad',null=True,blank=True)
     puesto = models.ForeignKey(Puesto,on_delete=models.DO_NOTHING,verbose_name='Puesto',null=True,blank=True)
+    history = HistoricalRecords()
+
     def toJSON(self):
         item = model_to_dict(self, exclude=['password', 'user_permissions', 'last_login'])
         if self.last_login:
