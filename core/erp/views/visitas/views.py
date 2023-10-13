@@ -117,9 +117,15 @@ class ListViewVisita(LoginRequiredMixin,PermisosMixins,ListView):
                 except Exception as e:
                     data['error'] = f"Ocurrio un erro {str(e)}"
             elif action =='confirm':
-                Visitas.objects.filter(id=request.POST['id']).update(h_llegada=datetime.now().strftime('%H:%M:%S'),estado=2)
+                instance = Visitas.objects.get(id=request.POST['id'])
+                instance.h_llegada=datetime.now().strftime('%H:%M:%S')
+                instance.estado=2
+                instance.save()
             elif action =='h_final':
-                Visitas.objects.filter(id=request.POST['id']).update(h_termino=datetime.now().strftime('%H:%M:%S'),estado=3)
+                instance = Visitas.objects.get(id=request.POST['id'])
+                instance.h_termino = datetime.now().strftime('%H:%M:%S')
+                instance.estado = 3
+                instance.save()
             elif action =="addvh":
                 data = {}
                 for value in Visitas.objects.filter(id=request.POST['id']).values_list("v_marca", "v_modelo", "v_placa", "fv_soat", "observacion","n_parqueo"):
@@ -133,9 +139,16 @@ class ListViewVisita(LoginRequiredMixin,PermisosMixins,ListView):
                     parqueos.append({"id":value[0],"numero":value[1]})
                 data['parking']=parqueos
             elif action=="h_salida":
-                Visitas.objects.filter(id=request.POST['id']).update(h_salida=datetime.now().strftime("%H:%M:%S"),estado=3)
+                instance = Visitas.objects.get(id=request.POST['id'])
+                instance.h_salida = datetime.now().strftime("%H:%M:%S")
+                instance.estado = 3
+                instance.save()
             elif action=="anular":
-                Visitas.objects.filter(id=request.POST['id']).update(estado=0,h_llegada=time(0,0),h_salida=time(0,0))
+                instance = Visitas.objects.get(id=request.POST['id'])
+                instance.estado = 0
+                instance.h_llegada = time(0,0)
+                instance.h_salida = time(0,0)
+                instance.save()
             elif action == "formvh":
                 try:
                     int(request.POST['n_parqueo'])
@@ -147,7 +160,9 @@ class ListViewVisita(LoginRequiredMixin,PermisosMixins,ListView):
                         observacion = request.POST['observacion'],
                         n_parqueo = request.POST['n_parqueo']
                     )
-                    Parqueo.objects.filter(id=request.POST['n_parqueo']).update(estado=0)
+                    instance = Parqueo.objects.get(id=request.POST['n_parqueo'])
+                    instance.estado = 0
+                    instance.save()
                 except :
                     data['error'] = 'Seleccione un numero de parqueo'
                     
@@ -187,16 +202,22 @@ class UpdateViewVisita(LoginRequiredMixin,PermisosMixins,UpdateView):
                 
                 sala = request.POST['sala']
                 try:
-                    Salas.objects.filter(sala=sala).update(estado=1)
+                    instance = Salas.objects.get(sala=sala)
+                    instance.estado = 1
+                    instance.save()
 
                 except:
                     pass
                 if request.POST['h_termino']!='':
-                    Salas.objects.filter(sala=sala).update(estado=0)
+                    instance = Salas.objects.get(sala=sala)
+                    instance.estado = 0
+                    instance.save()
                     try:
-                        Parqueo.objects.filter(numero=request.POST['n_parqueo']).update(estado=True)
+                        instance = Parqueo.objects.get(numero=request.POST['n_parqueo'])
+                        instance.estado=True
+                        instance.save()
                     except Exception as e:
-                        pass
+                        data['error'] = f"Ocurrio un error {str()}"
             else:
                 data['error'] = 'No ha ingresado a ninguna opción'
         except Exception as e:

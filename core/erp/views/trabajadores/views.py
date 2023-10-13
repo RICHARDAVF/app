@@ -65,34 +65,34 @@ class ListViewTrabajador(LoginRequiredMixin,PermisosMixins,ListView):
             if action == 'searchdata':
                 data = self.listar()
             elif action == "editepps":
-               AsignacionEPPS.objects.filter(trabajador_id=int(request.POST["id"])).update(
-                   casco = request.POST['casco'],
-                   barbiquejo = request.POST['barbiquejo'],
-                   botas = request.POST['botas'],
-                   tapones = request.POST['tapones'],
-                   lentes = request.POST['lentes'],
-                   chaleco = request.POST['chaleco'],
-                   respirador = request.POST['respirador']
-               )
-               data = self.listar()
+                instance = AsignacionEPPS.objects.get(trabajador_id=int(request.POST["id"]))
+                instance.casco = request.POST['casco']
+                instance.barbiquejo = request.POST['barbiquejo']
+                instance.botas = request.POST['botas']
+                instance.tapones = request.POST['tapones']
+                instance.lentes = request.POST['lentes']
+                instance.chaleco = request.POST['chaleco']
+                instance.respirador = request.POST['respirador']
+                instance.save()
+                data = self.listar()
             elif action == "editvh":
-                Vehiculos.objects.filter(trabajador_id=int(request.POST['id'])).update(
-                    marca = request.POST['marca'],
-                    modelo = request.POST['modelo'],
-                    placa = request.POST['placa'],
-                    fv_soat = request.POST['fv_soat'],
-                )
+                instance = Vehiculos.objects.get(trabajador_id=int(request.POST['id']))
+                instance.marca = request.POST['marca']
+                instance.modelo = request.POST['modelo']
+                instance.placa = request.POST['placa']
+                instance.fv_soat = request.POST['fv_soat'],
+                instance.save()
                 data = self.listar()
             elif action == "editepsv":
-                AsignacionEV.objects.filter(trabajador_id=int(request.POST['id'])).update(
-                    botiquin = request.POST['botiquin'],
-                    extintor = request.POST['extintor'],
-                    triangulo_s = request.POST['triangulo_s'],
-                    cono_s = request.POST['cono_s'],
-                    taco = request.POST['taco'],
-                    pertiga = request.POST['pertiga'],
-                    circulina = request.POST['circulina']
-                )
+                instance = AsignacionEV.objects.get(trabajador_id=int(request.POST['id']))
+                instance.botiquin = request.POST['botiquin']
+                instance.extintor = request.POST['extintor']
+                instance.triangulo_s = request.POST['triangulo_s']
+                instance.cono_s = request.POST['cono_s']
+                instance.taco = request.POST['taco']
+                instance.pertiga = request.POST['pertiga']
+                instance.circulina = request.POST['circulina']
+                instance.save()
                 data = self.listar()
             else:
                 data['error'] = 'Ha ocurrido un error'

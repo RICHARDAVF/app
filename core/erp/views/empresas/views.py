@@ -6,13 +6,17 @@ from core.mixins import PermisosMixins
 from core.user.models import Empresa
 from core.erp.forms import FormEmpresa
 from django.http import JsonResponse
-
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
 class CreateViewEmpresa(LoginRequiredMixin,PermissionRequiredMixin,CreateView):
     permission_required = ('user.add_empresa',)
     model = Empresa
     form_class = FormEmpresa
     template_name = 'empresa/create.html'
     success_url = reverse_lazy('erp:empresa_list')
+    @method_decorator(csrf_exempt)
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
     def post(self,request,*args,**kwargs):
         data = {}
         try:
@@ -21,7 +25,7 @@ class CreateViewEmpresa(LoginRequiredMixin,PermissionRequiredMixin,CreateView):
                 form = self.get_form()
                 data = form.save()
             elif action =="search_ruc":
-                data = Validation(request.POST['doc'],'ruc').valid()
+                data = Validation(request.POST['ruc'],'ruc').valid()
             else:
                 data['error'] = f'No se ingreso ninguna opcion'
         except Exception as e:
@@ -52,7 +56,7 @@ class UpdateViewEmpresa(LoginRequiredMixin,PermissionRequiredMixin,UpdateView):
     template_name = 'empresa/create.html'
     success_url = reverse_lazy('erp:empresa_list')
     url_redirect = success_url
-
+    @method_decorator(csrf_exempt)
     def dispatch(self, request, *args, **kwargs):
         self.object = self.get_object()
         return super().dispatch(request, *args, **kwargs)
@@ -64,6 +68,8 @@ class UpdateViewEmpresa(LoginRequiredMixin,PermissionRequiredMixin,UpdateView):
             if action == 'edit':
                 form = self.get_form()
                 data = form.save()
+            elif action =="search_ruc":
+                data = Validation(request.POST['ruc'],'ruc').valid()
             else:
                 data['error'] = 'No ha ingresado a ninguna opción'
         except Exception as e:

@@ -77,15 +77,16 @@ class UpdateViewUnidad(LoginRequiredMixin,PermisosMixins,UpdateView):
     template_name = 'unidad/create.html'
     success_url = reverse_lazy('erp:unidad_list')
     url_redirect = success_url
+    def dispatch(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        return super().dispatch(request, *args, **kwargs)
     def post(self, request, *args, **kwargs):
         data = {}
         try:
             action = request.POST['action']
             if action == 'edit':
-                instance = Unidad.objects.get(id=kwargs['pk'])
-                instance.empresa_id = request.POST['empresa']
-                instance.unidad = request.POST['unidad']
-                instance.save()
+                form = self.get_form()
+                data = form.save()
             else:
                 data['error'] = 'No ha ingresado a ninguna opción'
         except Exception as e:
