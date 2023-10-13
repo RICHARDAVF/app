@@ -8,10 +8,12 @@ charset-normalizer==3.2.0
 cryptography==41.0.3
 dj-database-url==2.0.0
 Django==4.2.3
+django-appconf==1.0.5
 django-betterforms==2.0.0
 django-crum==0.7.9
 django-multiform==0.1
 django-rest-framework==0.1.0
+django-simple-history==3.4.0
 django-widget-tweaks==1.4.12
 djangorestframework==3.14.0
 gunicorn==21.2.0
@@ -29,6 +31,7 @@ PyNaCl==1.5.0
 pyodbc==4.0.39
 python-dotenv==1.0.0
 pytz==2023.3
+redis==5.0.0
 requests==2.31.0
 requests-file==1.5.1
 requests-toolbelt==1.0.0
