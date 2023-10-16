@@ -596,10 +596,10 @@ $(function () {
                         <input type='hidden' class="form-control ml-3" value="${id}" editable='false' id="id" name="id"/>
                         <div class="mt-1">
                             <div class="d-flex">
-                                <label class="form-label">MARCA: </label><input class="form-control ml-4" ${(data.vh.v_marca!==null)?'value="'+data.vh.v_marca+'"':''}  id="v_marca" name="v_marca"/>
+                                <label class="form-label">Marca: </label><input class="form-control ml-4" ${(data.vh.v_marca!==null)?'value="'+data.vh.v_marca+'"':''}  id="v_marca" name="v_marca"/>
                             </div>
                             <div class="d-flex mt-2">
-                                <label class="form-label">MODELO: </label><input  class="form-control ml-4 " ${(data.vh.v_modelo!==null)?'value="'+data.vh.v_modelo+'"':''}  id="v_modelo" name="v_modelo"/>
+                                <label class="form-label">Modelo: </label><input  class="form-control ml-4 " ${(data.vh.v_modelo!==null)?'value="'+data.vh.v_modelo+'"':''}  id="v_modelo" name="v_modelo"/>
                             </div>
                             <div class="d-flex mt-2">
                                 <label class="form-label">Placa: </label><input  class="form-control ml-4 " ${(data.vh.v_placa!==null)?'value="'+data.vh.v_placa+'"':''} id="v_placa" name="v_placa" />

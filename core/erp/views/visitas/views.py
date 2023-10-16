@@ -151,19 +151,21 @@ class ListViewVisita(LoginRequiredMixin,PermisosMixins,ListView):
                 instance.save()
             elif action == "formvh":
                 try:
-                    int(request.POST['n_parqueo'])
-                    instance = Visitas.objects.filter(id=request.POST['id'])
+                   
+                    instance_park = Parqueo.objects.get(id=int(request.POST['n_parqueo']))
+                    instance = Visitas.objects.get(id=request.POST['id'])
                     instance.v_marca=request.POST['v_marca']
-                    instance.v_modelo=request.POST['v_modelo'],
-                    instance.v_placa=request.POST['v_placa'],
-                    instance.fv_soat = request.POST['fv_soat'],
-                    instance.observacion = request.POST['observacion'],
-                    instance.n_parqueo = request.POST['n_parqueo']
+                    instance.v_modelo=request.POST['v_modelo']
+                    instance.v_placa=request.POST['v_placa']
+                    instance.fv_soat = request.POST['fv_soat']
+                    instance.observacion = request.POST['observacion']
+                    instance.n_parqueo = instance_park
                     instance.save()
-                    instance = Parqueo.objects.get(id=request.POST['n_parqueo'])
-                    instance.estado = 0
-                    instance.save()
-                except :
+
+                    instance_park.estado = 0
+                    instance_park.save()
+                except Exception as e:
+                    print(str(e))
                     data['error'] = 'Seleccione un numero de parqueo'
                     
             else:
