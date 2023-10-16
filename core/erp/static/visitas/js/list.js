@@ -96,7 +96,7 @@ $(function () {
                 class:'text-center',
                 targets:[2],
                 render:function(data,type,row){
-                    return '<div style="width:0px;font-size:12px; font-weight: bold;">'+row.names+'</div>'
+                    return '<div style="width:250px;font-size:12px; font-weight: bold;">'+row.names+'</div>'
                 }
             },
             {
