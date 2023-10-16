@@ -1,7 +1,8 @@
+from django.forms.models import BaseModelForm
 from django.views.generic import CreateView,ListView,DeleteView,UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin,PermissionRequiredMixin
 from core.mixins import PermisosMixins
-from core.user.models import Unidad
+from core.user.models import Unidad,Empresa
 from core.erp.forms import FormUnidad
 from django.urls import reverse_lazy
 from django.http import JsonResponse
@@ -25,6 +26,13 @@ class CreateViewUnidad(LoginRequiredMixin,PermisosMixins,CreateView):
         except Exception as e:
             data['error'] = f"Ocurrio un error: {str(e)}"
         return JsonResponse(data,safe=False)
+    def get_form(self, form_class=None):
+        form =  super().get_form(form_class)
+        if not self.request.user.is_superuser:
+            form.fields['empresa'].queryset = Empresa.objects.filter(id=self.request.user.empresa_id)
+        else:
+            form.fields['empresa'].queryset = Empresa.objects.all()
+        return form
     def get_context_data(self, **kwargs) :
         context =  super().get_context_data(**kwargs)
         context['title'] = "Creacion de una unidad"

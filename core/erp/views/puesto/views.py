@@ -4,7 +4,7 @@ from django import http
 from django.views.generic import CreateView,ListView,DeleteView,UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from core.mixins import PermisosMixins
-from core.user.models import Puesto
+from core.user.models import Puesto,Unidad
 from core.erp.forms import FormPuesto
 from django.urls import reverse_lazy
 from django.http import HttpResponse, JsonResponse
@@ -26,6 +26,13 @@ class CreateViewPuesto(LoginRequiredMixin,PermisosMixins,CreateView):
         except Exception as e:
             data['error'] = f"Ocurrio un error: {str(e)}"
         return JsonResponse(data,safe=False)
+    def get_form(self, form_class=None):
+        form =  super().get_form(form_class)
+        if not self.request.user.is_superuser:
+            form.fields['unidad'].queryset = Unidad.objects.filter(id=self.request.user.unidad_id)
+        else:
+            form.fields['unidad'].queryset = Unidad.objects.all()
+        return form
     def get_context_data(self, **kwargs) :
         context =  super().get_context_data(**kwargs)
         context['title'] = "Creacion de un puesto"
