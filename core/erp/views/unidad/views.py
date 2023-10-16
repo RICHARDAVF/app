@@ -7,11 +7,11 @@ from django.urls import reverse_lazy
 from django.http import JsonResponse
 
 class CreateViewUnidad(LoginRequiredMixin,PermisosMixins,CreateView):
+    permission_required = 'user.view_unidad'
     model = Unidad
     form_class = FormUnidad
     template_name = 'unidad/create.html'
     success_url = reverse_lazy('erp:unidad_list')
-    permission_required = 'user.view_unidad'
     
     def post(self, request, *args, **kwargs) :
         data = {}

@@ -96,7 +96,7 @@ $(function () {
                 class:'text-center',
                 targets:[2],
                 render:function(data,type,row){
-                    return '<div style="width:250px;font-size:12px; font-weight: bold;">'+row.names+'</div>'
+                    return '<div style="width:0px;font-size:12px; font-weight: bold;">'+row.names+'</div>'
                 }
             },
             {
@@ -133,6 +133,9 @@ $(function () {
                 class:'text-center',
                 targets:[9],
                 render:function(data,type,row){
+                    if(row.estado==0){
+                        return '<strong>Anulado</strong>'
+                    }
                    var date = (row.tipo==1)?`<input type='button' id='btnaddperson' class='btn btn-success' value='Asistente.'/>`:'';
                     return date
                 }
@@ -167,13 +170,17 @@ $(function () {
                 targets:[-3],
                 class:'text-center',
                 render:function(data,type,row){
+                  
                     return `<div style="width:150px; font-weight: bold;font-size:12px;">${row.p_visita}</div>`
                 }
             },
             {
-                targets:[-3],
+                targets:[-2],
                 class:'text-center',
                 render:function(data,type,row){
+                    if(row.estado==0){
+                        return '<strong>Anulado</strong>'
+                    }
                     return '<input type="button" class="btn btn-warning" value="info." id="addvehiculo"/>'
                 }
             },
@@ -181,6 +188,9 @@ $(function () {
                 targets:[-1],
                 class:'text-center',
                 render:function(data,type,row){
+                    if(row.estado==0){
+                        return '<strong>Anulado</strong>'
+                    }
                     var buttons = '<div class="d-flex justify-content-center"><a href="/erp/visita/update/' + row.id + '/" class="btn btn-warning btn-xs btn-flat"><i class="fas fa-edit"></i></a> ';
                     buttons += '<a href="/erp/visita/delete/' + row.id + '/" type="button" class="btn btn-danger btn-xs btn-flat"><i class="fas fa-trash-alt"></i></a></row>';
                     return buttons;

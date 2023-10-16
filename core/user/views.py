@@ -93,7 +93,6 @@ class UpdateViewUser(LoginRequiredMixin,PermisosMixins,UpdateView):
     template_name = 'user/create.html'
     success_url = reverse_lazy('user:user_list')
     url_redirect = success_url
-
     @method_decorator(csrf_exempt)
     def dispatch(self, request, *args, **kwargs):
         self.object = self.get_object()

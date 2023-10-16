@@ -152,14 +152,14 @@ class ListViewVisita(LoginRequiredMixin,PermisosMixins,ListView):
             elif action == "formvh":
                 try:
                     int(request.POST['n_parqueo'])
-                    Visitas.objects.filter(id=request.POST['id']).update(
-                        v_marca=request.POST['v_marca'],
-                        v_modelo=request.POST['v_modelo'],
-                        v_placa=request.POST['v_placa'],
-                        fv_soat = request.POST['fv_soat'],
-                        observacion = request.POST['observacion'],
-                        n_parqueo = request.POST['n_parqueo']
-                    )
+                    instance = Visitas.objects.filter(id=request.POST['id'])
+                    instance.v_marca=request.POST['v_marca']
+                    instance.v_modelo=request.POST['v_modelo'],
+                    instance.v_placa=request.POST['v_placa'],
+                    instance.fv_soat = request.POST['fv_soat'],
+                    instance.observacion = request.POST['observacion'],
+                    instance.n_parqueo = request.POST['n_parqueo']
+                    instance.save()
                     instance = Parqueo.objects.get(id=request.POST['n_parqueo'])
                     instance.estado = 0
                     instance.save()
@@ -202,22 +202,23 @@ class UpdateViewVisita(LoginRequiredMixin,PermisosMixins,UpdateView):
                 
                 sala = request.POST['sala']
                 try:
-                    instance = Salas.objects.get(sala=sala)
+                    instance = Salas.objects.get(id=sala)
                     instance.estado = 1
                     instance.save()
 
                 except:
                     pass
-                if request.POST['h_termino']!='':
-                    instance = Salas.objects.get(sala=sala)
-                    instance.estado = 0
+                # if request.POST['h_termino']!='':
+                #     instance = Salas.objects.get(sala=sala)
+                #     instance.estado = 0
+                #     instance.save()
+                try:
+                    int(request.POST['n_parqueo'])
+                    instance = Parqueo.objects.get(id=request.POST['n_parqueo'])
+                    instance.estado=True
                     instance.save()
-                    try:
-                        instance = Parqueo.objects.get(numero=request.POST['n_parqueo'])
-                        instance.estado=True
-                        instance.save()
-                    except Exception as e:
-                        data['error'] = f"Ocurrio un error {str()}"
+                except :
+                    pass
             else:
                 data['error'] = 'No ha ingresado a ninguna opción'
         except Exception as e:
@@ -249,6 +250,8 @@ class UpdateViewVisita(LoginRequiredMixin,PermisosMixins,UpdateView):
         if self.request.method == 'GET':
             form.fields['sala'].initial = sala_actual
             form.fields['n_parqueo'].initial = parqueo_actual
+            # form.fields['p_visita'].initial = visitas_instance.p_visita.nombre
+            
        
         return form
 

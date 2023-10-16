@@ -7,7 +7,7 @@ from core.user.models import Empresa,Unidad,Puesto
 class FormVisitas(ModelForm):
     p_visita=forms.ModelChoiceField(queryset=Trabajadores.objects.all(),widget=forms.Select(attrs={
                 "class":"form-control select2"
-            }),to_field_name='nombre',label='Persona a quien visita')
+            }),to_field_name='id',label='Persona a quien visita')
     def __init__(self,*args,**kwargs):
         super().__init__(*args,**kwargs)
         self.fields['estado'].initial = '1'

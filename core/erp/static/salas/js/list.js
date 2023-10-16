@@ -58,7 +58,7 @@ $(function () {
                     }else if(row.estado==2){
                         state = 'OCUPADO'
                     }
-                    return "<div class='d-flex justify-content-center' ><strong class='bg-success' style='font-size:12px;border-radius:5px'>"+state+"</strong></div>"
+                    return "<div class='d-flex justify-content-center' ><strong class='bg-success' style='font-size:12px;border-radius:5px ;padding:5px;'>"+state+"</strong></div>"
                 }
             },
             {
