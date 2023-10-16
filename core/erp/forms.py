@@ -104,9 +104,8 @@ class FormVisitas(ModelForm):
                 'class':'form-control',
                 'placeholder':'Fecha de vencimiento del SOAT'
             }),
-            'sctr_salud' :TextInput(attrs={
+            'sctr_salud' :FileInput(attrs={
                 'class':'form-control',
-                'placeholder':'STRC SALUD'
             }),
             'n_parqueo':Select(attrs={
                 'class':'form-control'
