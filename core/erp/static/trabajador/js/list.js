@@ -9,7 +9,7 @@ $(function () {
         // destroy: true,
         // deferRender: true,
         dom:'Qlfrtip',
-        scrollX:true,
+     
         conditions:{
             num:{
                 'MultipleOf':{

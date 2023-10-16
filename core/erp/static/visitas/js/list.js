@@ -7,7 +7,7 @@ $(function () {
         autoWidth: false,
         destroy: true,
         deferRender: true,
-        scrollX:true,
+      
         dom:'Qlfrtip',
         fixedColumns:{
             left:3,

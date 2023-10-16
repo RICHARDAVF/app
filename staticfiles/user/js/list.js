@@ -7,7 +7,6 @@ $(function () {
         autoWidth: false,
         destroy: true,
         deferRender: true,
-        scrollX:true,
         dom:'Qlfrtip',
         ajax: {
             url: window.location.pathname,
