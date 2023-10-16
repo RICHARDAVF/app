@@ -42,6 +42,7 @@ class ListViewUser(LoginRequiredMixin,PermisosMixins,ListView):
         context['create_url'] = reverse_lazy('user:user_create')
         context['list_url'] = reverse_lazy('user:user_list')
         context['entidad'] = 'Usuarios'
+        context['is_superuser'] = self.request.user.is_superuser
         return context
 class CreateViewUser(LoginRequiredMixin,PermisosMixins,CreateView):
     permission_required = ('user.view_user','user.create_user')

@@ -7,6 +7,7 @@ $(function () {
         autoWidth: false,
         destroy: true,
         deferRender: true,
+        scrollX:true,
         dom:'Qlfrtip',
         conditions:{
             num:{
@@ -66,7 +67,7 @@ $(function () {
                 class:'rext-center',
                 render:function(date,type,row){
                     var buttons = '<div class="d-flex justify-content-center"><a href="/erp/sala/update/' + row.id + '/" class="btn btn-warning btn-xs btn-flat"><i class="fas fa-edit"></i></a> ';
-                    buttons += '<a href="/erp/sala/delete/' + row.id + '/" type="button" class="btn btn-danger btn-xs btn-flat"><i class="fas fa-trash-alt"></i></a></row>';
+                    buttons += '<a href="/erp/sala/delete/' + row.id + '/" type="button" class="btn btn-danger btn-xs btn-flat"><i class="fas fa-trash-alt"></i></a></div>';
                     return buttons;
                 }
             }

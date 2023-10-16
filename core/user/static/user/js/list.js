@@ -7,6 +7,7 @@ $(function () {
         autoWidth: false,
         destroy: true,
         deferRender: true,
+        scrollX:true,
         dom:'Qlfrtip',
         ajax: {
             url: window.location.pathname,
@@ -35,7 +36,11 @@ $(function () {
                 class: 'text-center',
                 orderable: false,
                 render: function (data, type, row) {
-                    return `<a href="/user/usuario/perms/${row.id}/">${row.username}</a>`;
+                    if (is_superuser=='True') {
+                        return `<a href="/user/usuario/perms/${row.id}/">${row.username}</a>`;
+                    }else {
+                        return data;
+                    }
                 }
             },
             {
