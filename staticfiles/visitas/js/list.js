@@ -167,6 +167,14 @@ $(function () {
                 }
             },
             {
+                targets:[-4],
+                class:'text-center',
+                render:function(data,type,row){
+                  
+                    return `<a href='${data}' target="_blank" ><i class="fas fa-file-pdf bg-red"></i></a>`
+                }
+            },
+            {
                 targets:[-3],
                 class:'text-center',
                 render:function(data,type,row){
@@ -277,26 +285,37 @@ $(function () {
                 </div>
     
                     `)};
-    var datos = []
+
     var parqueos = []
-    function listdates(){
+    var id_visita = ''
+    function listdates(datos){
         var tdhtml = ''
         
         for(item in datos){
             
-            tdhtml+=`<tr>
-            <td>${datos[item].documento}</td>
-            <td>${datos[item].nombre}</td>
-            <td>${datos[item].apellidos}</td>
-            <td>${datos[item].empresa}</td>
-            <td>${datos[item].modelo_v}</td>
-            <td>${datos[item].placa_v}</td>
-            <td>${datos[item].soat_v}</td>
-            <td>
-            <p>
-                <a href="${datos[item].sctr}" target="_blank">file</a></>
-            </td>
-            <td>${(datos[item].n_parqueo===null)?'':datos[item].n_parqueo}</td>
+            tdhtml+=`
+            <tr>
+                <td>${datos[item].id}</td>
+                <td>${datos[item].documento}</td>
+                <td>${datos[item].nombre}</td>
+                <td>${datos[item].apellidos}</td>
+                <td>${datos[item].empresa}</td>
+                <td>${datos[item].marca_v}</td>
+                <td>${datos[item].modelo_v}</td>
+                <td>${datos[item].placa_v}</td>
+                <td>${datos[item].soat_v}</td>
+                
+                <td>
+                    <a href="${datos[item].sctr}" target="_blank">file</a></>
+                </td>
+           
+                <td>
+                    ${(datos[item].n_parqueo===null || datos[item].n_parqueo==undefined)?'':datos[item].n_parqueo}
+                </td>
+                <td>
+                ${(datos[item].n_parqueo===null || datos[item].n_parqueo==undefined)?'':'<a type="button" class="btn btn-success" id="hab_park">Hab.</a>'}
+
+                </td>
             <tr>`
         }
         $('.table-group-divider').html(
@@ -313,9 +332,9 @@ $(function () {
 
     }
     function showperson(){
-        datos = []
         var rowIndex = miTabla.row($(this).closest('tr')).index();
         var id = miTabla.cell(rowIndex,0).data();
+        id_visita = id
         $.ajax({
             type:"POST",
             url:window.location.pathname,
@@ -326,7 +345,6 @@ $(function () {
             },
             success:function(data){
                 
-                datos = data.asis
                 parqueos = data.parking
                 var opt_select = '<select name="n_parqueo"  class="form-control ml-3"  id="n_parqueo">'
                 for(var item of parqueos){
@@ -364,19 +382,22 @@ $(function () {
                     <form>
                     <a type='button' class='btn btn-primary mt-1 mb-1' id='addperson'><i class='fas fa-plus'></i>Agregar</a>
                     <div class="table-responsive">
-                        <table class="table table-striped">
+                        <table class="table table-striped" id="id_asis">
                             <thead class="table-light">
                                 <caption>Table Name</caption>
                                 <tr>
-                                    <th style='width:100'>DNI</th>
-                                    <th style='width:100'>NOMBRE</th>
-                                    <th style='width:200'>APELLIDO</th>
-                                    <th style='width:200'>EMPRESA</th>
-                                    <th style='width:100'>MODELO</th>
-                                    <th style='width:100'>PLACA</th>
-                                    <th style='width:100'>SOAT</th>
-                                    <th style='width:100'>SCTR</th>
-                                    <th style='width:50'>PARQUE</th>
+                                    <th >#ID</th>
+                                    <th >DNI</th>
+                                    <th >NOMBRE</th>
+                                    <th >APELLIDO</th>
+                                    <th >EMPRESA</th>
+                                    <th >MARCA</th>
+                                    <th >MODELO</th>
+                                    <th >PLACA</th>
+                                    <th >SOAT</th>
+                                    <th >SCTR</th>
+                                    <th >PARQUEO</th>
+                                    <th >OPCIONES</th>
                                 </tr>
                                 </thead>
                                 <tbody class="table-group-divider">
@@ -391,7 +412,7 @@ $(function () {
 
                     `
                 );
-                listdates();
+                listdates(data.asis);
             },
             error:function(){
                 alert("Error en la peticion")
@@ -399,18 +420,22 @@ $(function () {
         });
         $('body').append(contenidoModal);
         $("#miModal").modal('show');
+        
     }
     
     $(document).on("click","#btnaddperson",showperson);
    
     $(document).on('click', '#addperson', function () {
-        var datas = {}
+       
         var formData = new FormData($('#myForm')[0]);
-        formData.append('action', 'addperson');
-        for (var pair of formData.entries()) {
-           datas[pair[0]]=pair[1]
+        var vh = $('#marca_v').val()
+        if(vh.length!=0){
+            var park = $('#n_parqueo').val()
+            if(park==null){
+                return alert('Debe selccionar un parqueo')
+            }
         }
-        datos.push(datas)
+        formData.append('action', 'addperson');
         $.ajax({
             type: 'POST',
             url: '/erp/visita/asis/add/',
@@ -419,14 +444,19 @@ $(function () {
             processData: false, 
             contentType: false,
             success: function (data) {
+               if(data.error){
+                return alert(data.error)
+               }
                
+               
+               listdates(data.asis);
             },
             error: function (data) {
                 alert(data.error);
             }
         });
     
-        listdates();
+        
     });
     
     $(document).on('input','#documento',function(event){
@@ -743,6 +773,29 @@ $(function () {
                 window.location.reload()
             }
         })
+    })
+    $(document).on('click','#hab_park',function(){
+        var row = $(this).closest('tr');
+        var id = row.find('td:first').text();
+        $.ajax({
+            type:'POST',
+            url:'/erp/visita/asis/add/',
+            dataType:'json',
+            data:{
+                "action":'lib_park',
+                "id":id
+            },
+            success:function(data){
+                if(data.error){
+                    return alert(data.error)
+                }
+                window.location.reload()
+            },
+            error:function(){
+
+            }
+        })
+        
     })
 });
 
