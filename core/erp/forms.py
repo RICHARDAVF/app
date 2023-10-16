@@ -81,6 +81,7 @@ class FormVisitas(ModelForm):
             'h_termino':TimeInput(attrs={
                 'type':'time',
                 'class':'form-control',
+                'required':True
             }),
             'sala':Select(attrs={
                 'class':'form-control',  
