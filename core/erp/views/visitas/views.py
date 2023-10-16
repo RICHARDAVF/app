@@ -87,6 +87,7 @@ class ListViewVisita(LoginRequiredMixin,PermisosMixins,ListView):
                     if request.user.is_superuser:
                         
                         for value in Visitas.objects.select_related("p_visita").all():
+                            
                             item = value.toJSON()
                             if  value.p_visita is not None:
                                 item['p_visita'] = f"{value.p_visita.nombre} {value.p_visita.apellidos}"
@@ -103,8 +104,9 @@ class ListViewVisita(LoginRequiredMixin,PermisosMixins,ListView):
             elif action =="addperson":
                 try:
                     data = {'asis':[],'parking':[]}
-                    for index,value in  enumerate(Asistentes.objects.filter(visita_id=request.POST['id'])):
+                    for index,value in  enumerate(Asistentes.objects.prefetch_related('n_parqueo').filter(visita_id=request.POST['id'])):
                         item = value.toJSON()
+                        item['n_parqueo'] = value.n_parqueo.numero
                         data['asis'].append(item)
                    
                     for value in Parqueo.objects.filter(estado=True,
@@ -123,7 +125,11 @@ class ListViewVisita(LoginRequiredMixin,PermisosMixins,ListView):
                 instance.save()
             elif action =='h_final':
                 instance = Visitas.objects.get(id=request.POST['id'])
-                instance.h_termino = datetime.now().strftime('%H:%M:%S')
+                instance.h_salida = datetime.now().strftime('%H:%M:%S')
+                sala = instance.sala_id
+                instace_sala = Salas.objects.get(id=sala)
+                instace_sala.estado = 0
+                instace_sala.save()
                 instance.estado = 3
                 instance.save()
             elif action =="addvh":
@@ -141,14 +147,22 @@ class ListViewVisita(LoginRequiredMixin,PermisosMixins,ListView):
             elif action=="h_salida":
                 instance = Visitas.objects.get(id=request.POST['id'])
                 instance.h_salida = datetime.now().strftime("%H:%M:%S")
+                sala = instance.sala_id
                 instance.estado = 3
                 instance.save()
+                instace_sala = Salas.objects.get(id=sala)
+                instace_sala.estado = 0
+                instace_sala.save()
             elif action=="anular":
                 instance = Visitas.objects.get(id=request.POST['id'])
                 instance.estado = 0
+                sala = instance.sala_id
                 instance.h_llegada = time(0,0)
                 instance.h_salida = time(0,0)
                 instance.save()
+                instace_sala = Salas.objects.get(id=sala)
+                instace_sala.estado = 0
+                instace_sala.save()
             elif action == "formvh":
                 try:
                    
@@ -165,7 +179,7 @@ class ListViewVisita(LoginRequiredMixin,PermisosMixins,ListView):
                     instance_park.estado = 0
                     instance_park.save()
                 except Exception as e:
-                    print(str(e))
+                    
                     data['error'] = 'Seleccione un numero de parqueo'
                     
             else:
@@ -370,31 +384,49 @@ class CreateViewAsist(LoginRequiredMixin,PermisosMixins,View):
         return super().dispatch(request, *args, **kwargs)
     def post(self,request,*ars,**kwargs):
         data = {}
-        if request.POST['action'] == "addperson":
-            id = request.POST['id']
-            if request.POST['soat_v']=='':
-                fecha =date.today()
-            else:
-                fecha = request.POST['soat_v']
-            
-            try:
-                sctr = request.FILES.get('sctr', None)
-                asis = Asistentes.objects.create(
-                        visita_id=int(id),
-                        documento=request.POST['documento'],
-                        nombre=request.POST['nombre'],
-                        apellidos = request.POST['apellidos'],
-                        empresa = request.POST['empresa'],
-                        marca_v=request.POST['marca_v'],
-                        modelo_v=request.POST['modelo_v'],
-                        placa_v=request.POST['placa_v'],
-                        soat_v=fecha,
-                        sctr=sctr,
-                        n_parqueo_id=request.POST['n_parqueo'],
-                    )
-                asis.save()
-            except Exception as e:
-             
-                data['error'] = f"Ocurrio un error: {str(e)}"
+        action = request.POST['action']
+        try:
+            if action == "addperson":
+                id = request.POST['id']
+                if request.POST['soat_v']=='':
+                    fecha = date(1, 1, 1)
+                else:
+                    fecha = request.POST['soat_v']
+                try:
+                    sctr = request.FILES.get('sctr', None)
+                    park = Parqueo.objects.get(id=request.POST['n_parqueo'])
+                    park.estado = 0
+                    asis = Asistentes.objects.create(
+                            visita_id=int(id),
+                            documento=request.POST['documento'],
+                            nombre=request.POST['nombre'],
+                            apellidos = request.POST['apellidos'],
+                            empresa = request.POST['empresa'],
+                            marca_v=request.POST['marca_v'],
+                            modelo_v=request.POST['modelo_v'],
+                            placa_v=request.POST['placa_v'],
+                            soat_v=fecha,
+                            sctr=sctr,
+                            n_parqueo=park,
+                        )
+                    asis.save()
+                    park.save()
+                    data = []
+                    for value in Asistentes.objects.filter(visita_id=int(id)):
+                        item = value.toJSON()
+                        item['n_parqueo'] = value.n_parqueo.numero
+                        data.append(item)
+                
+                except Exception as e:
+                
+                    data['error'] = f"Ocurrio un error: {str(e)}"
+            elif action =='lib_park':
+                id_park = Asistentes.objects.get(id=request.POST['id'])
+                instance = Parqueo.objects.get(id=id_park.n_parqueo_id)
+                instance.estado = True
+                instance.save()
+        except Exception as e:
+            data['error'] = 'Ocurrio un error'
+
         return JsonResponse(data,safe=False)
     

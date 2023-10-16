@@ -149,7 +149,7 @@ class Visitas(models.Model):
     user = models.ForeignKey(User,on_delete=models.DO_NOTHING,verbose_name="Usuario que Autoriza",null=True,blank=True)
     tipo_documento = models.CharField(max_length=10,choices=[("1","DNI"),("2","C.E"),("3","PASAPORTE")],verbose_name="TIPO DOCUMENTO",blank=True,null=True)
     dni = models.CharField(max_length=10,verbose_name="N° Documento")
-    nombre = models.CharField(max_length=15,verbose_name="Nombres")
+    nombre = models.CharField(max_length=50,verbose_name="Nombres")
     apellidos = models.CharField(max_length=50,verbose_name="Apellidos")
     empresa = models.CharField(max_length=150,verbose_name="Empresa",null=True,blank=True)
     cargo = models.CharField(max_length=50,verbose_name="Cargo",null=True,blank=True)
@@ -165,7 +165,7 @@ class Visitas(models.Model):
     v_modelo = models.CharField(max_length=20,verbose_name="Modelo del vehiculo",null=True,blank=True)
     v_placa =  models.CharField(max_length=10,verbose_name="Placa de rodaje",null=True,blank=True)
     fv_soat = models.CharField(max_length=50,verbose_name="Fecha de vencimiento del SOAT",null=True,blank=True)
-    sctr_salud = models.CharField(max_length=30,verbose_name="SCTR-SALUD",null=True,blank=True)
+    sctr_salud = models.FileField(verbose_name="SCTR-SALUD",null=True,blank=True)
     n_parqueo = models.ForeignKey(Parqueo,on_delete=models.DO_NOTHING,verbose_name="Numero de Parqueo",null=True,blank=True)
     estado = models.CharField(max_length=10,choices=[('1','PROGRAMADO'),('2','EN CURSO'),('3','FINALIZO')],null=True,blank=True)
     guias = models.FileField(upload_to='guias/',verbose_name="Guias de remision",blank=True,null=True)
@@ -174,9 +174,9 @@ class Visitas(models.Model):
     observacion = models.CharField(max_length=100,verbose_name="Observaciones",blank=True,null=True)
     history = HistoricalRecords()
 
-    def get_file(self):
-        if self.guias:
-            return '{}{}'.format(MEDIA_URL, self.guias)
+    def get_file(self,file):
+        if file:
+            return '{}{}'.format(MEDIA_URL, file)
         return '{}{}'.format(STATIC_URL, 'img/nopdf.jpg')
     class Meta:
         verbose_name = 'Visita'
@@ -185,7 +185,8 @@ class Visitas(models.Model):
     def toJSON(self):
         item = model_to_dict(self)
         item['user'] = self.user.id
-        item['guias'] = self.get_file()
+        item['guias'] = self.get_file(self.guias)
+        item['sctr_salud'] = self.get_file(self.sctr_salud)
         item['names'] = f"{self.nombre} {self.apellidos}"
         return item
 class Asistentes(models.Model):
@@ -201,7 +202,6 @@ class Asistentes(models.Model):
     sctr = models.FileField(upload_to='strc/', verbose_name="STRC",null=True,blank=True)
     n_parqueo = models.ForeignKey(Parqueo,on_delete=models.DO_NOTHING,verbose_name="Parqueo",null=True,blank=True)
     history = HistoricalRecords()
-
     class Meta:
         verbose_name = "asinten"
         verbose_name_plural = 'asistentes'

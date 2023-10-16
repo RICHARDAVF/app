@@ -48,11 +48,6 @@ class ListViewSala(LoginRequiredMixin,PermisosMixins,ListView):
         return super().dispatch(request, *args, **kwargs)
        
     def post(self, request, *args, **kwargs):
-        user = request.user
-        permissions = user.get_all_permissions()
-        
-        for permission in permissions:
-            print(permission)
         data = {}
         try:
             action = request.POST['action']
