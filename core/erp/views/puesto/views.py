@@ -105,7 +105,13 @@ class UpdateViewPuesto(LoginRequiredMixin,PermisosMixins,UpdateView):
         except Exception as e:
             data['error'] = str(e)
         return JsonResponse(data,safe=False)
-
+    def get_form(self, form_class=None):
+        form =  super().get_form(form_class)
+        if not self.request.user.is_superuser:
+            form.fields['unidad'].queryset = Unidad.objects.filter(id=self.request.user.unidad_id)
+        else:
+            form.fields['unidad'].queryset = Unidad.objects.all()
+        return form
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['title'] = 'Edición de un Usuario'
