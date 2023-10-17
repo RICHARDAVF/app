@@ -411,11 +411,7 @@ class CreateViewAsist(LoginRequiredMixin,PermisosMixins,View):
                         )
                     asis.save()
                     park.save()
-                    data = []
-                    for value in Asistentes.objects.filter(visita_id=int(id)):
-                        item = value.toJSON()
-                        item['n_parqueo'] = value.n_parqueo.numero
-                        data.append(item)
+                   
                 
                 except Exception as e:
                 
@@ -425,6 +421,11 @@ class CreateViewAsist(LoginRequiredMixin,PermisosMixins,View):
                 instance = Parqueo.objects.get(id=id_park.n_parqueo_id)
                 instance.estado = True
                 instance.save()
+            data = []
+            for value in Asistentes.objects.filter(visita_id=int(id)):
+                item = value.toJSON()
+                item['n_parqueo'] = value.n_parqueo.numero
+                data.append(item)
         except Exception as e:
             data['error'] = 'Ocurrio un error'
 

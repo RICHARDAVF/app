@@ -444,12 +444,13 @@ $(function () {
             processData: false, 
             contentType: false,
             success: function (data) {
+                console.log(data)
                if(data.error){
                 return alert(data.error)
                }
                
                
-               listdates(data.asis);
+               listdates(data);
             },
             error: function (data) {
                 alert(data.error);
