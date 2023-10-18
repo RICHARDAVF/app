@@ -93,11 +93,11 @@ class AsignacionEV(models.Model):#ASIGNACION DE EQUIPO VEHICULAR
 class IngresoSalida(models.Model):
     documento = models.CharField(max_length=11,verbose_name="N° Documento",null=True,blank=True)
     nombres = models.CharField(max_length=150,verbose_name="Nombre Completo",null=True,blank=True)
-    fecha = models.DateField(auto_created=False,verbose_name="Fecha",null=True,blank=True)
-    h_salida = models.TimeField(auto_created=False,verbose_name="Hora de salida",null=True,blank=True)
-    h_entrada = models.TimeField(auto_now=False,verbose_name="Hora de ingreso",null=True,blank=True)
+    fecha = models.DateField(auto_now_add=True,verbose_name="Fecha",null=True,blank=True)
+    hora = models.TimeField(auto_now_add=True,verbose_name="Hora de salida",null=True,blank=True)
+    tipo = models.CharField(max_length=15,choices=[("1",'INGRESO'),("2","SALIDA")])
+    motivo = models.CharField(max_length=200,verbose_name="Motivo del ingreso o salida")
     history = HistoricalRecords()
-
     class Meta:
         verbose_name = "IngresoSalida"
         verbose_name_plural = "IngresosSalidas"
@@ -172,6 +172,7 @@ class Visitas(models.Model):
     cantidad = models.CharField(verbose_name="Cantidad",max_length=20,blank=True,null=True)
     tipo = models.CharField(max_length=3,choices=[('1','VISITA'),("2","COURRIER/DELIVERY")],default='1')
     observacion = models.CharField(max_length=100,verbose_name="Observaciones",blank=True,null=True)
+    documentos = models.CharField(max_length=250,verbose_name="Documentos",null=True,blank=True)
     history = HistoricalRecords()
 
     def get_file(self,file):

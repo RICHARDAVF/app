@@ -7,7 +7,7 @@ $(function(){
         autoWidth:false,
         destroy:true,
         deferRender:true,
-   
+        "order": [[0, 'desc']],
         dom:"Qlfrtip",
         conditions:{
             num:{
@@ -44,31 +44,44 @@ $(function(){
             {"data":"id"},
             {"data":"documento"},
             {"data":"nombres"},
+            {"data":"tipo"},
             {"data":"fecha"},
-            {"data":"h_entrada"},
-            {"data":"h_salida"},
+            {"data":"hora"},
+            {"data":"motivo"},
             {"data":"id"},
            
         ],
         columnDefs:[
             {
-                targets:[-1],
-                class:"text-center",
-                render:function(date,type,row){
-                    return "<a href='/erp/ingsal/edit/"+row.id+"/' ><i class='fas fa-edit'></i><a/>"
+                targets:[3],
+                class:'text-center',
+                render:function(data,type,row){
+                    var opt = '<strong class="bg-success" style="font-size:12px;border-radius:5px;padding:4px;">INGRESO</strong>'
+                    if(data==2){
+                        opt = '<strong class="bg-danger" style="font-size:12px;border-radius:5px;padding:4px;">SALIDA</strong>'
+                    }
+                    return opt
                 }
-
-            }
+            },
+            {
+                targets:[-1],
+                class:'rext-center',
+                render:function(date,type,row){
+                    var buttons = '<div class="d-flex justify-content-center"><a href="/erp/ingsal/edit/' + row.id + '/" class="btn btn-warning btn-xs btn-flat"><i class="fas fa-edit"></i></a> ';
+                    buttons += '<a href="/erp/ingsal/delete/' + row.id + '/" type="button" class="btn btn-danger btn-xs btn-flat"><i class="fas fa-trash-alt"></i></a></row>';
+                    return buttons;
+                }
+            },
         ],
         initComplete:function(settings,json){
             new $.fn.dataTable.Buttons(miTabla,{
                 buttons:[
-                    {
-                        text:'<i class="fas fa-plus"></i>Nuevo registro',
-                        action:function(e,dt,node,conf){
-                            window.location.href = '/erp/ingsal/add/'
-                        }
-                    },
+                    // {
+                    //     text:'<i class="fas fa-plus"></i>Nuevo registro',
+                    //     action:function(e,dt,node,conf){
+                    //         window.location.href = '/erp/ingsal/add/'
+                    //     }
+                    // },
                     'copy','excel',"csv","pdf"
                 ],
                 dom:{

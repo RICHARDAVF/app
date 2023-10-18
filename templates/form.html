@@ -4,7 +4,6 @@
     {% block head_form %}
        
     {% endblock head_form %}
-    
 {% endblock head %}
 {% block content %}
 <form method="POST" action="." enctype="multipart/form-data">
@@ -50,7 +49,7 @@
             <button type="submit" class="btn btn-primary btn-flat">
                 <i class="fas fa-save"></i> Guardar registro
             </button>
-            <a href="{{list_url}}" class="btn btn-danger btn-flat">
+            <a href="{{list_url}}" class="btn btn-danger btn-flat" id="btn-cancel">
                 <i class="fas fa-times"></i> Cancelar
             </a>
         </div>

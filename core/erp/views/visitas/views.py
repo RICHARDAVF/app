@@ -76,6 +76,10 @@ class ListViewVisita(LoginRequiredMixin,PermisosMixins,ListView):
     @method_decorator(csrf_exempt)
     def dispatch(self, request, *args, **kwargs):
         return super().dispatch(request, *args, **kwargs)
+    def habilitar_sala(self,object):
+        instace_sala = Salas.objects.get(id=object)
+        instace_sala.estado = 0
+        instace_sala.save()
     def post(self, request, *args, **kwargs):
         data = {}
         try:
@@ -127,9 +131,8 @@ class ListViewVisita(LoginRequiredMixin,PermisosMixins,ListView):
                 instance = Visitas.objects.get(id=request.POST['id'])
                 instance.h_salida = datetime.now().strftime('%H:%M:%S')
                 sala = instance.sala_id
-                instace_sala = Salas.objects.get(id=sala)
-                instace_sala.estado = 0
-                instace_sala.save()
+                if sala is not None:
+                    self.habilitar_sala(sala)
                 instance.estado = 3
                 instance.save()
             elif action =="addvh":
@@ -148,21 +151,19 @@ class ListViewVisita(LoginRequiredMixin,PermisosMixins,ListView):
                 instance = Visitas.objects.get(id=request.POST['id'])
                 instance.h_salida = datetime.now().strftime("%H:%M:%S")
                 sala = instance.sala_id
+                if sala is not None:
+                    self.habilitar_sala(sala)
                 instance.estado = 3
                 instance.save()
-                instace_sala = Salas.objects.get(id=sala)
-                instace_sala.estado = 0
-                instace_sala.save()
             elif action=="anular":
                 instance = Visitas.objects.get(id=request.POST['id'])
                 instance.estado = 0
                 sala = instance.sala_id
+                if sala is not None:
+                   self.habilitar_sala(sala)
                 instance.h_llegada = time(0,0)
                 instance.h_salida = time(0,0)
                 instance.save()
-                instace_sala = Salas.objects.get(id=sala)
-                instace_sala.estado = 0
-                instace_sala.save()
             elif action == "formvh":
                 try:
                    
@@ -175,7 +176,6 @@ class ListViewVisita(LoginRequiredMixin,PermisosMixins,ListView):
                     instance.observacion = request.POST['observacion']
                     instance.n_parqueo = instance_park
                     instance.save()
-
                     instance_park.estado = 0
                     instance_park.save()
                 except Exception as e:

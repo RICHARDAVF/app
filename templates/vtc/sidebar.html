@@ -101,10 +101,26 @@
                 
                
                 <li class="nav-item">
-                    <a href="{% url 'erp:ingsal_list' %}" class="nav-link">
+                    <a href="{% url 'erp:ing_create' %}" class="nav-link">
                         <i class="nav-icon fas fa-arrow-right"></i>
                         <p>
-                            Ingresos y salidas
+                            Ingresos
+                        </p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'erp:sal_create' %}" class="nav-link">
+                        <i class="nav-icon fas fa-arrow-left"></i>
+                        <p>
+                            Salidas
+                        </p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'erp:ingsal_list' %}" class="nav-link">
+                        <i class="nav-icon fas fa-clock"></i>
+                        <p>
+                            Control de Personal
                         </p>
                     </a>
                 </li>

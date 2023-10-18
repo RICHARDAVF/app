@@ -1,4 +1,4 @@
-from django.forms import ModelForm,TextInput,DateInput,TimeInput,Select,FileInput,HiddenInput
+from django.forms import ModelForm,TextInput,DateInput,TimeInput,Select,FileInput,HiddenInput,Textarea
 from django import forms
 from .models import Visitas,Salas,Parqueo,Trabajadores,AsignacionEPPS,Vehiculos,AsignacionEV,Asistentes,IngresoSalida
 from datetime import datetime
@@ -86,8 +86,8 @@ class FormVisitas(ModelForm):
             'sala':Select(attrs={
                 'class':'form-control',  
             }),
-            'tipo':Select(attrs={
-                'class':'form-control',  
+            'tipo':HiddenInput(attrs={
+               
             }),
             'v_marca' :TextInput(attrs={
                 'class':'form-control',
@@ -119,10 +119,11 @@ class FormVisitas(ModelForm):
 class FormDelivery(ModelForm):
     p_visita=forms.ModelChoiceField(queryset=Trabajadores.objects.all(),widget=forms.Select(attrs={
                 "class":"form-control select2"
-            }),to_field_name='nombre',label='Persona a quien visita')
+            }),to_field_name='id',label='Persona a quien visita')
     def __init__(self,*args,**kwargs):
         super().__init__(*args,**kwargs)
         self.fields['estado'].initial = '2'
+        self.fields['tipo_documento'].initial = '1'
     def save(self,commit=True):
         data = {}
         form = super()
@@ -136,42 +137,59 @@ class FormDelivery(ModelForm):
         return data
     class Meta:
         model = Visitas
-        fields = ['estado','dni',"nombre","apellidos","guias","cantidad","tipo","observacion","empresa","user","fecha","h_inicio","h_termino","p_visita"]
+        fields = ['estado','dni',"nombre","tipo_documento","apellidos","guias","cantidad","tipo","observacion","empresa","user","fecha","h_inicio","h_termino","p_visita","documentos"]
         widgets= {
             'estado':Select(attrs={
                 "class":"form-control",
                 "type":'select'
             }),
+            'tipo_documento':Select(attrs={
+                "class":"form-control",
+                "type":'select'
+            }),
             "dni":TextInput({
-                "class":"form-control"
+                "class":"form-control",
+                'placeholder':'888888888'
             }),
             "nombre":TextInput({
-                "class":"form-control"
+                "class":"form-control",
+                "placeholder":'Ingrese su nombre'
             }),
             "apellidos":TextInput({
-                "class":"form-control"
+                "class":"form-control form-control",
+                "placeholder":'Ingrese sus apellidos'
             }),
             "guias":FileInput({
-                "class":"form-control"
+                "class":"form-control",
+                'type':"file"
             }),
             "cantidad":TextInput({
-                "class":"form-control"
+                "class":"form-control",
+                "type":"number",
+                "placeholder":"Ejemplo:123"
             }),
-            "tipo":Select({
-                "class":"form-control"
+            "tipo":HiddenInput({
             }),
             "observacion":TextInput({
-                "class":"form-control"
+                "class":"form-control",
+                "placeholder":"Observaciones"
             }),
             "empresa":TextInput({
-                "class":"form-control"
+                "class":"form-control",
+                "placeholder":"Empresa de procedencia"
             }),
-            "p_visita":TextInput({
-                "class":"form-control"
+            "p_visita":Select({
+                "class":"form-control",
+                
             }),
             "user":TextInput(attrs={
                 "class":'form-control',
                 'readonly':True
+            }),
+            "documentos":Textarea(attrs={
+                "class":'form-control',
+                "rows":"2",
+                "placeholder":'Ingrese los documentos'
             }),
             'fecha':DateInput(format='%Y-%m-%d',attrs={
                 'class':'form-control',
@@ -181,14 +199,12 @@ class FormDelivery(ModelForm):
             'h_inicio':TimeInput(attrs={
                 'type':'time',
                 'class':'form-control',
-                'value':datetime.now().strftime('%H:%M:%S')
+                'value':datetime.now().strftime('%H:%M')
                
             }),
             'h_termino':TimeInput(attrs={
                 'type':'time',
                 'class':'form-control',
-                
-                
             }),
         }
 class FormSala(ModelForm):
@@ -376,30 +392,26 @@ class FormIngSal(ModelForm):
         return data
     class Meta:
         model = IngresoSalida
-        fields = "__all__"
+        fields = ["documento","nombres","tipo","motivo"]
         widgets = {
-            "h_entrada":TimeInput(attrs={
-                "class":'form-control form-control-sm',
-                'type':'time',
-                'value':datetime.now().strftime('%H:%M')
-            }),
-            "h_salida":TimeInput(attrs={
-                "class":'form-control form-control-sm',
-                'type':'time',
-            }),
-            "fecha":DateInput(format='%Y-%m-%d',attrs={
-                "class":'form-control form-control-sm',
-                'type':'date',
-                'value':datetime.now().date
-            }),
-            "documento":DateInput(attrs={
+            "documento":TextInput(attrs={
                 "class":'form-control',
-                'type':'number'
+                'type':'number',
+                "placeholder":"8888888888"
             }),
-            "nombres":DateInput(attrs={
+            "nombres":TextInput(attrs={
                 "class":'form-control',
+                "placeholder":"Ingrese su nombre y apellidos"
               
             }),
+            "motivo":Textarea(attrs={
+                "class":'form-control',
+                "placeholder":"Ingrese razon o motivo",
+                "rows":2,
+                "required":False
+                
+            }),
+            "tipo":HiddenInput(),
             
         }
 class FormEmpresa(ModelForm):
@@ -429,7 +441,8 @@ class FormEmpresa(ModelForm):
             }),
             "direccion":TextInput(attrs={
                 "class":"form-control",
-            })
+            }),
+           
         }
 class FormUnidad(ModelForm):
     def __init__(self,*args,**kwargs):

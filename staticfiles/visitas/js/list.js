@@ -3,6 +3,7 @@ $(function () {
         language: {
             url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json',
         },
+        "order": [[0, 'desc']],
         // responsive: false,
         // autoWidth: false,
         // destroy: true,
@@ -48,11 +49,11 @@ $(function () {
             {"data": "id"},//0
             {"data": "estado"},//1
             {"data": "names"},//2
-            {"data": "h_inicio"},//3
-            {"data": "h_termino"},//4
-            {"data":"h_llegada"},//5
-            {"data": "h_salida"},//6
-            {"data": "fecha"},//7
+            {"data": "fecha"},//3
+            {"data": "h_inicio"},//4
+            {"data": "h_termino"},//5
+            {"data":"h_llegada"},//6
+            {"data": "h_salida"},//7
             {"data": "dni"},//8
             {"data": "id"},//9
             {"data": "empresa"},//10
@@ -61,9 +62,14 @@ $(function () {
             {'data': "sala"},//13
             {'data': "sctr_salud"},//14
             {'data': "p_visita"},//15
-            {'data': "id"},//16
+            {'data': "documentos"},//16
             {'data': "id"},//17
+            {'data': "id"},//18
         ],
+        headerCallback: function (thead, data, start, end, display) {
+            // Aplicar el fondo al encabezado de las tres primeras columnas
+            $(thead).find('th').slice(0, 3).css('background-color', '#b89c5c');
+        },
         columnDefs:[
             {
                 targets:[1],
@@ -77,11 +83,9 @@ $(function () {
                     </div>`
                     }else if(row.estado==2){
                        
-                        opt = `<div style="width:150px;display: flex; align-items: center; height: 50px;">
-                                    <strong class="bg-success" style="font-size:11px;border-radius:5px; padding:5px;">EN CURSO</strong>
-                                    <input class="btn btn-danger btn-sm" id="hora_final" type="button" value="FINALIZAR" style="font-size:11px;border-radius:5px; padding:5px;"/>
-                                </div>
-                                `
+                        opt = ` 
+                        <strong class="bg-success" style="font-size:11px;border-radius:5px; padding:5px;">EN CURSO</strong>
+                            `
                     }else if(row.estado==3){
                         opt='<strong class="bg-success" style="font-size:11px;border-radius:5px; padding:5px;">FINALIZADO</strong>'
                     }else{
@@ -100,7 +104,14 @@ $(function () {
                 }
             },
             {
-                targets:[5],
+                targets:[3],
+                class:'text-center',
+                render:function(data,type,row){
+                    return `<div style="width:110px;">${row.fecha}</div>`
+                }
+            },
+            {
+                targets:[6],
                 class:'text-center',
                 render:function(data,type,row){
                     var hora = '<input type="button" value="Confirmar" id="hora_llegada" class="form-control form-control-xs btn btn-secondary">'
@@ -112,22 +123,16 @@ $(function () {
             },
            
             {
-                targets:[6],
+                targets:[7],
                 class:'text-center',
                 render:function(data,type,row){
-                    if(row.h_salida===null){
+                    if(row.h_salida===null & row.h_llegada!=null){
                         return '<input class="btn btn-secondary" value="MARCAR" type="button" id="h_salida"/>'
                     }
                     return row.h_salida
                 }
             },
-             {
-                targets:[7],
-                class:'text-center',
-                render:function(data,type,row){
-                    return `<div style="width:110px;">${row.fecha}</div>`
-                }
-            },
+             
             {
                
                 class:'text-center',
@@ -167,7 +172,7 @@ $(function () {
                 }
             },
             {
-                targets:[-4],
+                targets:[-5],
                 class:'text-center',
                 render:function(data,type,row){
                   
@@ -175,11 +180,19 @@ $(function () {
                 }
             },
             {
+                targets:[-4],
+                class:'text-center',
+                render:function(data,type,row){
+                  
+                    return `<div style="width:250px; font-weight: bold;font-size:12px;">${row.p_visita}</div>`
+                }
+            },
+            {
                 targets:[-3],
                 class:'text-center',
                 render:function(data,type,row){
                   
-                    return `<div style="width:150px; font-weight: bold;font-size:12px;">${row.p_visita}</div>`
+                    return `<div style="width:150px; font-weight: bold;font-size:12px;">${(data!=null)?data:''}</div>`
                 }
             },
             {
@@ -199,7 +212,11 @@ $(function () {
                     if(row.estado==0){
                         return '<strong>Anulado</strong>'
                     }
-                    var buttons = '<div class="d-flex justify-content-center"><a href="/erp/visita/update/' + row.id + '/" class="btn btn-warning btn-xs btn-flat"><i class="fas fa-edit"></i></a> ';
+                    var part_url = 'visita/update/'
+                    if(row.tipo==2){
+                        part_url = 'delivery/update/'
+                    }
+                    var buttons = '<div class="d-flex justify-content-center"><a href="/erp/'+part_url + row.id + '/" class="btn btn-warning btn-xs btn-flat"><i class="fas fa-edit"></i></a> ';
                     buttons += '<a href="/erp/visita/delete/' + row.id + '/" type="button" class="btn btn-danger btn-xs btn-flat"><i class="fas fa-trash-alt"></i></a></row>';
                     return buttons;
                 }
@@ -210,7 +227,7 @@ $(function () {
         createdRow: function (row, data, dataIndex) {
             
             if (data.estado==0) {
-                $(row).css('background-color','#f58d8d'); 
+                $(row).find('td').css('background-color', '#f58d8d');
                
             }
         },
@@ -544,56 +561,56 @@ $(function () {
         })
         
     })
-    $(document).on('click',"#hora_final",function(){
-        var rowIndex = miTabla.row($(this).closest('tr')).index();
-        var id = miTabla.cell(rowIndex,0).data();
-        $.confirm({
-            theme: 'material',
-            title: 'Alerta',
-            icon: 'fas fa-info',
-            content: "¿Esta seguro de marcar la hora final?",
-            columnClass: 'small',
-            typeAnimated: true,
-            cancelButtonClass: 'btn-primary',
-            draggable: true,
-            dragWindowBorder: false,
-            buttons:{
-                info:{
-                    text:'Si',
-                    btnClass:'btn-primary',
-                    action:function(){
-                        $.ajax({
-                            type:'POST',
-                            url:window.location.pathname,
-                            dataType:'json',
-                            data:{
-                                "id":id,
-                                "action":"h_final",
-                            },
-                            success:function(data){
-                                window.location.reload()
-                                if(data.error){
+    // $(document).on('click',"#hora_final",function(){
+    //     var rowIndex = miTabla.row($(this).closest('tr')).index();
+    //     var id = miTabla.cell(rowIndex,0).data();
+    //     $.confirm({
+    //         theme: 'material',
+    //         title: 'Alerta',
+    //         icon: 'fas fa-info',
+    //         content: "¿Esta seguro de marcar la hora final?",
+    //         columnClass: 'small',
+    //         typeAnimated: true,
+    //         cancelButtonClass: 'btn-primary',
+    //         draggable: true,
+    //         dragWindowBorder: false,
+    //         buttons:{
+    //             info:{
+    //                 text:'Si',
+    //                 btnClass:'btn-primary',
+    //                 action:function(){
+    //                     $.ajax({
+    //                         type:'POST',
+    //                         url:window.location.pathname,
+    //                         dataType:'json',
+    //                         data:{
+    //                             "id":id,
+    //                             "action":"h_final",
+    //                         },
+    //                         success:function(data){
+    //                             window.location.reload()
+    //                             if(data.error){
                                     
-                                    return alert(data.error)
-                                }
-                            },
-                            error:function(){
-                                alert("Hubo un error en la peticion")
-                            }
-                        })
-                    }
-                },
-                danger:{
-                    text:'No',
-                    btnClass:'btn-red',
-                    action:function(){
+    //                                 return alert(data.error)
+    //                             }
+    //                         },
+    //                         error:function(){
+    //                             alert("Hubo un error en la peticion")
+    //                         }
+    //                     })
+    //                 }
+    //             },
+    //             danger:{
+    //                 text:'No',
+    //                 btnClass:'btn-red',
+    //                 action:function(){
 
-                    }
-                }
-            }
-        })
+    //                 }
+    //             }
+    //         }
+    //     })
        
-    })
+    // })
     $(document).on("click","#addvehiculo",function(){
         $('body').append(contenidoModal);
         var rowIndex = miTabla.row($(this).closest('tr')).index();

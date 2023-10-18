@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     'core.user',
     'core.api',
     'core.dashboard',
+   
     #LIBRERIAS
     'widget_tweaks',
     'simple_history',

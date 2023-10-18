@@ -18,6 +18,9 @@ from django.contrib import admin
 from django.urls import path,include
 from django.contrib.staticfiles.urls import static
 from django.conf import settings
+
+from core.search import SearchDoc
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('core.login.urls')),
@@ -26,8 +29,9 @@ urlpatterns = [
     path('erp/', include('core.erp.urls')),
     path('user/',include('core.user.urls')),
     path('dashboard/',include('core.dashboard.urls')),
+    path('search_doc/',SearchDoc.as_view(),name="search_doc")
     #API
-    path('api/',include('core.api.urls')),
+   
 ]
 
 if settings.DEBUG:

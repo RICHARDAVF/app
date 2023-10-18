@@ -4,7 +4,7 @@
     <script src="{% static 'empresas/js/list.js' %}"></script>
 {% endblock head_list %}
 {% block columnas %}
-<tr>
+<tr id="header-title">
     <th>ID</th>
     <th>RUC</th>
     <th>EMPRESA</th>
@@ -14,7 +14,7 @@
 {% endblock columnas %}
 {% block filas %}
     {% for empresa in object_list  %}
-    <tr>
+    <tr >
         <td  scope="row">{{empresa.id}}</td>
         <td>{{empresa.ruc}}</td>
         <td>{{empresa.razon_social}}</td>
