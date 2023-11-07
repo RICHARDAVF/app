@@ -8,7 +8,11 @@ $(function(){
         destroy:true,
         deferRender:true,
         "order": [[0, 'desc']],
-        dom:"Qlfrtip",
+        lengthMenu: [
+            [ 10, 25, 50, -1 ],
+            [ '10 filas', '25 filas', '50 filas', 'Todo' ]
+        ],
+        dom:"Qfrtip",
         conditions:{
             num:{
                 'MultipleOf':{
@@ -67,8 +71,8 @@ $(function(){
                 targets:[-1],
                 class:'rext-center',
                 render:function(date,type,row){
-                    var buttons = '<div class="d-flex justify-content-center"><a href="/erp/ingsal/edit/' + row.id + '/" class="btn btn-warning btn-xs btn-flat"><i class="fas fa-edit"></i></a> ';
-                    buttons += '<a href="/erp/ingsal/delete/' + row.id + '/" type="button" class="btn btn-danger btn-xs btn-flat"><i class="fas fa-trash-alt"></i></a></row>';
+                    var buttons = '<div class="d-flex justify-content-center"><a href="/erp/ingsal/edit/' + row.id + '/" class="btn btn-warning btn-sm btn-flat"><i class="fas fa-edit"></i></a> ';
+                    buttons += '<a href="/erp/ingsal/delete/' + row.id + '/" type="button" class="btn btn-danger btn-sm btn-flat"><i class="fas fa-trash-alt"></i></a></row>';
                     return buttons;
                 }
             },
@@ -82,7 +86,7 @@ $(function(){
                     //         window.location.href = '/erp/ingsal/add/'
                     //     }
                     // },
-                    'copy','excel',"csv","pdf"
+                    'copy','excel',"csv","pdf",'pageLength'
                 ],
                 dom:{
                     button:{

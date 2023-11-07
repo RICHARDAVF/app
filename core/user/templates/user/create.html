@@ -24,8 +24,12 @@
                 {{form.username}}
                 <label for="email">{{form.email.label}}</label>
                 {{form.email}}
-                <label for="">Foto</label>
-                {{form.image}}
+                <div class="d-flex flex-row  mt-2"> 
+                    <label for="">Foto</label>
+                    {{form.image}}
+                    <label class="form-label ml-3" for="">Administrador</label>
+                    {{form.is_superuser}}
+                </div>
             </div>
         
         </div>

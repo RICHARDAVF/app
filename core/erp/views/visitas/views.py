@@ -1,4 +1,6 @@
 
+from typing import Any
+from django.db.models.query import QuerySet
 from django.http import JsonResponse
 from django.shortcuts import redirect, render
 from django.views.generic import CreateView,ListView,DeleteView,UpdateView,View
@@ -430,4 +432,15 @@ class CreateViewAsist(LoginRequiredMixin,PermisosMixins,View):
             data['error'] = 'Ocurrio un error'
 
         return JsonResponse(data,safe=False)
-    
+class AuditoriaVisitaView(LoginRequiredMixin,PermisosMixins,ListView):
+    login_url = reverse_lazy('login')
+    permission_required = 'erp.view_visitas'
+    model  = Visitas
+    template_name = 'visitas/auditoria.html'
+    def get_queryset(self):
+        instance = Visitas.objects.get(id=self.kwargs['pk'])
+        return instance.history.all()
+    def get_context_data(self, **kwargs):
+        context =  super().get_context_data(**kwargs)
+        context['title'] = "Auditoria de una visita"
+        return context

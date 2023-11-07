@@ -6,11 +6,12 @@ from django.contrib.auth.models import Permission
 
 
 class PermissionSelectionForm(forms.ModelForm):
-    user = forms.ModelChoiceField(queryset=User.objects.all(),to_field_name='username',widget=forms.Select(attrs={
+    user = forms.ModelChoiceField(queryset=User.objects.all(),to_field_name='id',widget=forms.Select(attrs={
         'class':'form-control',
     }),label="ID Usuario")
+    content_type_ids = [9, 11, 13, 15,17,19,21,23,25,27,29,31]
     permissions = forms.ModelMultipleChoiceField(
-        queryset=Permission.objects.all(),
+        queryset=Permission.objects.filter(content_type__id__in=content_type_ids),
         widget=forms.CheckboxSelectMultiple,
     )
     
@@ -21,12 +22,12 @@ class PermissionSelectionForm(forms.ModelForm):
         super(PermissionSelectionForm, self).__init__(*args, **kwargs)
         
         if self.instance:
-            # Si ya hay una instancia de usuario (edición), establece los permisos actuales en el formulario
-            self.fields['user'].initial = self.instance.username
-            # print(self.instance.username)
+          
+            self.fields['user'].initial = self.instance.id
+          
             self.fields['permissions'].initial = self.instance.user_permissions.all()
     def label_from_instance(self, obj):
-        # Personaliza cómo se muestra cada opción en el elemento select
+      
         return obj.username
 class FormUser(ModelForm):
     empresa=forms.ModelChoiceField(queryset=Empresa.objects.all(),widget=forms.Select(attrs={
@@ -42,7 +43,7 @@ class FormUser(ModelForm):
         super().__init__(*args,**kwargs)
     class Meta:
         model = User
-        fields = ['first_name','last_name','email','username','password','image','groups','dni',"empresa","unidad","puesto"]
+        fields = ['first_name','last_name','email','username','password','image','is_superuser','groups','dni',"empresa","unidad","puesto"]
         widgets = {
             'dni':forms.TextInput(
                 attrs={
@@ -88,13 +89,16 @@ class FormUser(ModelForm):
                 'multiple': 'multiple',
                  
             }),
+            'is_superuser': forms.CheckboxInput(attrs={
+                'class': 'form-control', 
+            }),
             'image':forms.FileInput(
                 attrs={
                     'class':'form-control',
                     'type':'file'
             }),
         }
-        exclude = ['user_permissions','last_login','date_joined','is_superuser','is_active','is_staff']
+        exclude = ['user_permissions','last_login','date_joined','is_active','is_staff']
     def save(self,commit=True):
         data = {}
         form = super()

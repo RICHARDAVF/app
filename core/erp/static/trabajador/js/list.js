@@ -5,11 +5,15 @@ $(function () {
             url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json',
         },
         "order": [[0, 'desc']],
-        // responsive: true,
-        // autoWidth: false,
-        // destroy: true,
-        // deferRender: true,
-        dom:'Qlfrtip',
+        responsive: true,
+        autoWidth: false,
+        destroy: true,
+        deferRender: true,
+        lengthMenu: [
+            [ 10, 25, 50, -1 ],
+            [ '10 filas', '25 filas', '50 filas', 'Todo' ]
+        ],
+        dom:'Qfrtip',
      
         conditions:{
             num:{
@@ -63,7 +67,7 @@ $(function () {
                 render:function(date,type,row){
                    
                     
-                    return '<button id="btnepps" class="btn btn-primary" style="font-size: 10px;" >VER DATOS</button>'
+                    return '<button id="btnepps" class="btn btn-primary btn-sm" style="font-size: 10px;" >VER DATOS</button>'
                 }
             },
             {
@@ -72,7 +76,7 @@ $(function () {
                 render:function(date,type,row){
                    
                     
-                    return '<button id="btnvh" class="btn btn-secondary" style="font-size: 10px;">VER DATOS</button>'
+                    return '<button id="btnvh" class="btn btn-secondary btn-sm" style="font-size: 10px;">VER DATOS</button>'
                 }
             },
             {
@@ -81,15 +85,15 @@ $(function () {
                 render:function(date,type,row){
                    
                     
-                    return '<button id="btnepv" class="btn btn-success" style="font-size: 10px;" >VER DATOS</button>'
+                    return '<button id="btnepv" class="btn btn-success btn-sm" style="font-size: 10px;" >VER DATOS</button>'
                 }
             },
             {
                 targets:[-1],
                 class:'text-center',
                 render:function(date,type,row){
-                    var buttons = '<div class="d-flex justify-content-center"><a href="/erp/trab/update/' + row.id + '/" class="btn btn-warning btn-xs btn-flat"><i class="fas fa-edit"></i></a> ';
-                    buttons += '<a href="/erp/trab/delete/' + row.id + '/" type="button" class="btn btn-danger btn-xs btn-flat"><i class="fas fa-trash-alt"></i></a></row>';
+                    var buttons = '<div class="d-flex justify-content-center"><a href="/erp/trab/update/' + row.id + '/" class="btn btn-warning btn-sm btn-flat"><i class="fas fa-edit"></i></a> ';
+                    buttons += '<a href="/erp/trab/delete/' + row.id + '/" type="button" class="btn btn-danger btn-sm btn-flat"><i class="fas fa-trash-alt"></i></a></row>';
                     return buttons;
                 }
             }
@@ -105,7 +109,7 @@ $(function () {
                             window.location.href = '/erp/trab/create/'
                         }
                     },
-                    'copy', 'excel', 'csv', 'pdf', 'print'
+                    'copy', 'excel', 'csv', 'pdf', 'print','pageLength'
                 ],
                 // Personalizar la apariencia de los botones (opcional)
                 dom: {
@@ -138,7 +142,7 @@ $(function () {
                         
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-success" id="btnsumbit">GUARDAR</button>
+                            <button type="button" class="btn btn-success " id="btnsumbit">GUARDAR</button>
                             <button type="button" class="btn btn-danger" data-dismiss="modal">CERRAR</button>
                         </div>
                     </div>

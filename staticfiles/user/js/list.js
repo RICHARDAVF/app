@@ -8,7 +8,12 @@ $(function () {
         destroy: true,
         deferRender: true,
         // scrollX:true,
-        dom:'Qlfrtip',
+        dom:'Qfrtip',
+   
+        lengthMenu: [
+            [ 10, 25, 50, -1 ],
+            [ '10 filas', '25 filas', '50 filas', 'Todo' ]
+        ],
         ajax: {
             url: window.location.pathname,
             type: 'POST',
@@ -76,8 +81,8 @@ $(function () {
                 class: 'text-center',
                 orderable: false,
                 render: function (data, type, row) {
-                    var buttons = '<div class="d-flex justify-content-center"> <a href="/user/usuario/update/' + row.id + '/" class="btn btn-warning btn-xs btn-flat"><i class="fas fa-edit"></i></a> ';
-                    buttons += '<a href="/user/usuario/delete/' + row.id + '/" type="button" class="btn btn-danger btn-xs btn-flat"><i class="fas fa-trash-alt"></i></a> </div>';
+                    var buttons = '<div class="d-flex justify-content-center"> <a href="/user/usuario/update/' + row.id + '/" class="btn btn-warning btn-sm btn-flat"><i class="fas fa-edit"></i></a> ';
+                    buttons += '<a href="/user/usuario/delete/' + row.id + '/" type="button" class="btn btn-danger btn-sm btn-flat"><i class="fas fa-trash-alt"></i></a> </div>';
                     return buttons;
                 }
             },
@@ -92,7 +97,7 @@ $(function () {
                             window.location.href = '/user/usuario/create'
                         }
                     },
-                    'copy', 'excel', 'csv', 'pdf', 'print',
+                    'copy', 'excel', 'csv', 'pdf', 'print','pageLength'
     
                 ],
                 

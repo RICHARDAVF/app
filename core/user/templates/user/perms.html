@@ -3,9 +3,11 @@
 {% block form %}
     <h6 id="id_perms_user"></h6>
     {{form.as_p}}
+    
 {% endblock form %}
 {% block javascript %}
     <script>
        $('#id_perms_user').text('Usuario: {{username.first_name}} '+" {{username.last_name}}")
+       
     </script>
 {% endblock javascript %}

@@ -180,7 +180,7 @@ class SelectPermissionsView(CreateView):
             user.user_permissions.set(selected_permissions)
         except Exception as e:
             data['error'] = f"Ocurrio un error {str(e)}"
-        return JsonResponse()
+        return JsonResponse(data)
     def get_context_data(self, **kwargs):
         context =  super().get_context_data(**kwargs)
         context['title'] = "Asignacion de Permisos"
@@ -189,30 +189,42 @@ class SelectPermissionsView(CreateView):
         return context
 
 class UpdatePermissionsView(UpdateView):
-    model = User  # Reemplaza 'User' con tu modelo de usuario
+    model = User
     form_class = PermissionSelectionForm
     template_name = 'user/perms.html'
     success_url = reverse_lazy('user:user_list')
 
     def get(self, request, *args, **kwargs):
-        user_id = kwargs.get('pk')  # 'pk' es el nombre de la clave primaria del usuario
-        user = User.objects.get(pk=user_id)  # Obtén el usuario que deseas editar
-        self.object = user  # Asigna la instancia de usuario al objeto de la vista
+        user_id = kwargs.get('pk')
+        user = User.objects.get(pk=user_id)
+        self.object = user
         return super().get(request, *args, **kwargs)
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['title'] = "Editar Permisos"
         context['entidad'] = "Permisos"
         context['list_url'] = self.success_url
         context['username'] = User.objects.get(id=self.object.id)
+        context['action'] = 'edit'
         return context
-
-    def form_valid(self, form):
+    def post(self, request, *args, **kwargs):
         data = {}
+        if int(request.POST['user'])!=int(kwargs['pk']):
+            return JsonResponse({'error':'No se puede cambiar de usuario'})
+        
         try:
-            user = form.cleaned_data['user']
-            selected_permissions = form.cleaned_data['permissions']
-            user.user_permissions.set(selected_permissions)
-        except Exception as e:
-            data['error'] = f"Ocurrió un error: {e}"
+            action = request.POST['action']
+            if action =='edit':
+                user = User.objects.get(id=request.POST['user'])
+                try:
+                    selected_permissions = request.POST.getlist('permissions')
+                    user.user_permissions.set(selected_permissions)
+                except :
+                    user.user_permissions.clear()
+      
+            else:
+                data['error']  = "No ingreso ninguna opcion"
+        except:
+            data['error'] = f'Error al registrar'
         return JsonResponse(data)

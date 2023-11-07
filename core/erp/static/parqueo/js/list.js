@@ -7,8 +7,11 @@ $(function () {
         autoWidth: false,
         destroy: true,
         deferRender: true,
-      
-        dom:'Qlfrtip',
+        lengthMenu: [
+            [ 10, 25, 50, -1 ],
+            [ '10 filas', '25 filas', '50 filas', 'Todo' ]
+        ],
+        dom:'Qfrtip',
         conditions:{
             num:{
                 'MultipleOf':{
@@ -63,8 +66,8 @@ $(function () {
                 targets:[-1],
                 class:'rext-center',
                 render:function(date,type,row){
-                    var buttons = '<div class="d-flex justify-content-center"><a href="/erp/parqueo/update/' + row.id + '/" class="btn btn-warning btn-xs btn-flat"><i class="fas fa-edit"></i></a> ';
-                    buttons += '<a href="/erp/parqueo/delete/' + row.id + '/" type="button" class="btn btn-danger btn-xs btn-flat"><i class="fas fa-trash-alt"></i></a></row>';
+                    var buttons = '<div class="d-flex justify-content-center"><a href="/erp/parqueo/update/' + row.id + '/" class="btn btn-warning btn-sm btn-flat"><i class="fas fa-edit"></i></a> ';
+                    buttons += '<a href="/erp/parqueo/delete/' + row.id + '/" type="button" class="btn btn-danger btn-sm btn-flat"><i class="fas fa-trash-alt"></i></a></row>';
                     return buttons;
                 }
             },
@@ -80,7 +83,7 @@ $(function () {
                             window.location.href = '/erp/parqueo/create/'
                         }
                     },
-                    'copy', 'excel', 'csv', 'pdf', 'print'
+                    'copy', 'excel', 'csv', 'pdf', 'print','pageLength'
                 ],
                 // Personalizar la apariencia de los botones (opcional)
                 dom: {

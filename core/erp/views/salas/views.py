@@ -1,8 +1,10 @@
 from typing import Any, Dict
-from django.http import JsonResponse
+from django import http
+from django.db.models.query import QuerySet
+from django.forms import model_to_dict
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
-from django.views.generic import CreateView,ListView,DeleteView,UpdateView
-
+from django.views.generic import CreateView,ListView,DeleteView,UpdateView,TemplateView
 from core.mixins import PermisosMixins
 from ...models import Salas
 from ...forms import FormSala
@@ -10,6 +12,7 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
+from simple_history.models import HistoricalRecords
 # Create your views here.
 class CreateViewSala(LoginRequiredMixin,PermisosMixins,CreateView):
     login_url = reverse_lazy('login')
@@ -136,3 +139,20 @@ class DeleteViewSala(LoginRequiredMixin,PermisosMixins,DeleteView):
         context['Entidad'] = 'Salas'
         context['list_url'] = self.success_url
         return context
+class AuditoriaSalaView(LoginRequiredMixin,PermisosMixins,ListView):
+    login_url = reverse_lazy('login')
+    permission_required = 'erp.view_salas'
+    model  = Salas
+    template_name = 'salas/auditoria.html'
+  
+    def get_queryset(self):
+        instace =  Salas.objects.get(id=self.kwargs['pk'])
+        return instace.history.all()
+    def get_context_data(self, **kwargs):
+        context =   super().get_context_data(**kwargs)
+        context['title'] = "Auditoria de una sala"
+        sala = Salas.objects.get(id=self.kwargs['pk'])
+        context['sala'] = {'empresa':sala.empresa,'unidad':sala.unidad,'puesto':sala.puesto}
+        return context
+
+        

@@ -7,8 +7,11 @@ $(function () {
         autoWidth: false,
         destroy: true,
         deferRender: true,
-       
-        dom:'Qlfrtip',
+        lengthMenu: [
+            [ 10, 25, 50, -1 ],
+            [ '10 filas', '25 filas', '50 filas', 'Todo' ]
+        ],
+        dom:'Qfrtip',
         conditions:{
             num:{
                 'MultipleOf':{
@@ -66,8 +69,9 @@ $(function () {
                 targets:[-1],
                 class:'rext-center',
                 render:function(date,type,row){
-                    var buttons = '<div class="d-flex justify-content-center"><a href="/erp/sala/update/' + row.id + '/" class="btn btn-warning btn-xs btn-flat"><i class="fas fa-edit"></i></a> ';
-                    buttons += '<a href="/erp/sala/delete/' + row.id + '/" type="button" class="btn btn-danger btn-xs btn-flat"><i class="fas fa-trash-alt"></i></a></div>';
+                    var buttons = '<div class="d-flex justify-content-center"><a href="/erp/sala/update/' + row.id + '/" class="btn btn-warning btn-sm "><i class="fas fa-edit"></i></a> ';
+                    buttons += '<a href="/erp/sala/delete/' + row.id + '/" type="button" class="btn btn-danger btn-sm "><i class="fas fa-trash-alt"></i></a>'
+                    buttons+='<a href="/erp/sala/audi/'+row.id+'/" type="button" class="btn btn-primary btn-sm"><i class="fas fa-search"></i></a></div>';
                     return buttons;
                 }
             }
@@ -83,7 +87,7 @@ $(function () {
                             window.location.href = '/erp/sala/create/'
                         }
                     },
-                    'copy', 'excel', 'csv', 'pdf', 'print'
+                    'copy', 'excel', 'csv', 'pdf', 'print','pageLength'
                 ],
                 // Personalizar la apariencia de los botones (opcional)
                 dom: {

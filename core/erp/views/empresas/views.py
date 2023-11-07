@@ -1,3 +1,5 @@
+from typing import Any
+from django.db import models
 from django.views.generic import CreateView,ListView,DeleteView,UpdateView
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin,PermissionRequiredMixin
@@ -104,7 +106,6 @@ class DeleteViewEmpresa(LoginRequiredMixin,PermisosMixins,DeleteView):
         except Exception as e:
             data['error'] = str(e)
         return JsonResponse(data)
-
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['title'] = 'Eliminación de una Empresa'

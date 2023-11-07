@@ -66,7 +66,7 @@ class AsignacionEPPS(models.Model):
         item['trabajador'] = self.trabajador.id
         return item
     class Meta:
-        verbose_name = "AsingacionEPPS"
+        verbose_name = "AsignacionEPPS"
         verbose_name_plural = "AsignacionEPPS"
         db_table = 'asignacion_epps'
         ordering = ['id']
@@ -86,7 +86,7 @@ class AsignacionEV(models.Model):#ASIGNACION DE EQUIPO VEHICULAR
         item['trabajador'] = self.trabajador.id
         return item
     class Meta:
-        verbose_name = 'AsginacionEV'
+        verbose_name = 'AsignacionEV'
         verbose_name = 'AsignacionEVS'
         db_table = 'asignacion_ev'
         ordering = ['id']
@@ -209,6 +209,7 @@ class Asistentes(models.Model):
         db_table = 'asis_visitas'
     def __str__(self) -> str:
         return str(self.visita)
+    
     def toJSON(self):
         item = model_to_dict(self)
         item['visita'] = self.visita.id
@@ -226,3 +227,4 @@ def add_automatic(sender, instance, created, **kwargs):
         AsignacionEPPS.objects.create(trabajador=instance)
         Vehiculos.objects.create(trabajador=instance)
         AsignacionEV.objects.create(trabajador=instance)
+

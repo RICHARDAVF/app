@@ -4,12 +4,16 @@ $(function () {
             url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json',
         },
         "order": [[0, 'desc']],
-        // responsive: false,
-        // autoWidth: false,
-        // destroy: true,
-        // deferRender: true,
+        responsive: false,
+        autoWidth: false,
+        destroy: true,
+        deferRender: true,
         scrollX:true,
-        dom:'Qlfrtip',
+        lengthMenu: [
+            [ 10, 25, 50, -1 ],
+            [ '10 filas', '25 filas', '50 filas', 'Todo' ]
+        ],
+        dom:'Qfrtip',
         fixedColumns:{
             left:3,
             // right:2
@@ -114,7 +118,7 @@ $(function () {
                 targets:[6],
                 class:'text-center',
                 render:function(data,type,row){
-                    var hora = '<input type="button" value="Confirmar" id="hora_llegada" class="form-control form-control-xs btn btn-secondary">'
+                    var hora = '<input type="button" value="Confirmar" id="hora_llegada" class="btn btn-secondary btn-sm">'
                     if(row.h_llegada!==null){
                         hora = '<strong style="font-weight:bold;">'+row.h_llegada+'</strong>'
                     }
@@ -127,7 +131,7 @@ $(function () {
                 class:'text-center',
                 render:function(data,type,row){
                     if(row.h_salida===null & row.h_llegada!=null){
-                        return '<input class="btn btn-secondary" value="MARCAR" type="button" id="h_salida"/>'
+                        return '<input class="btn btn-secondary btn-sm" value="MARCAR" type="button" id="h_salida"/>'
                     }
                     return row.h_salida
                 }
@@ -141,7 +145,7 @@ $(function () {
                     if(row.estado==0){
                         return '<strong>Anulado</strong>'
                     }
-                   var date = (row.tipo==1)?`<input type='button' id='btnaddperson' class='btn btn-success' value='Asistente.'/>`:'';
+                   var date = (row.tipo==1)?`<input type='button' id='btnaddperson' class='btn btn-success btn-sm' value='Asistente.'/>`:'';
                     return date
                 }
             },
@@ -202,7 +206,7 @@ $(function () {
                     if(row.estado==0){
                         return '<strong>Anulado</strong>'
                     }
-                    return '<input type="button" class="btn btn-warning" value="info." id="addvehiculo"/>'
+                    return '<input type="button" class="btn btn-warning btn-sm" value="info." id="addvehiculo"/>'
                 }
             },
             {
@@ -216,8 +220,9 @@ $(function () {
                     if(row.tipo==2){
                         part_url = 'delivery/update/'
                     }
-                    var buttons = '<div class="d-flex justify-content-center"><a href="/erp/'+part_url + row.id + '/" class="btn btn-warning btn-xs btn-flat"><i class="fas fa-edit"></i></a> ';
-                    buttons += '<a href="/erp/visita/delete/' + row.id + '/" type="button" class="btn btn-danger btn-xs btn-flat"><i class="fas fa-trash-alt"></i></a></row>';
+                    var buttons = '<div class="d-flex justify-content-center"><a href="/erp/'+part_url + row.id + '/" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i></a> ';
+                    buttons += '<a href="/erp/visita/delete/' + row.id + '/" type="button" class="btn btn-danger btn-sm"><i class="fas fa-trash-alt"></i></a>'
+                    buttons+='<a href="/erp/visita/audi/'+row.id+'/" type="button" class="btn btn-primary btn-sm"><i class="fas fa-search"></i></a></div>';
                     return buttons;
                 }
             },
@@ -260,6 +265,7 @@ $(function () {
                         }
                     },
                     'print',
+                    'pageLength'
                     
                 ],
                
@@ -330,7 +336,7 @@ $(function () {
                     ${(datos[item].n_parqueo===null || datos[item].n_parqueo==undefined)?'':datos[item].n_parqueo}
                 </td>
                 <td>
-                ${(datos[item].n_parqueo===null || datos[item].n_parqueo==undefined)?'':'<a type="button" class="btn btn-success" id="hab_park">Hab.</a>'}
+                ${(datos[item].n_parqueo===null || datos[item].n_parqueo==undefined)?'':'<a type="button" class="btn btn-success btn-sm" id="hab_park">Hab.</a>'}
 
                 </td>
             <tr>`

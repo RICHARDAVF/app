@@ -19,6 +19,7 @@ function message_error(obj){
     }); 
 }
 function submit_with_ajax(url, title, content, parameters, callback) {
+    
     $.confirm({
         theme: 'material',
         title: title,
@@ -35,7 +36,7 @@ function submit_with_ajax(url, title, content, parameters, callback) {
                 btnClass: 'btn-primary',
                 action: function () {
                     $.ajax({
-                        url: url, //window.location.pathname
+                        url: url,
                         type: 'POST',
                         data: parameters,
                         dataType: 'json',
@@ -49,6 +50,7 @@ function submit_with_ajax(url, title, content, parameters, callback) {
                         }
                         message_error(data.error);
                     }).fail(function (jqXHR, textStatus, errorThrown) {
+                    
                         alert(textStatus + ': ' + errorThrown);
                     }).always(function (data) {
 

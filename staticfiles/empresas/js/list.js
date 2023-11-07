@@ -8,7 +8,11 @@ $(function(){
         autoWidth: false,
         destroy: true,
         deferRender: true,
-        dom:'Qlfrtip',
+        dom:'Qfrtip',
+        lengthMenu: [
+            [ 10, 25, 50, -1 ],
+            [ '10 filas', '25 filas', '50 filas', 'Todo' ]
+        ],
         initComplete: function (settings, json) {
            
             new $.fn.dataTable.Buttons(table, {
@@ -19,7 +23,7 @@ $(function(){
                             window.location.href = '/erp/empresa/add/'
                         }
                     },
-                    'copy', 'excel', 'csv', 'pdf', 'print'
+                    'copy', 'excel', 'csv', 'pdf', 'print','pageLength'
                 ],
                 
                 dom: {

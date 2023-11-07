@@ -3,8 +3,11 @@ $(function(){
         language: {
             url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json',
         },
-      
-        dom:'Qlfrtip',
+        lengthMenu: [
+            [ 10, 25, 50, -1 ],
+            [ '10 filas', '25 filas', '50 filas', 'Todo' ]
+        ],
+        dom:'Qfrtip',
         initComplete: function (settings, json) {
            
             new $.fn.dataTable.Buttons(table, {
@@ -15,7 +18,7 @@ $(function(){
                             window.location.href = '/erp/puesto/add/'
                         }
                     },
-                    'copy', 'excel', 'csv', 'pdf', 'print'
+                    'copy', 'excel', 'csv', 'pdf', 'print','pageLength'
                 ],
 
                 dom: {

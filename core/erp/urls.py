@@ -31,6 +31,7 @@ urlpatterns = [
     path('visita/list/',ListViewVisita.as_view(),name="visita_list"),
     path('visita/update/<int:pk>/',UpdateViewVisita.as_view(),name="visita_edit"),
     path('visita/delete/<int:pk>/',DeleteViewVisita.as_view(),name="visita_delete"),
+    path('visita/audi/<int:pk>/',AuditoriaVisitaView.as_view(),name="visita_audi"),
     #ASISTEN EN LA VISITA
     path('visita/asis/add/',CreateViewAsist.as_view(),name="asis_create"),
     #EPS
@@ -45,6 +46,7 @@ urlpatterns = [
     path('sala/list/',ListViewSala.as_view(),name="sala_list"),
     path('sala/update/<int:pk>/',UpdateViewSala.as_view(),name="sala_edit"),
     path('sala/delete/<int:pk>/',DeleteViewSala.as_view(),name="sala_delete"),
+    path('sala/audi/<int:pk>/',AuditoriaSalaView.as_view(),name="sala_audit"),
     #PARQUEO
     path('parqueo/create/',CreateViewParqueo.as_view(),name="parqueo_create"),
     path('parqueo/list/',ListViewParqueo.as_view(),name="parqueo_list"),
