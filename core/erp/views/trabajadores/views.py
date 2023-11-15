@@ -9,6 +9,7 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
+from core.upload import Cargo
 
 class CreateViewTrabajador(LoginRequiredMixin,PermisosMixins,CreateView):
     login_url = reverse_lazy('login')
@@ -22,6 +23,7 @@ class CreateViewTrabajador(LoginRequiredMixin,PermisosMixins,CreateView):
         return super().dispatch(request, *args, **kwargs)
     def post(self, request, *args, **kwargs) :
         data = {}
+       
         try:
             action =request.POST['action']
             if action == "add":
@@ -54,12 +56,14 @@ class ListViewTrabajador(LoginRequiredMixin,PermisosMixins,ListView):
        
         for value in Trabajadores.objects.all():
             item = value.toJSON()
+            item['cargo'] = value.cargo.cargo
             data.append(item)
        
         return data
     def post(self, request, *args, **kwargs):
         data = {}
-       
+        # Cargo().cargar()
+        # Cargo().trabajadores()
         try:
             action = request.POST['action']
             if action == 'searchdata':

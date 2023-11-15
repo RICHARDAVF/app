@@ -8,6 +8,14 @@ from datetime import date
 from core.user.models import Empresa,Unidad,Puesto
 from simple_history.models import HistoricalRecords
 # Create your models here.
+class CargoTrabajador(models.Model):
+    cargo = models.CharField(max_length=150,verbose_name="Cargo",unique=True)
+    class Meta:
+        verbose_name = "Tcargo"
+        verbose_name_plural = "Tcargos"
+        db_table = "cargo_trabajador"
+    def __str__(self):
+        return self.cargo
 class Trabajadores(models.Model):
     tipo = models.CharField(max_length=3,choices=[('1',"DNI"),('2',"C.E"),('3',"PASAPORTE")],blank=True,null=True)
     documento = models.CharField(max_length=10,verbose_name="Documento")
@@ -15,9 +23,10 @@ class Trabajadores(models.Model):
     apellidos = models.CharField(max_length=50,verbose_name="Apellidos")
     telefono = models.PositiveIntegerField(verbose_name="Celular",null=True,blank=True)
     direccion = models.CharField(max_length=100,verbose_name="Direccion",null=True,blank=True)
+    empresa = models.CharField(max_length=100,verbose_name="Empresa",null=True,blank=True)
+    cargo = models.ForeignKey(CargoTrabajador,on_delete=models.DO_NOTHING,verbose_name="Cargo del trabajador",null=True,blank=True)
     sctr = models.FileField(upload_to='sctr/',verbose_name="SCTR",blank=True,null=True)
     history = HistoricalRecords()
-
     def toJSON(self):
         item = model_to_dict(self)
         item['sctr'] = self.get_file()
@@ -50,6 +59,25 @@ class Vehiculos(models.Model):
         verbose_name_plural = "Vehiculos"
         db_table = "vehiculos"
         ordering = ['id']
+class Parqueo(models.Model):
+    numero = models.CharField(max_length=5,verbose_name="Numero de Parqueo",unique=False)
+    estado = models.BooleanField(default=True,verbose_name="Estado",null=True,blank=True)
+    nombre = models.CharField(max_length=150,verbose_name="Nombre del parqueo",null=True,blank=True)
+    empresa = models.ForeignKey(Empresa,on_delete=models.DO_NOTHING,verbose_name="Empresa",null=True,blank=True)
+    unidad = models.ForeignKey(Unidad,on_delete=models.DO_NOTHING,verbose_name="unidad",null=True,blank=True)
+    puesto = models.ForeignKey(Puesto,on_delete=models.DO_NOTHING,verbose_name="puesto",null=True,blank=True)
+    history = HistoricalRecords()
+
+    class Meta:
+        verbose_name = "Parqueo"
+        verbose_name_plural = "Parqueos"
+        db_table = 'parqueos'
+        ordering = ['id']
+    def toJSON(self):
+        item = model_to_dict(self)
+        return item
+    def __str__(self) -> str:
+        return self.numero
 class AsignacionEPPS(models.Model):
     trabajador = models.ForeignKey(Trabajadores,on_delete=models.CASCADE,verbose_name="Trabajador",blank=True,null=True)
     casco = models.BooleanField(default=False,verbose_name="Casco")
@@ -91,12 +119,13 @@ class AsignacionEV(models.Model):#ASIGNACION DE EQUIPO VEHICULAR
         db_table = 'asignacion_ev'
         ordering = ['id']
 class IngresoSalida(models.Model):
-    documento = models.CharField(max_length=11,verbose_name="N° Documento",null=True,blank=True)
-    nombres = models.CharField(max_length=150,verbose_name="Nombre Completo",null=True,blank=True)
-    fecha = models.DateField(auto_now_add=True,verbose_name="Fecha",null=True,blank=True)
-    hora = models.TimeField(auto_now_add=True,verbose_name="Hora de salida",null=True,blank=True)
-    tipo = models.CharField(max_length=15,choices=[("1",'INGRESO'),("2","SALIDA")])
-    motivo = models.CharField(max_length=200,verbose_name="Motivo del ingreso o salida")
+    trabajador = models.ForeignKey(Trabajadores,on_delete=models.DO_NOTHING,verbose_name="Trabajador",null=True,blank=True)
+    fecha = models.DateField(auto_now_add=True,verbose_name='Fecha',null=True,blank=True)
+    hora_ingreso = models.TimeField(auto_now_add=True,verbose_name="Hora de salida",null=True,blank=True)
+    hora_salida = models.TimeField(verbose_name="Hora de salida",null=True,blank=True)
+    placa = models.CharField(max_length=10,verbose_name="Placa del vehiculo",null=True,blank=True)
+    n_parqueo = models.ForeignKey(Parqueo, on_delete=models.DO_NOTHING, verbose_name="Numero de parqueo",null=True,blank=True)
+    motivo = models.CharField(max_length=200,verbose_name="Motivo del ingreso o salida",null=True,blank=True)
     history = HistoricalRecords()
     class Meta:
         verbose_name = "IngresoSalida"
@@ -126,25 +155,7 @@ class Salas(models.Model):
     def __str__(self) -> str:
         return self.sala
   
-class Parqueo(models.Model):
-    numero = models.CharField(max_length=5,verbose_name="Numero de Parqueo",unique=False)
-    estado = models.BooleanField(default=True,verbose_name="Estado",null=True,blank=True)
-    nombre = models.CharField(max_length=150,verbose_name="Nombre del parqueo",null=True,blank=True)
-    empresa = models.ForeignKey(Empresa,on_delete=models.DO_NOTHING,verbose_name="Empresa",null=True,blank=True)
-    unidad = models.ForeignKey(Unidad,on_delete=models.DO_NOTHING,verbose_name="unidad",null=True,blank=True)
-    puesto = models.ForeignKey(Puesto,on_delete=models.DO_NOTHING,verbose_name="puesto",null=True,blank=True)
-    history = HistoricalRecords()
 
-    class Meta:
-        verbose_name = "Parqueo"
-        verbose_name_plural = "Parqueos"
-        db_table = 'parqueos'
-        ordering = ['id']
-    def toJSON(self):
-        item = model_to_dict(self)
-        return item
-    def __str__(self) -> str:
-        return self.numero
 class Visitas(models.Model):
     user = models.ForeignKey(User,on_delete=models.DO_NOTHING,verbose_name="Usuario que Autoriza",null=True,blank=True)
     tipo_documento = models.CharField(max_length=10,choices=[("1","DNI"),("2","C.E"),("3","PASAPORTE")],verbose_name="TIPO DOCUMENTO",blank=True,null=True)

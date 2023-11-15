@@ -1,7 +1,6 @@
 $(function(){
     var table = new DataTable('#data',{
         responsive:true,
-      
         language: {
             url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json',
         },
@@ -9,6 +8,7 @@ $(function(){
         destroy: true,
         deferRender: true,
         dom:'Qfrtip',
+        "order": [[0, 'desc']],
         lengthMenu: [
             [ 10, 25, 50, -1 ],
             [ '10 filas', '25 filas', '50 filas', 'Todo' ]
@@ -26,20 +26,17 @@ $(function(){
                     'copy', 'excel', 'csv', 'pdf', 'print','pageLength'
                 ],
                 
-                dom: {
-                    button: {
-                        className: 'btn btn-primary'
-                    }
-                }
+               
             });
 
             // Crear un contenedor para los botones de exportación
             var $exportButtonsContainer = $('<div class="export-buttons-container"></div>');
             table.buttons().container().appendTo($exportButtonsContainer);
-
             // Agregar el contenedor de botones antes del input de búsqueda
             $exportButtonsContainer.insertBefore($('#data_wrapper .dataTables_filter'));
+            
         }
     }
     )
+
 })

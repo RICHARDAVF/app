@@ -90,11 +90,7 @@ $(function () {
                     'copy', 'excel', 'csv', 'pdf', 'print','pageLength'
                 ],
                 // Personalizar la apariencia de los botones (opcional)
-                dom: {
-                    button: {
-                        className: 'btn btn-primary'
-                    }
-                }
+               
             });
 
             // Crear un contenedor para los botones de exportación

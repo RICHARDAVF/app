@@ -59,8 +59,7 @@ urlpatterns = [
     path('trab/delete/<int:pk>/',DeleteViewTrabajador.as_view(),name="trabajador_delete"),
     #INGRESO Y SALIDAS DE TRABAJADORES
     path('ingsal/list/',ListViewIngSal.as_view(),name='ingsal_list'),
-    path('ingreso/add/',CreateViewIng.as_view(),name='ing_create'),
-    path('salida/add/',CreateViewSal.as_view(),name='sal_create'),
+    path('ingsal/add/',CreateViewIngSal.as_view(),name='ingsal_create'),
     path('ingsal/edit/<int:pk>/',UpdateViewIngSal.as_view(),name='ingsal_update'),
     path('ingsal/delete/<int:pk>/',DeleteViewIngSal.as_view(),name='ingsal_delete'),
 

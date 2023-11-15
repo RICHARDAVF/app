@@ -72,7 +72,7 @@ $(function () {
         ],
         headerCallback: function (thead, data, start, end, display) {
             // Aplicar el fondo al encabezado de las tres primeras columnas
-            $(thead).find('th').slice(0, 3).css('background-color', '#b89c5c');
+            $(thead).find('th').slice(0, 3).css('background-color', 'rgb(238, 137, 49)');
         },
         columnDefs:[
             {
@@ -252,6 +252,12 @@ $(function () {
                             window.location.href = '/erp/delivery/create/';
                         }
                     },
+                    {
+                        text:"<i class='fas fa-plus'></i> TRABAJADOR",
+                        action:function ( e, dt, node, conf ) {
+                            window.location.href = '/erp/ingsal/add/';
+                        }
+                    },
                     'copy',
                     'excel',
                     'csv',
@@ -269,11 +275,7 @@ $(function () {
                     
                 ],
                
-                dom: {
-                    button: {
-                        className: 'btn btn-primary'
-                    }
-                }
+                
             });
 
            
@@ -310,7 +312,6 @@ $(function () {
                     `)};
 
     var parqueos = []
-    var id_visita = ''
     function listdates(datos){
         var tdhtml = ''
         

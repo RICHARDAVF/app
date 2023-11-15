@@ -21,11 +21,7 @@ $(function(){
                     'copy', 'excel', 'csv', 'pdf', 'print','pageLength'
                 ],
                 
-                dom: {
-                    button: {
-                        className: 'btn btn-primary'
-                    }
-                }
+               
             });
 
             // Crear un contenedor para los botones de exportación

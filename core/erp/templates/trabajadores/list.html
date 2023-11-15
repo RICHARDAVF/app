@@ -1,6 +1,7 @@
 {% extends 'list.html' %}
 {% load static %}
 {% block head_list %}
+<script src="{% static 'lib/moment/moment.js' %}"></script>
 <script src="{% static 'trabajador/js/list.js' %}"></script>
 {% endblock head_list %}
 {% block columnas %}
@@ -10,11 +11,12 @@
     <th scope="col">DOCUMENTO</th>
     <th scope="col">NOMBRE</th>
     <th scope="col">APELLIDOS</th>
-    <th scope="col">TELFONO</th>
+    <th scope="col">CARGO</th>
+    <th scope="col">TELEFONO</th>
     <th scope="col">DIRECCION</th>
-    <th scope="col">EPPS TRAB</th>
+    <!-- <th scope="col">EPPS TRAB</th>
     <th scope="col">AUTO</th>
-    <th scope="col">EPPS AUTO</th>
+    <th scope="col">EPPS AUTO</th> -->
     <th scope="col">OPCIONES</th>
 </tr>
 

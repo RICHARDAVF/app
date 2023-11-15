@@ -13,7 +13,6 @@ from django.views.decorators.csrf import csrf_exempt
 from django.urls import reverse_lazy
 from django.db.models import Q
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib import messages
 from datetime import date,datetime,time
 # Create your views here.
 class CreateViewVisita(LoginRequiredMixin,PermisosMixins,CreateView):

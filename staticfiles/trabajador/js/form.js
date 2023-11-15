@@ -35,4 +35,9 @@ $(function(){
         $('#id_apellidos').val('')
     }
    })
+   $('.select2').select2({
+    theme:'bootstrap4',
+    language:'es',
+    placeholder:'buscar...'
+   })
 });

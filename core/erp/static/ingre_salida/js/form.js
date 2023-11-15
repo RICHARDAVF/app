@@ -1,29 +1,49 @@
-$(function(){
-    $('#btn-cancel').css('display','none')
-})
+$(function () {
+    $('#btn-cancel').css('display', 'none')
+    $('.select2').select2({
+        theme: 'bootstrap4',
 
-function search_doc(){
-    var doc = $(this).val()
-    $('#id_nombres').val('')
-    if(doc.trim().length==8){
-        $.ajax({
-            url:'/search_doc/',
-            type:'POST',
-            dataType:'json',
-            data:{
-                "action":'search_doc',
-                "doc":doc
-            },
-            success:function(data){
-                if(data.error){
-                    return alert(data.error)
+        ajax: {
+            method: 'POST',
+            url: '/erp/ingsal/list/',
+            dataType: 'json',
+            data: function (params) {
+                var queryParams = {
+                    q: params.term,
+                    action: 'search_trabajador'
                 }
-                $('#id_nombres').val(data.data.nombre_completo)
+                return queryParams
             },
-            error:function(){
-    
-            }
-        })
+            processResults: function (data, params) {
+          
+                params.page = params.page || 1;
+                return {
+                    results: data,
+                    pagination: {
+                        more: (params.page * 30 < data.total_count)
+                    }
+                };
+            },
+            
+        },
+        minimumInputLength: 1,
+        placeholder: 'Buscar Trabajador',
+        language: 'es',
+        templateResult: formatRepo,
+        templateSelection: formatRepoSelection
+    });
+
+    function formatRepo(repo) {
+        console.log(repo)
+        if (repo.loading) {
+            return repo.text;
+        }
+        var container = $('<div class="select2-result"><div class="select2-nombre"></div></div>');
+        container.find('.select2-nombre').text(repo.text);
+        return container;
     }
-}
-$(document).on('input','#id_documento',search_doc)
+
+    function formatRepoSelection(repo) {
+        return repo.text;
+    }
+});

@@ -52,42 +52,63 @@ $(function () {
             {"data": "documento"},
             {"data": "nombre"},
             {"data": "apellidos"},
+            {"data": "cargo"},
             {"data": "telefono"},
             {"data": "direccion"},
-            {"data": "id"},
-            {"data": "id"},
-            {"data": "id"},
+            // {"data": "id"},
+            // {"data": "id"},
+            // {"data": "id"},
             {"data": "id"},
         ],
         columnDefs:[
+            {
+                targets:[1],
+                class:'text-center',
+                render:function(data,type,row){
+                    var tipo = 'DNI'
+                    if(data==2){
+                        tipo = 'C.E'
+                    }else if(data==3){
+                        tipo = 'PASAPORTE'
+                    }
+                    return `<strong>${tipo}</strong>`
+                }
+            },
+            {
+                targets:[5],
+                class:'text-center',
+                render:function(data,type,row){
+                    return `<p class="larg-text">${data}</p>`
+                }
+            },
            
-            {
-                targets:[-4],
-                class:'text-center',
-                render:function(date,type,row){
+            // {
+            //     targets:[-4],
+            //     class:'text-center',
+            //     render:function(date,type,row){
                    
                     
-                    return '<button id="btnepps" class="btn btn-primary btn-sm" style="font-size: 10px;" >VER DATOS</button>'
-                }
-            },
-            {
-                targets:[-3],
-                class:'text-center',
-                render:function(date,type,row){
+            //         return '<button id="btnepps" class="btn btn-primary btn-sm" style="font-size: 10px;" >VER DATOS</button>'
+            //     }
+            // },
+            // {
+            //     targets:[-3],
+            //     class:'text-center',
+            //     render:function(date,type,row){
                    
                     
-                    return '<button id="btnvh" class="btn btn-secondary btn-sm" style="font-size: 10px;">VER DATOS</button>'
-                }
-            },
-            {
-                targets:[-2],
-                class:'text-center',
-                render:function(date,type,row){
+            //         return '<button id="btnvh" class="btn btn-secondary btn-sm" style="font-size: 10px;">VER DATOS</button>'
+            //     }
+            // },
+            // {
+            //     targets:[-2],
+            //     class:'text-center',
+            //     render:function(date,type,row){
                    
                     
-                    return '<button id="btnepv" class="btn btn-success btn-sm" style="font-size: 10px;" >VER DATOS</button>'
-                }
-            },
+            //         return '<button id="btnepv" class="btn btn-success btn-sm" style="font-size: 10px;" >VER DATOS</button>'
+            //     }
+            // },
             {
                 targets:[-1],
                 class:'text-center',
@@ -112,11 +133,7 @@ $(function () {
                     'copy', 'excel', 'csv', 'pdf', 'print','pageLength'
                 ],
                 // Personalizar la apariencia de los botones (opcional)
-                dom: {
-                    button: {
-                        className: 'btn btn-primary'
-                    }
-                }
+                
             });
 
             // Crear un contenedor para los botones de exportación

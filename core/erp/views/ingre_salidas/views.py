@@ -3,12 +3,13 @@ from django.urls import reverse_lazy
 from django.views.generic import CreateView,ListView,UpdateView,DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from core.mixins import PermisosMixins
-from core.erp.models import IngresoSalida
+from core.erp.models import IngresoSalida,Trabajadores
 from core.erp.forms import FormIngSal
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
-
-class CreateViewIng(LoginRequiredMixin,PermisosMixins,CreateView):
+from django.db.models import Q
+from datetime import datetime
+class CreateViewIngSal(LoginRequiredMixin,PermisosMixins,CreateView):
     permission_required = 'erp.add_ingresosalida'
     model = IngresoSalida
     form_class = FormIngSal
@@ -23,15 +24,16 @@ class CreateViewIng(LoginRequiredMixin,PermisosMixins,CreateView):
             if action =='add':
                 form = self.get_form()
                 data = form.save()
+
             else:
                 data['error'] = "no se envio ninguna opcion"
         except Exception as e:
             data['error'] = f"Ocurrio un error: "
         return JsonResponse(data)
-    def get_form(self, form_class=None):
-        form =  super().get_form(form_class)
-        form.fields['tipo'].initial = "1"
-        return form
+    # def get_form(self, form_class=None):
+    #     form =  super().get_form(form_class)
+    #     form.fields['tipo'].initial = "1"
+    #     return form
     def get_context_data(self, **kwargs):
         context =  super().get_context_data(**kwargs)
         context['title'] = 'Creacion de un Ingreso'
@@ -57,10 +59,10 @@ class CreateViewSal(LoginRequiredMixin,PermisosMixins,CreateView):
         except Exception as e:
             data['error'] = f"Ocurrio un error: {str(e)}"
         return JsonResponse(data)
-    def get_form(self, form_class=None):
-        form =  super().get_form(form_class)
-        form.fields['tipo'].initial = "2"
-        return form
+    # def get_form(self, form_class=None):
+    #     form =  super().get_form(form_class)
+    #     form.fields['tipo'].initial = "2"
+    #     return form
     def get_context_data(self, **kwargs):
         context =  super().get_context_data(**kwargs)
         context['title'] = 'Creacion de un Salida '
@@ -82,10 +84,23 @@ class ListViewIngSal(LoginRequiredMixin,PermisosMixins,ListView):
             if action =="searchdata":
                 data = []
                 for value in IngresoSalida.objects.all():
-                  
                     item = value.toJSON()
-                    item['fecha'] = value.fecha
-                    item['hora'] = value.hora.strftime('%H:%M:%S')
+                    item['documento'] = value.trabajador.documento
+                    item['nombres'] = f"{value.trabajador.nombre}   {value.trabajador.apellidos}"
+                    item['fecha'] = value.fecha.strftime('%Y-%m-%d')
+                    item['hora_ingreso'] = value.hora_ingreso.strftime('%H:%M:%S')
+                    data.append(item)
+            elif action == 'confirm_hora_salida':
+                instance = IngresoSalida.objects.get(id=request.POST['id'])
+                instance.hora_salida = datetime.now().strftime('%H:%M:%S')
+                instance.save()
+            elif action == "search_trabajador":
+                trabajadores = Trabajadores.objects.filter(Q(documento__startswith=request.POST['q']) | Q(nombre__startswith=request.POST['q']))
+                data = []
+                for index,value in enumerate(trabajadores):
+                    item = {}
+                    item['id'] = value.id
+                    item['text'] = f"{value.nombre} {value.apellidos}"
                     data.append(item)
             else:
                 data['error'] = 'No se envio ninguna opcion'

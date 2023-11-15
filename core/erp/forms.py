@@ -335,7 +335,15 @@ class FormTrabajador(ModelForm):
                 'class':'form-control',
                 'placeholder':'Ingrese su direccion'
             }),
-            
+            'empresa':TextInput(attrs={
+                'class':'form-control',
+                'placeholder':'Empresa'
+            }),
+            'cargo':Select(attrs={
+                'class':'form-control select2',
+             
+            }),
+
             'sctr':FileInput(attrs={
                 'class':'form-control',
             }),
@@ -377,8 +385,10 @@ class FormAsis(ModelForm):
         model = Asistentes
         fields = "__all__"
 class FormIngSal(ModelForm):
+
     def __init__(self,*args,**kwargs):
         super().__init__(*args,**kwargs)
+
     def save(self,commit=True):
         data = {}
         form = super()
@@ -392,26 +402,24 @@ class FormIngSal(ModelForm):
         return data
     class Meta:
         model = IngresoSalida
-        fields = ["documento","nombres","tipo","motivo"]
+        fields = ["trabajador","motivo","placa"]
         widgets = {
-            "documento":TextInput(attrs={
-                "class":'form-control',
-                'type':'number',
-                "placeholder":"8888888888"
-            }),
-            "nombres":TextInput(attrs={
-                "class":'form-control',
-                "placeholder":"Ingrese su nombre y apellidos"
-              
+            "trabajador":Select(attrs={
+                "class":'form-control select2',
+                "placeholder":"N° de documento"
             }),
             "motivo":Textarea(attrs={
                 "class":'form-control',
                 "placeholder":"Ingrese razon o motivo",
                 "rows":2,
                 "required":False
-                
             }),
-            "tipo":HiddenInput(),
+            "placa":TextInput(attrs={
+                "class":'form-control',
+                "placeholder":"Numero de placa del vehiculo",
+                "required":False
+            }),
+           
             
         }
 class FormEmpresa(ModelForm):
