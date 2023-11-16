@@ -177,7 +177,7 @@ $(function () {
                 }
             },
             {
-                targets:[-5],
+                targets:[14],
                 class:'text-center',
                 render:function(data,type,row){
                   
@@ -185,7 +185,7 @@ $(function () {
                 }
             },
             {
-                targets:[-4],
+                targets:[15],
                 class:'text-center',
                 render:function(data,type,row){
                   
@@ -194,7 +194,7 @@ $(function () {
             },
            
             {
-                targets:[-3],
+                targets:[17],
                 class:'text-center',
                 render:function(data,type,row){
                     if(row.estado==0){
@@ -204,7 +204,7 @@ $(function () {
                 }
             },
             {
-                targets:[-2],
+                targets:[18],
                 class:'text-center',
                 render:function(data,type,row){
                     
@@ -212,7 +212,7 @@ $(function () {
                 }
             },
             {
-                targets:[-1],
+                targets:[19],
                 class:'text-center',
                 render:function(data,type,row){
                     if(row.estado==0){
