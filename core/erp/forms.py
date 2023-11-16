@@ -1,6 +1,7 @@
 from django.forms import ModelForm,TextInput,DateInput,TimeInput,Select,FileInput,HiddenInput,Textarea,CheckboxInput
 from django import forms
-from .models import Visitas,Salas,Parqueo,Trabajadores,AsignacionEPPS,Vehiculos,AsignacionEV,Asistentes,IngresoSalida,EquiposProteccionVisitante
+from .models import (Visitas,Salas,Parqueo,Trabajadores,AsignacionEPPS,Vehiculos,AsignacionEV,
+                     Asistentes,IngresoSalida,EquiposProteccionVisitante,CargoTrabajador)
 from datetime import datetime
 
 from core.user.models import Empresa,Unidad,Puesto
@@ -324,7 +325,28 @@ class FormParqueoAdmin(ModelForm):
             })
         }
    
-        
+class FormCargo(ModelForm):
+    def __init__(self,*args,**kwargs):
+        super().__init__(*args,**kwargs)
+    class Meta:
+        model = CargoTrabajador 
+        fields = '__all__'
+        widgets = {
+            'cargo':TextInput(attrs={
+                "class":"form-control"
+            })
+        } 
+    def save(self, commit=True):
+        data = {}
+        form = super()
+        try:
+            if form.is_valid():
+                form.save()
+            else:
+                data['error'] = form.errors
+        except Exception as e:
+            data['error'] = str(e)
+        return data   
 class FormTrabajador(ModelForm):
     def __init__(self,*args,**kwargs):
         super().__init__(*args,**kwargs)

@@ -20,17 +20,6 @@ class CreateViewParqueo(LoginRequiredMixin,PermisosMixins,CreateView):
     @method_decorator(csrf_exempt)
     def dispatch(self, request, *args, **kwargs):
         return super().dispatch(request, *args, **kwargs)
-
-    # def get_template_names(self):
-    #     if self.request.user.is_superuser:
-    #        return 'parqueo/create_parqueo_admin.html'
-    #     else:
-    #        return 'parqueo/create_parqueo_user.html'
-    # def get_form_class(self):
-    #     if self.request.user.is_superuser:
-    #         return FormParqueoAdmin
-    #     return FormParqueo
-    
     def post(self, request, *args, **kwargs) :
         data = {}
         try:

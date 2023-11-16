@@ -8,6 +8,7 @@ from .views.empresas.views import*
 from .views.unidad.views import*
 from .views.puesto.views import*
 from .views.equipos.views import*
+from .views.cargos.views import*
 from .views.views import PageNotFoundView
 handler404 = PageNotFoundView.as_view()
 app_name = 'erp'
@@ -56,6 +57,11 @@ urlpatterns = [
     path('parqueo/list/',ListViewParqueo.as_view(),name="parqueo_list"),
     path('parqueo/update/<int:pk>/',UpdateViewParqueo.as_view(),name="parqueo_edit"),
     path('parqueo/delete/<int:pk>/',DeleteViewParqueo.as_view(),name="parqueo_delete"),
+    #CARGO TRABAJADOR
+    path('cargo/create/',CreateViewCargo.as_view(),name="cargo_create"),
+    path('cargo/list/',ListViewCargo.as_view(),name="cargo_list"),
+    path('cargo/update/<int:pk>/',UpdateViewCargo.as_view(),name="cargo_edit"),
+    path('cargo/delete/<int:pk>/',DeleteViewCargo.as_view(),name="cargo_delete"),
     #TRABAJADORES
     path('trab/create/',CreateViewTrabajador.as_view(),name="trabajador_create"),
     path('trab/list/',ListViewTrabajador.as_view(),name="trabajador_list"),

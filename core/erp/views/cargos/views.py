@@ -3,21 +3,21 @@ from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 from django.views.generic import CreateView,ListView,DeleteView,UpdateView,TemplateView
 from core.mixins import PermisosMixins
-from ...models import Salas
-from ...forms import FormSala
+from ...models import CargoTrabajador
+from ...forms import FormCargo
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 # Create your views here.
-class CreateViewSala(LoginRequiredMixin,PermisosMixins,CreateView):
+class CreateViewCargo(LoginRequiredMixin,PermisosMixins,CreateView):
     login_url = reverse_lazy('login')
-    permission_required = "erp.add_salas"
-    model = Salas
-    form_class = FormSala
-    template_name = 'salas/create.html'
-    success_url = reverse_lazy('erp:sala_list')
+    permission_required = "erp.add_cargos"
+    model = CargoTrabajador
+    form_class = FormCargo
+    template_name = 'cargos/create.html'
+    success_url = reverse_lazy('erp:cargo_list')
     def post(self, request, *args, **kwargs) :
         data = {}
         try:
@@ -30,19 +30,19 @@ class CreateViewSala(LoginRequiredMixin,PermisosMixins,CreateView):
         except Exception as e:
             data['error'] = str(e)
 
-        return JsonResponse(data)
+        return JsonResponse(data,safe=False)
     def get_context_data(self, **kwargs):
         context= super().get_context_data(**kwargs)
-        context['title'] = 'Creacion de una Sala'
-        context['entidad'] = 'Salas'
+        context['title'] = 'Creacion de un Cargo'
+        context['entidad'] = 'Cargos'
         context['list_url'] = self.success_url
         context['action'] = 'add'
         return context
-class ListViewSala(LoginRequiredMixin,PermisosMixins,ListView):
+class ListViewCargo(LoginRequiredMixin,PermisosMixins,ListView):
     login_url = reverse_lazy('login')
-    permission_required = "erp.view_salas"
-    model = Salas
-    template_name = 'salas/list.html'
+    permission_required = "erp.view_cargos"
+    model = CargoTrabajador
+    template_name = 'cargos/list.html'
     @method_decorator(csrf_exempt)
     def dispatch(self, request, *args, **kwargs):
         return super().dispatch(request, *args, **kwargs)
@@ -53,14 +53,10 @@ class ListViewSala(LoginRequiredMixin,PermisosMixins,ListView):
             action = request.POST['action']
             if action == 'searchdata':
                 data = []
-                if not request.user.is_superuser:
-                    for value in Salas.objects.filter(empresa_id=request.user.empresa_id,unidad_id=request.user.unidad_id,puesto_id=request.user.puesto_id):
-                        item = value.toJSON()
-                        data.append(item)
-                else:
-                    for value in Salas.objects.all():
-                        item = value.toJSON()
-                        data.append(item)
+                for value in CargoTrabajador.objects.all():
+                    item = value.toJSON()
+                    data.append(item)
+             
             else:
                 data['error'] = 'Ha ocurrido un error'
         except Exception as e:
@@ -69,18 +65,18 @@ class ListViewSala(LoginRequiredMixin,PermisosMixins,ListView):
         return JsonResponse(data, safe=False)
     def get_context_data(self, **kwargs) :
         context =  super().get_context_data(**kwargs)
-        context['title'] = 'Listado de Salas'
-        context['create_url'] = reverse_lazy('erp:sala_create')
-        context['list_url'] = reverse_lazy('erp:sala_list')
-        context['entidad'] = 'Salas'
+        context['title'] = 'Listado de Cargos'
+        context['create_url'] = reverse_lazy('erp:cargo_create')
+        context['list_url'] = reverse_lazy('erp:cargo_list')
+        context['entidad'] = 'Cargos'
         return context
-class UpdateViewSala(LoginRequiredMixin,PermisosMixins,UpdateView):
+class UpdateViewCargo(LoginRequiredMixin,PermisosMixins,UpdateView):
     login_url = reverse_lazy('login')
-    permission_required = "erp.change_salas"
-    model = Salas
-    form_class = FormSala
-    template_name = 'salas/create.html'
-    success_url = reverse_lazy('erp:sala_list')
+    permission_required = "erp.change_cargos"
+    model = CargoTrabajador
+    form_class = FormCargo
+    template_name = 'cargos/create.html'
+    success_url = reverse_lazy('erp:cargo_list')
    
     url_redirect = success_url
 
@@ -103,17 +99,17 @@ class UpdateViewSala(LoginRequiredMixin,PermisosMixins,UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['title'] = 'Edición de un Sala'
-        context['entidad'] = 'Salas'
+        context['title'] = 'Edición de un Cargo'
+        context['entidad'] = 'Cargos'
         context['list_url'] = self.success_url
         context['action'] = 'edit'
         return context
-class DeleteViewSala(LoginRequiredMixin,PermisosMixins,DeleteView):
+class DeleteViewCargo(LoginRequiredMixin,PermisosMixins,DeleteView):
     login_url = reverse_lazy('login')
-    permission_required = "erp.delete_salas"
-    model = Salas
-    template_name = 'salas/delete.html'
-    success_url = reverse_lazy('erp:sala_list')
+    permission_required = "erp.delete_cargos"
+    model = CargoTrabajador
+    template_name = 'cargos/delete.html'
+    success_url = reverse_lazy('erp:cargo_list')
     
     url_redirect = success_url
 
@@ -132,24 +128,7 @@ class DeleteViewSala(LoginRequiredMixin,PermisosMixins,DeleteView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['title'] = 'Eliminación de un Sala'
-        context['Entidad'] = 'Salas'
+        context['title'] = 'Eliminación de un Cargo'
+        context['entidad'] = 'Cargos'
         context['list_url'] = self.success_url
         return context
-class AuditoriaSalaView(LoginRequiredMixin,PermisosMixins,ListView):
-    login_url = reverse_lazy('login')
-    permission_required = 'erp.view_salas'
-    model  = Salas
-    template_name = 'salas/auditoria.html'
-  
-    def get_queryset(self):
-        instace =  Salas.objects.get(id=self.kwargs['pk'])
-        return instace.history.all()
-    def get_context_data(self, **kwargs):
-        context =   super().get_context_data(**kwargs)
-        context['title'] = "Auditoria de una sala"
-        sala = Salas.objects.get(id=self.kwargs['pk'])
-        context['sala'] = {'empresa':sala.empresa,'unidad':sala.unidad,'puesto':sala.puesto}
-        return context
-
-        

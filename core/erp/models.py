@@ -14,6 +14,8 @@ class CargoTrabajador(models.Model):
         verbose_name = "Tcargo"
         verbose_name_plural = "Tcargos"
         db_table = "cargo_trabajador"
+    def toJSON(self):
+        return model_to_dict(self)
     def __str__(self):
         return self.cargo
 class Trabajadores(models.Model):
