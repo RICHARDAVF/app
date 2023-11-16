@@ -1,3 +1,4 @@
+from django.forms.models import BaseModelForm
 from django.http import JsonResponse
 from django.urls import reverse_lazy
 from django.views.generic import CreateView,ListView,UpdateView,DeleteView
@@ -28,12 +29,12 @@ class CreateViewIngSal(LoginRequiredMixin,PermisosMixins,CreateView):
             else:
                 data['error'] = "no se envio ninguna opcion"
         except Exception as e:
-            data['error'] = f"Ocurrio un error: "
+            data['error'] = f"Ocurrio un error:{str(e)} "
         return JsonResponse(data)
-    # def get_form(self, form_class=None):
-    #     form =  super().get_form(form_class)
-    #     form.fields['tipo'].initial = "1"
-    #     return form
+    def get_form(self, form_class= None):
+        form =  super().get_form(form_class)
+        form.fields['usuario'].initial = self.request.user
+        return form
     def get_context_data(self, **kwargs):
         context =  super().get_context_data(**kwargs)
         context['title'] = 'Creacion de un Ingreso'
@@ -83,7 +84,12 @@ class ListViewIngSal(LoginRequiredMixin,PermisosMixins,ListView):
             action = request.POST['action']
             if action =="searchdata":
                 data = []
-                for value in IngresoSalida.objects.all():
+                if request.user.is_superuser:
+                    instance = IngresoSalida.objects.all()
+                else:
+                    instance = IngresoSalida.objects.filter(usuario_id=request.user.id)
+
+                for value in instance:
                     item = value.toJSON()
                     item['documento'] = value.trabajador.documento
                     item['nombres'] = f"{value.trabajador.nombre}   {value.trabajador.apellidos}"
@@ -97,7 +103,10 @@ class ListViewIngSal(LoginRequiredMixin,PermisosMixins,ListView):
                 instance.hora_salida = datetime.now().strftime('%H:%M:%S')
                 instance.save()
             elif action == "search_trabajador":
-                trabajadores = Trabajadores.objects.filter(Q(documento__icontains=request.POST['q']) | Q(nombre__icontains=request.POST['q']) | Q(apellidos__icontains=request.POST['q']))
+                trabajadores = Trabajadores.objects.filter(
+                    Q(documento__icontains=request.POST['q']) | 
+                    Q(nombre__icontains=request.POST['q']) | 
+                    Q(apellidos__icontains=request.POST['q']))
                 data = []
                 for index,value in enumerate(trabajadores):
                     item = {}
@@ -147,6 +156,10 @@ class UpdateViewIngSal(LoginRequiredMixin,PermisosMixins,UpdateView):
         except Exception as e:
             data['error'] = f"Ocurrio un erro: {str(e)}"
         return JsonResponse(data)
+    def get_form(self, form_class= None):
+        form =  super().get_form(form_class)
+        form.fields['usuario'].initial = self.request.user
+        return form
     def get_context_data(self,**kwargs):
         context = super().get_context_data(**kwargs)
         context['title'] = "Edicion de un Ingreso O salida"

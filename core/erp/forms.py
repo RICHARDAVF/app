@@ -432,7 +432,6 @@ class FormIngSal(ModelForm):
 
     def __init__(self,*args,**kwargs):
         super().__init__(*args,**kwargs)
-
     def save(self,commit=True):
         data = {}
         form = super()
@@ -446,7 +445,7 @@ class FormIngSal(ModelForm):
         return data
     class Meta:
         model = IngresoSalida
-        fields = ["trabajador","motivo","placa"]
+        fields = ["trabajador","motivo","placa","usuario"]
         widgets = {
             "trabajador":Select(attrs={
                 "class":'form-control select2',
@@ -463,8 +462,7 @@ class FormIngSal(ModelForm):
                 "placeholder":"Numero de placa del vehiculo",
                 "required":False
             }),
-           
-            
+            "usuario":HiddenInput(), 
         }
 class FormEmpresa(ModelForm):
     def __init__(self,*args,**kwargs):

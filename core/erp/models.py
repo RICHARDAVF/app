@@ -121,7 +121,8 @@ class AsignacionEV(models.Model):#ASIGNACION DE EQUIPO VEHICULAR
         db_table = 'asignacion_ev'
         ordering = ['id']
 class IngresoSalida(models.Model):
-    trabajador = models.ForeignKey(Trabajadores,on_delete=models.DO_NOTHING,verbose_name="Trabajador",null=True,blank=True)
+    trabajador = models.ForeignKey(Trabajadores,on_delete=models.DO_NOTHING,verbose_name="Trabajador")
+    usuario = models.ForeignKey(User,on_delete=models.DO_NOTHING)
     fecha = models.DateField(auto_now_add=True,verbose_name='Fecha',null=True,blank=True)
     hora_ingreso = models.TimeField(auto_now_add=True,verbose_name="Hora de salida",null=True,blank=True)
     hora_salida = models.TimeField(verbose_name="Hora de salida",null=True,blank=True)
