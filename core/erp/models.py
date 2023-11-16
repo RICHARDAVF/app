@@ -61,7 +61,7 @@ class Vehiculos(models.Model):
         ordering = ['id']
 class Parqueo(models.Model):
     numero = models.CharField(max_length=5,verbose_name="Numero de Parqueo",unique=False)
-    estado = models.BooleanField(default=True,verbose_name="Estado",null=True,blank=True)
+    estado = models.BooleanField(default=True,verbose_name="Estado")
     nombre = models.CharField(max_length=150,verbose_name="Nombre del parqueo",null=True,blank=True)
     empresa = models.ForeignKey(Empresa,on_delete=models.DO_NOTHING,verbose_name="Empresa",null=True,blank=True)
     unidad = models.ForeignKey(Unidad,on_delete=models.DO_NOTHING,verbose_name="unidad",null=True,blank=True)
@@ -154,8 +154,6 @@ class Salas(models.Model):
         return item
     def __str__(self) -> str:
         return self.sala
-  
-
 class Visitas(models.Model):
     user = models.ForeignKey(User,on_delete=models.DO_NOTHING,verbose_name="Usuario que Autoriza",null=True,blank=True)
     tipo_documento = models.CharField(max_length=10,choices=[("1","DNI"),("2","C.E"),("3","PASAPORTE")],verbose_name="TIPO DOCUMENTO",blank=True,null=True)
@@ -175,7 +173,7 @@ class Visitas(models.Model):
     v_marca = models.CharField(max_length=20,verbose_name="Marca del Vehiculo",null=True,blank=True)
     v_modelo = models.CharField(max_length=20,verbose_name="Modelo del vehiculo",null=True,blank=True)
     v_placa =  models.CharField(max_length=10,verbose_name="Placa de rodaje",null=True,blank=True)
-    fv_soat = models.CharField(max_length=50,verbose_name="Fecha de vencimiento del SOAT",null=True,blank=True)
+    fv_soat = models.DateField(auto_now=False,verbose_name="Fecha de vencimiento del SOAT",null=True,blank=True)
     sctr_salud = models.FileField(verbose_name="SCTR-SALUD",null=True,blank=True)
     n_parqueo = models.ForeignKey(Parqueo,on_delete=models.DO_NOTHING,verbose_name="Numero de Parqueo",null=True,blank=True)
     estado = models.CharField(max_length=10,choices=[('1','PROGRAMADO'),('2','EN CURSO'),('3','FINALIZO')],null=True,blank=True)
@@ -201,6 +199,28 @@ class Visitas(models.Model):
         item['sctr_salud'] = self.get_file(self.sctr_salud)
         item['names'] = f"{self.nombre} {self.apellidos}"
         return item
+class EquiposProteccionVisitante(models.Model):
+    visitante = models.ForeignKey(Visitas,on_delete=models.DO_NOTHING,verbose_name="Visitante",editable=False)
+    botiquin = models.BooleanField(default=False,verbose_name="Botiquin")
+    extintor = models.BooleanField(default=False,verbose_name="Extintor")
+    triangulo = models.BooleanField(default=False,verbose_name="Triangulo de Seguridad")
+    cono_s = models.BooleanField(default=False,verbose_name="Cono de seguridad")
+    taco = models.BooleanField(default=False,verbose_name="Taco")
+    pertiga = models.BooleanField(default=False,verbose_name="Pertiga")
+    circulina = models.BooleanField(default=False,verbose_name="Circulina")
+    casco = models.BooleanField(default=False,verbose_name="Casco")
+    barbiquejo = models.BooleanField(default=False,verbose_name="Barbiquejo")
+    botas = models.BooleanField(default=False,verbose_name="Botas punta de acero")
+    tapones = models.BooleanField(default=False,verbose_name="Tapones de oido")
+    lentes = models.BooleanField(default=False,verbose_name="Lentes de seguridad")
+    chaleco = models.BooleanField(default=False,verbose_name="Chaleco reflectivo")
+    respirador = models.BooleanField(default=False,verbose_name="Respirador doble via")
+    class Meta:
+        verbose_name = "Equipo de Proteccion del visitante"
+        verbose_name_plural = "Equipos de seguridad de los visitantes"
+        db_table = "ep_visitante"
+    def toJSON(self):
+        return model_to_dict(self)
 class Asistentes(models.Model):
     visita = models.ForeignKey(Visitas,on_delete=models.DO_NOTHING,verbose_name="Visita",unique=False)
     documento = models.CharField(max_length=11,verbose_name="n° documento")
@@ -232,8 +252,13 @@ class Asistentes(models.Model):
             return '{}{}'.format(MEDIA_URL, self.sctr)
         return '{}{}'.format(STATIC_URL, 'img/nopdf.jpg')
 
+@receiver(post_save, sender=Visitas)
+def add_automatic_v(sender, instance, created, **kwargs):
+    if created:
+        EquiposProteccionVisitante.objects.create(visitante=instance)
+       
 @receiver(post_save, sender=Trabajadores)
-def add_automatic(sender, instance, created, **kwargs):
+def add_automatic_t(sender, instance, created, **kwargs):
     if created:
         AsignacionEPPS.objects.create(trabajador=instance)
         Vehiculos.objects.create(trabajador=instance)

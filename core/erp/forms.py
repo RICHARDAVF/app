@@ -1,6 +1,6 @@
-from django.forms import ModelForm,TextInput,DateInput,TimeInput,Select,FileInput,HiddenInput,Textarea
+from django.forms import ModelForm,TextInput,DateInput,TimeInput,Select,FileInput,HiddenInput,Textarea,CheckboxInput
 from django import forms
-from .models import Visitas,Salas,Parqueo,Trabajadores,AsignacionEPPS,Vehiculos,AsignacionEV,Asistentes,IngresoSalida
+from .models import Visitas,Salas,Parqueo,Trabajadores,AsignacionEPPS,Vehiculos,AsignacionEV,Asistentes,IngresoSalida,EquiposProteccionVisitante
 from datetime import datetime
 
 from core.user.models import Empresa,Unidad,Puesto
@@ -103,7 +103,8 @@ class FormVisitas(ModelForm):
             }),
             'fv_soat' :TextInput(attrs={
                 'class':'form-control',
-                'placeholder':'Fecha de vencimiento del SOAT'
+                'type':'date'
+               
             }),
             'sctr_salud' :FileInput(attrs={
                 'class':'form-control',
@@ -116,6 +117,25 @@ class FormVisitas(ModelForm):
             })
             
         }
+class FormEPVisitante(ModelForm):
+    def __init__(self,*args,**kwargs):
+        super().__init__(*args,**kwargs)
+        for field in self.fields:
+            self.fields[field].widget.attrs.update({'class': 'form-control'})
+    class Meta:
+        model = EquiposProteccionVisitante
+        fields = '__all__'
+    def save(self,commit=True):
+        data = {}
+        form = super()
+        try:
+            if form.is_valid():
+                form.save()
+            else:
+                data['error'] = form.errors
+        except Exception as e:
+            data['error'] = str(e)
+        return data
 class FormDelivery(ModelForm):
     p_visita=forms.ModelChoiceField(queryset=Trabajadores.objects.all(),widget=forms.Select(attrs={
                 "class":"form-control select2"
@@ -255,7 +275,9 @@ class FormParqueo(ModelForm):
                 'placeholer':'Nombre del parqueo',
                 'class':'form-control'
             }),
-            "estado":HiddenInput(),
+            "estado":CheckboxInput(attrs={
+                "class":"form-control"
+            }),
             "empresa":HiddenInput(),
             "unidad":HiddenInput(),
             "puesto":HiddenInput()

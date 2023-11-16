@@ -88,6 +88,17 @@ $(function(){
                 }
             },
             {
+                targets:[-3],
+                class:'rext-center',
+                render:function(date,type,row){
+                    var n_parqueo  = date
+                    if(n_parqueo==null && row.placa!=null){
+                        n_parqueo = `<button class="btn btn-secondary btn-sm" id="n_parqueo">REGISTRAR</button>`
+                    }
+                    return n_parqueo;
+                }
+            },
+            {
                 targets:[-1],
                 class:'rext-center',
                 render:function(date,type,row){
@@ -203,5 +214,77 @@ $(function(){
             table.search('').columns().search('').draw();
         }
     }
+    const contenidoModal = ()=>{
+        return (`
+                <div class="modal fade" id="miModal" tabindex="-1" role="dialog" aria-labelledby="miModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="miModalLabel">Numero de Parqueo</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                            
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-success " id="btn_park_submit">GUARDAR</button>
+                                <button type="button" class="btn btn-danger" data-dismiss="modal">CERRAR</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+    
+                    `)};
+    function showpark(){
+            var rowIndex = table.row($(this).closest('tr')).index();
+            var id = table.cell(rowIndex, 0).data();        
+            $("body").append(contenidoModal);
+            $('.modal-body').html(
+                ` <form method="POST" action="." enctype="multipart/form-data" id="myForm">
+                    <div class="d-flex justify-content-around mt-1">
+                        <label class="form-label" style="width:50px;">ID: </label><input class="form-control ml-3" value="${id}" readonly="true" id="id" name="id"/>
+                    </div>
+                    <div class="d-flex justify-content-around mt-1">
+                        <label class="form-label" style="width:50px;">Numero: </label><input type="text" class="form-control ml-3" id="n_park" name="n_park" />
+                    </div>
 
-})
+                <form>
+                `
+            );
+                    
+            
+            // Agrega el contenido del modal al cuerpo de la página
+            // Activa el modal utilizando la función modal() de Bootstrap
+            $("#miModal").modal("show");
+        }
+    $(document).on('click','#n_parqueo',showpark)
+
+    $(document).on('click','#btn_park_submit',function(){
+        var parking = $('#n_park').val()
+        var id = $('#id').val()
+        if(parking==''){
+            return alert('Ingrese un numero de parqueo')
+        }
+        $.ajax({
+            method:'POST',
+            url:window.location.pathname,
+            dataType:'json',
+            data:{
+                "action":"n_parkin",
+                "parqueo":parking,
+                "id":id
+            },
+            success:function(data){
+                window.location.reload()
+                if(data.error){
+                    return alert(data.error)
+                }
+            },
+            error:function(error){
+                alert(error)
+            }
+        })
+    })
+    })

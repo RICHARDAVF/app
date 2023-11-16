@@ -1,10 +1,12 @@
 {% extends 'form.html' %}
 {% load widget_tweaks %}
 {% block form %}
-    <label for="">{{ form.nombre.label }}:</label>
+    <label for="id_nombre">{{ form.nombre.label }}:</label>
     {{form.nombre}}
-    <label for="">{{ form.numero.label }}:</label>
+    <label for="id_numero">{{ form.numero.label }}:</label>
     {{form.numero}}
+    <label for="id_estado">{{ form.estado.label }}:</label>
+    {{form.estado}}
     {{form.empresa}}
     {{form.unidad}}
     {{form.puesto}}

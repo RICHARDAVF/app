@@ -69,6 +69,7 @@ $(function () {
             {'data': "documentos"},//16
             {'data': "id"},//17
             {'data': "id"},//18
+            {'data': "id"},//19
         ],
         headerCallback: function (thead, data, start, end, display) {
             // Aplicar el fondo al encabezado de las tres primeras columnas
@@ -191,22 +192,23 @@ $(function () {
                     return `<div style="width:250px; font-weight: bold;font-size:12px;">${row.p_visita}</div>`
                 }
             },
+           
             {
                 targets:[-3],
-                class:'text-center',
-                render:function(data,type,row){
-                  
-                    return `<div style="width:150px; font-weight: bold;font-size:12px;">${(data!=null)?data:''}</div>`
-                }
-            },
-            {
-                targets:[-2],
                 class:'text-center',
                 render:function(data,type,row){
                     if(row.estado==0){
                         return '<strong>Anulado</strong>'
                     }
                     return '<input type="button" class="btn btn-warning btn-sm" value="info." id="addvehiculo"/>'
+                }
+            },
+            {
+                targets:[-2],
+                class:'text-center',
+                render:function(data,type,row){
+                    
+                    return `<a class="btn btn-primary btn-sm" href="/erp/visita/ep/${row.id}/"><i class="fas fa-eye"></i></a>`
                 }
             },
             {
@@ -631,7 +633,7 @@ $(function () {
                 "action":"addvh"
             },
             success:function(data){
-              
+               console.log(data)
                 if(data.error){
                     return alert(data.error)
                 }

@@ -1,5 +1,10 @@
 $(function () {
-    $('#btn-cancel').css('display', 'none')
+    var action = $('#id_action').val()
+    if(action!='edit'){
+
+        $('#btn-cancel').css('display', 'none')
+    }
+    $('#id_motivo').val('LABORAR')
     $('.select2').select2({
         theme: 'bootstrap4',
 

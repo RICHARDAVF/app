@@ -7,6 +7,7 @@ from .views.ingre_salidas.views import*
 from .views.empresas.views import*
 from .views.unidad.views import*
 from .views.puesto.views import*
+from .views.equipos.views import*
 from .views.views import PageNotFoundView
 handler404 = PageNotFoundView.as_view()
 app_name = 'erp'
@@ -32,6 +33,9 @@ urlpatterns = [
     path('visita/update/<int:pk>/',UpdateViewVisita.as_view(),name="visita_edit"),
     path('visita/delete/<int:pk>/',DeleteViewVisita.as_view(),name="visita_delete"),
     path('visita/audi/<int:pk>/',AuditoriaVisitaView.as_view(),name="visita_audi"),
+    #EQUIPOS DE PROTECCION DEL VISITANTE
+    path('visita/ep/<int:pk>/',UpdateViewEquipos.as_view(),name="visita_ep_update"),
+
     #ASISTEN EN LA VISITA
     path('visita/asis/add/',CreateViewAsist.as_view(),name="asis_create"),
     #EPS

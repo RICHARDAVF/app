@@ -3,13 +3,16 @@ from django import forms
 from .models import User
 from .models import Empresa,Unidad,Puesto
 from django.contrib.auth.models import Permission
-
+# class PermissionSelectionForm(forms.ModelForm):
+#     # ...
+#     def label_from_instance(self, obj):
+#         return obj.name
 
 class PermissionSelectionForm(forms.ModelForm):
     user = forms.ModelChoiceField(queryset=User.objects.all(),to_field_name='id',widget=forms.Select(attrs={
         'class':'form-control',
     }),label="ID Usuario")
-    content_type_ids = [9, 11, 13, 15,17,19,21,23,25,27,29,31]
+    content_type_ids = [6,8,10,12,14,16,18,20,22,24,26,28,30,32]
     permissions = forms.ModelMultipleChoiceField(
         queryset=Permission.objects.filter(content_type__id__in=content_type_ids),
         widget=forms.CheckboxSelectMultiple,
@@ -22,13 +25,13 @@ class PermissionSelectionForm(forms.ModelForm):
         super(PermissionSelectionForm, self).__init__(*args, **kwargs)
         
         if self.instance:
-          
             self.fields['user'].initial = self.instance.id
           
             self.fields['permissions'].initial = self.instance.user_permissions.all()
-    def label_from_instance(self, obj):
-      
-        return obj.username
+        self.fields['permissions'].label_from_instance = self.label_from_instance_custom
+
+    def label_from_instance_custom(self, obj):
+        return obj.name  # Utiliza el campo 'name' de Permission como etiqueta del checkb
 class FormUser(ModelForm):
     empresa=forms.ModelChoiceField(queryset=Empresa.objects.all(),widget=forms.Select(attrs={
                 "class":"form-control select2"

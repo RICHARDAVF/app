@@ -3,7 +3,7 @@ from django.urls import reverse_lazy
 from django.views.generic import CreateView,ListView,UpdateView,DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from core.mixins import PermisosMixins
-from core.erp.models import IngresoSalida,Trabajadores
+from core.erp.models import IngresoSalida, Parqueo,Trabajadores
 from core.erp.forms import FormIngSal
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
@@ -92,16 +92,27 @@ class ListViewIngSal(LoginRequiredMixin,PermisosMixins,ListView):
                     data.append(item)
             elif action == 'confirm_hora_salida':
                 instance = IngresoSalida.objects.get(id=request.POST['id'])
+                if instance.n_parqueo != None :
+                    Parqueo.objects.filter(id=instance.n_parqueo_id).update(estado=True)
                 instance.hora_salida = datetime.now().strftime('%H:%M:%S')
                 instance.save()
             elif action == "search_trabajador":
-                trabajadores = Trabajadores.objects.filter(Q(documento__startswith=request.POST['q']) | Q(nombre__startswith=request.POST['q']))
+                trabajadores = Trabajadores.objects.filter(Q(documento__icontains=request.POST['q']) | Q(nombre__icontains=request.POST['q']) | Q(apellidos__icontains=request.POST['q']))
                 data = []
                 for index,value in enumerate(trabajadores):
                     item = {}
                     item['id'] = value.id
                     item['text'] = f"{value.nombre} {value.apellidos}"
                     data.append(item)
+            elif action == "n_parkin":
+                try:
+                    instance_parqueo = Parqueo.objects.get(numero=request.POST['parqueo'],unidad_id=request.user.unidad_id,puesto_id=request.user.puesto_id,estado=True)
+                    instance = IngresoSalida.objects.get(id=request.POST['id'])
+                    instance.n_parqueo = instance_parqueo
+                    instance.save()
+                    Parqueo.objects.filter(numero=request.POST['parqueo'],unidad_id=request.user.unidad_id,puesto_id=request.user.puesto_id).update(estado=False)
+                except Parqueo.DoesNotExist  as e:
+                    data['error'] = 'Parqueo no encontrado o esta ocupado'
             else:
                 data['error'] = 'No se envio ninguna opcion'
         except Exception as e:

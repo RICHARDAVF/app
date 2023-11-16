@@ -1,6 +1,4 @@
 
-from typing import Any
-from django.db.models.query import QuerySet
 from django.http import JsonResponse
 from django.shortcuts import redirect, render
 from django.views.generic import CreateView,ListView,DeleteView,UpdateView,View
@@ -143,7 +141,8 @@ class ListViewVisita(LoginRequiredMixin,PermisosMixins,ListView):
                         parqueo = Parqueo.objects.get(id=value[5]).numero
                     except:
                         parqueo = None
-                    data['vh']={"v_marca":value[0],"v_modelo":value[1],"v_placa":value[2],"fv_soat":"-".join(str(i) for i in reversed(str(value[3]).split('/'))),"observacion":value[4],"n_parqueo":parqueo}
+                    data['vh']={"v_marca":value[0],"v_modelo":value[1],"v_placa":value[2],"fv_soat":value[3],"n_parqueo":parqueo,'observacion':value[4]}
+                    print(data['vh'])
                 parqueos = []
                 for value in Parqueo.objects.filter(estado=1,puesto_id=request.user.puesto_id).values_list("id","numero"):
                     parqueos.append({"id":value[0],"numero":value[1]})

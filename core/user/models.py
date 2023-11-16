@@ -9,7 +9,6 @@ class Empresa(models.Model):
     razon_social = models.CharField(max_length=150,verbose_name="Razon social")
     direccion = models.CharField(max_length=150,verbose_name="Direccion",null=True,blank=True)
     history = HistoricalRecords()
-
     class Meta:
         verbose_name = 'empresa'
         verbose_name_plural = "empresas"
