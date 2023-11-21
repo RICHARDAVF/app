@@ -115,6 +115,7 @@ class ListViewIngSal(LoginRequiredMixin,PermisosMixins,ListView):
                     data.append(item)
             elif action == "n_parkin":
                 try:
+                    
                     instance_parqueo = Parqueo.objects.get(numero=request.POST['parqueo'],unidad_id=request.user.unidad_id,puesto_id=request.user.puesto_id,estado=True)
                     instance = IngresoSalida.objects.get(id=request.POST['id'])
                     instance.n_parqueo = instance_parqueo

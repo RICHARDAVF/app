@@ -7,6 +7,7 @@ $(function () {
         "order": [[0, 'desc']],
         responsive: true,
         autoWidth: false,
+        scrollX:true,
         destroy: true,
         deferRender: true,
         lengthMenu: [
@@ -53,6 +54,7 @@ $(function () {
             {"data": "nombre"},
             {"data": "apellidos"},
             {"data": "cargo"},
+            {"data": "empresa"},
             {"data": "telefono"},
             {"data": "direccion"},
             // {"data": "id"},

@@ -115,7 +115,19 @@ DATABASES = {
     }
 }
 
-
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'noi_vigiandina',
+#         'USER': 'noi_vigiandina',
+#         'PASSWORD': 'S11a2oi8*',
+#         'HOST': 's1.creativaperu.com',  
+#         'PORT': '3306',    
+#         'OPTIONS': {
+#             'sql_mode': 'STRICT_ALL_TABLES',
+#         },       
+#     }
+# }
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
