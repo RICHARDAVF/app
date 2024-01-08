@@ -3,18 +3,18 @@ from django import forms
 from .models import User
 from .models import Empresa,Unidad,Puesto
 from django.contrib.auth.models import Permission
-# class PermissionSelectionForm(forms.ModelForm):
-#     # ...
-#     def label_from_instance(self, obj):
-#         return obj.name
+from django.db.models import Q
 
 class PermissionSelectionForm(forms.ModelForm):
     user = forms.ModelChoiceField(queryset=User.objects.all(),to_field_name='id',widget=forms.Select(attrs={
         'class':'form-control',
     }),label="ID Usuario")
-    content_type_ids = [6,8,10,12,14,16,18,20,22,24,26,28,30,32]
+    tablas_excluir = ['historical','entry','group','permission','content','session','token']
+    exclude_conditions = Q()
+    for p_c  in tablas_excluir:
+        exclude_conditions|=Q(name__icontains=p_c)
     permissions = forms.ModelMultipleChoiceField(
-        queryset=Permission.objects.filter(content_type__id__in=content_type_ids),
+        queryset=Permission.objects.exclude(exclude_conditions),
         widget=forms.CheckboxSelectMultiple,
     )
     

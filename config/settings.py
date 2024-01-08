@@ -101,33 +101,34 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 # settings.py
+# DATABASES = {
+#     'default': {
+#         'ENGINE': os.getenv('DATABASES_DEFAULT_ENGINE'),
+#         'NAME': os.getenv('DATABASES_DEFAULT_NAME'),
+#         'USER': os.getenv('DATABASES_DEFAULT_USER'),
+#         'PASSWORD': os.getenv('DATABASES_DEFAULT_PASSWORD'),
+#         'HOST': os.getenv('DATABASES_DEFAULT_HOST'),
+#         'PORT': os.getenv('DATABASES_DEFAULT_PORT'),
+#         'OPTIONS': {
+#             'driver': os.getenv('DATABASES_DEFAULT_OPTIONS_DRIVER'),
+#         },
+#     }
+# }
+
 DATABASES = {
     'default': {
-        'ENGINE': os.getenv('DATABASES_DEFAULT_ENGINE'),
-        'NAME': os.getenv('DATABASES_DEFAULT_NAME'),
-        'USER': os.getenv('DATABASES_DEFAULT_USER'),
-        'PASSWORD': os.getenv('DATABASES_DEFAULT_PASSWORD'),
-        'HOST': os.getenv('DATABASES_DEFAULT_HOST'),
-        'PORT': os.getenv('DATABASES_DEFAULT_PORT'),
+        'ENGINE': os.getenv('DATABASES_MYSQL_ENGINE'),
+        'NAME': os.getenv('DATABASES_MYSQL_NAME'),
+        'USER': os.getenv('DATABASES_MYSQL_USER'),
+        'PASSWORD': os.getenv('DATABASES_MYSQL_PASSWORD'),
+        'HOST': os.getenv('DATABASES_MYSQL_HOST'),  
+        'PORT': os.getenv('DATABASES_MYSQL_PORT'),    
         'OPTIONS': {
-            'driver': os.getenv('DATABASES_DEFAULT_OPTIONS_DRIVER'),
-        },
+            'sql_mode':os.getenv('DATABASES_MYSQL_OPTIONS'),
+        },       
     }
 }
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.mysql',
-#         'NAME': 'noi_vigiandina',
-#         'USER': 'noi_vigiandina',
-#         'PASSWORD': 'S11a2oi8*',
-#         'HOST': 's1.creativaperu.com',  
-#         'PORT': '3306',    
-#         'OPTIONS': {
-#             'sql_mode': 'STRICT_ALL_TABLES',
-#         },       
-#     }
-# }
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators

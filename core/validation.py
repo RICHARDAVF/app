@@ -10,7 +10,7 @@ class Validation:
 
     def valid(self):
         data = {}
-        response = requests.get(f'https://my.apidevs.pro/api/{self.tipo}/{self.doc}',headers = {
+        response = requests.get(f'https://my.apidev.pro/api/{self.tipo}/{self.doc}',headers = {
                     "Authorization":f'Bearer {os.getenv("TOKEN_DNI")}'
                 })
         res=json.loads(response.text)

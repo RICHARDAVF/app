@@ -11,8 +11,8 @@ from simple_history.models import HistoricalRecords
 class CargoTrabajador(models.Model):
     cargo = models.CharField(max_length=150,verbose_name="Cargo",unique=True)
     class Meta:
-        verbose_name = "Tcargo"
-        verbose_name_plural = "Tcargos"
+        verbose_name = "Cargo de Trabajador"
+        verbose_name_plural = "Cargos de trabajadores"
         db_table = "cargo_trabajador"
     def toJSON(self):
         return model_to_dict(self)
@@ -34,7 +34,7 @@ class Trabajadores(models.Model):
         item['sctr'] = self.get_file()
         return item
     class Meta:
-        verbose_name = "Trabajadores"
+        verbose_name = "Trabajador"
         verbose_name_plural = "Trabajadores"
         db_table = "trabajadores"
         ordering = ['id']
@@ -96,8 +96,8 @@ class AsignacionEPPS(models.Model):
         item['trabajador'] = self.trabajador.id
         return item
     class Meta:
-        verbose_name = "AsignacionEPPS"
-        verbose_name_plural = "AsignacionEPPS"
+        verbose_name = "Asignacion de EPPS"
+        verbose_name_plural = "Asignaciones de EPPS"
         db_table = 'asignacion_epps'
         ordering = ['id']
 class AsignacionEV(models.Model):#ASIGNACION DE EQUIPO VEHICULAR
@@ -116,8 +116,8 @@ class AsignacionEV(models.Model):#ASIGNACION DE EQUIPO VEHICULAR
         item['trabajador'] = self.trabajador.id
         return item
     class Meta:
-        verbose_name = 'AsignacionEV'
-        verbose_name = 'AsignacionEVS'
+        verbose_name = 'Asignacion de ESV'
+        verbose_name = 'Asignaciones de ESV'
         db_table = 'asignacion_ev'
         ordering = ['id']
 class IngresoSalida(models.Model):
@@ -131,8 +131,8 @@ class IngresoSalida(models.Model):
     motivo = models.CharField(max_length=200,verbose_name="Motivo del ingreso o salida",null=True,blank=True)
     history = HistoricalRecords()
     class Meta:
-        verbose_name = "IngresoSalida"
-        verbose_name_plural = "IngresosSalidas"
+        verbose_name = "Ingreso y salida"
+        verbose_name_plural = "Ingresos y salidas"
         db_table = "ingresos_salidas"
         ordering = ['id']
     def toJSON(self):
@@ -238,8 +238,8 @@ class Asistentes(models.Model):
     n_parqueo = models.ForeignKey(Parqueo,on_delete=models.DO_NOTHING,verbose_name="Parqueo",null=True,blank=True)
     history = HistoricalRecords()
     class Meta:
-        verbose_name = "asinten"
-        verbose_name_plural = 'asistentes'
+        verbose_name = "Asistente"
+        verbose_name_plural = 'Asistentes'
         db_table = 'asis_visitas'
     def __str__(self) -> str:
         return str(self.visita)
